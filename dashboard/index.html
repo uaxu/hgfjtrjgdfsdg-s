@@ -79,15 +79,38 @@
       from { transform: translateY(-10vh); }
       to { transform: translateY(110vh); }
     }
+    .message-card {
+      transition: all 0.2s;
+    }
+    .message-card:hover {
+      border-color: #ff4d4d;
+      background: #0a0000;
+    }
+    .loading-spinner {
+      border: 3px solid #1a0000;
+      border-top: 3px solid #ff0000;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
   <div class="dashboard-container">
     <div class="flex justify-between items-center mb-10">
       <h1 class="text-4xl">Pesquisador de Mensagens</h1>
-      <button id="btn-logout" class="bg-gray-800 hover:bg-gray-700 text-white px-6 py-2 rounded">
-        Sair
-      </button>
+      <div class="flex items-center gap-4">
+        <span id="user-info" class="text-gray-400 text-sm"></span>
+        <button id="btn-logout" class="bg-gray-800 hover:bg-gray-700 text-white px-6 py-2 rounded">
+          Sair
+        </button>
+      </div>
     </div>
 
     <div class="flex flex-col md:flex-row gap-4 mb-8">
@@ -101,7 +124,9 @@
     </div>
 
     <div id="results" class="bg-black/60 border border-red-800 rounded p-6 min-h-[400px] max-h-[70vh] overflow-y-auto whitespace-pre-wrap text-base leading-relaxed">
-      Resultados aparecerão aqui...
+      <div class="text-gray-500 text-center mt-20">
+        🔍 Digite um ID de autor ou palavra-chave para começar
+      </div>
     </div>
     <p id="result-info" class="text-right mt-4 text-gray-400 text-sm"></p>
   </div>
@@ -150,29 +175,192 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // Se não estiver logado, volta pro login
+    // Elementos
+    const resultsDiv = document.getElementById("results");
+    const infoDiv = document.getElementById("result-info");
+    const authorInput = document.getElementById("author-id");
+    const keywordInput = document.getElementById("keyword");
+    const searchBtn = document.getElementById("btn-search");
+    const userInfo = document.getElementById("user-info");
+
+    // Verificar autenticação
     onAuthStateChanged(auth, (user) => {
       if (!user) {
-        window.location.href = "/";  // ou "/index.html" se o login for index.html
+        window.location.href = "/";
+      } else {
+        userInfo.textContent = `👤 ${user.email}`;
       }
     });
 
-    // Logout funcionando de verdade
+    // Logout
     document.getElementById("btn-logout").onclick = async () => {
       try {
         await signOut(auth);
-        window.location.href = "/";  // volta pro login
+        window.location.href = "/";
       } catch (error) {
         console.error("Erro ao sair:", error);
-        alert("Falha ao sair. Tenta de novo, fofo.");
+        alert("Falha ao sair. Tenta de novo.");
       }
     };
 
-    // Placeholder pro botão Pesquisar (depois a gente liga no Oracle)
-    document.getElementById("btn-search").onclick = () => {
-      document.getElementById("results").innerHTML = "Buscando... (ainda não ligado no Oracle, mas o logout já tá top 😘)";
-    };
+    // Função para escapar HTML
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Função para formatar data
+    function formatDate(dateString) {
+      try {
+        const date = new Date(dateString);
+        return date.toLocaleString('pt-BR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      } catch {
+        return dateString;
+      }
+    }
+
+    // Função principal de busca
+    async function performSearch() {
+      const authorId = authorInput.value.trim();
+      const keyword = keywordInput.value.trim();
+
+      if (!authorId && !keyword) {
+        resultsDiv.innerHTML = `
+          <div class="text-yellow-500 text-center mt-20">
+            ⚠️ Digite um ID de autor ou uma palavra-chave.
+          </div>
+        `;
+        infoDiv.textContent = '';
+        return;
+      }
+
+      // Mostrar loading
+      resultsDiv.innerHTML = `
+        <div class="flex flex-col items-center justify-center mt-20">
+          <div class="loading-spinner"></div>
+          <div class="text-gray-400 mt-4">🔍 Buscando mensagens...</div>
+        </div>
+      `;
+      infoDiv.textContent = '';
+
+      try {
+        const user = auth.currentUser;
+        if (!user) {
+          resultsDiv.innerHTML = `<div class="text-red-500 text-center mt-20">❌ Faça login primeiro.</div>`;
+          return;
+        }
+
+        const token = await user.getIdToken();
+
+        // Construir URL da API
+        let url = 'https://ge6c22a3518a389-dms.adb.eu-stockholm-1.oraclecloudapps.com/ords/admin/api/search?';
+        const params = [];
+        if (authorId) params.push(`author_id=${encodeURIComponent(authorId)}`);
+        if (keyword) params.push(`keyword=${encodeURIComponent(keyword)}`);
+        url += params.join('&');
+
+        // Chamar a API
+        const response = await fetch(url, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        // Processar resultados
+        if (!data.items || data.items.length === 0) {
+          resultsDiv.innerHTML = `
+            <div class="text-gray-400 text-center mt-20">
+              📭 Nenhuma mensagem encontrada.
+              <div class="text-sm text-gray-600 mt-2">
+                Tente outro ID de autor ou palavra-chave.
+              </div>
+            </div>
+          `;
+          infoDiv.textContent = `Total: 0 mensagens`;
+          return;
+        }
+
+        // Montar HTML dos resultados
+        let html = `
+          <div class="flex justify-between items-center mb-4">
+            <span class="text-green-400">✅ ${data.items.length} mensagens encontradas</span>
+            <span class="text-gray-400 text-sm">Total: ${data.count || data.items.length}</span>
+          </div>
+          <hr class="border-red-800 mb-4">
+        `;
+
+        data.items.forEach((msg, index) => {
+          html += `
+            <div class="message-card mb-4 p-4 border border-red-700 rounded">
+              <div class="flex justify-between items-start gap-4">
+                <div class="flex-1">
+                  <div class="text-gray-400 text-sm flex flex-wrap gap-2">
+                    <span class="text-red-400 font-bold">${escapeHtml(msg.author || 'Desconhecido')}</span>
+                    <span>em</span>
+                    <span class="text-red-300">${escapeHtml(msg.server || 'Servidor')}</span>
+                    <span>></span>
+                    <span class="text-red-300">${escapeHtml(msg.channel || 'Canal')}</span>
+                    ${msg.thread ? `<span>></span><span class="text-red-300">${escapeHtml(msg.thread)}</span>` : ''}
+                  </div>
+                  <div class="mt-2 text-white whitespace-pre-wrap break-words">
+                    ${escapeHtml(msg.content || '')}
+                  </div>
+                  <div class="mt-1 text-gray-500 text-xs">
+                    ${formatDate(msg.created_at)}
+                  </div>
+                </div>
+                <span class="text-gray-600 text-xs whitespace-nowrap">#${index + 1}</span>
+              </div>
+            </div>
+          `;
+        });
+
+        resultsDiv.innerHTML = html;
+        infoDiv.textContent = `Mostrando ${data.items.length} de ${data.count || data.items.length} mensagens`;
+
+      } catch (error) {
+        console.error('Erro na busca:', error);
+        resultsDiv.innerHTML = `
+          <div class="text-red-500 text-center mt-20">
+            ❌ Erro ao buscar mensagens
+            <div class="text-sm text-gray-400 mt-2">${escapeHtml(error.message)}</div>
+            <div class="text-sm text-gray-500 mt-4">
+              Verifique sua conexão e tente novamente.
+            </div>
+          </div>
+        `;
+        infoDiv.textContent = 'Erro na busca';
+      }
+    }
+
+    // Event listeners
+    searchBtn.addEventListener('click', performSearch);
+
+    // Permitir Enter nos campos
+    authorInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') performSearch();
+    });
+    keywordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') performSearch();
+    });
+
+    // Mensagem inicial
+    console.log('🔍 Pesquisador de Mensagens carregado!');
   </script>
 </body>
 </html>
-
