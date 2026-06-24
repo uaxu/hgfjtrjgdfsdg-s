@@ -26,7 +26,7 @@
       max-width: 900px;
       text-align: center;
       box-shadow: 0 0 30px #8a0002;
-      margin-bottom: 2rem;
+      margin-bottom: 3rem;
       width: 100%;
       position: relative;
       z-index: 2;
@@ -49,20 +49,6 @@
     }
     .link-card:hover {
       transform: scale(1.05);
-    }
-    .circle {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      border: 2px solid #8a0002;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 0.75rem;
-      background: #000;
-      font-size: 1.5rem;
-      color: #ff0000;
-      font-weight: bold;
     }
     .link-row {
       display: flex;
@@ -98,22 +84,91 @@
         width: 45%;
       }
     }
+    /* Estilos para os campos */
+    .input-field {
+      width: 80%;
+      max-width: 400px;
+      padding: 1rem;
+      text-align: center;
+      background: #000;
+      border: 1px solid rgba(220, 38, 38, 0.5);
+      border-radius: 0.75rem;
+      color: #ff0000;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 1rem;
+      box-shadow: 0 0 15px #8a0002;
+      transition: all 0.3s ease;
+    }
+    .input-field:focus {
+      outline: none;
+      border-color: #ff0000;
+      box-shadow: 0 0 30px #8a0002;
+      transform: scale(1.02);
+    }
+    .input-field::placeholder {
+      color: #444;
+      letter-spacing: 1px;
+    }
+    .btn-login {
+      width: 80%;
+      max-width: 400px;
+      padding: 1rem;
+      background: #000;
+      border: 1px solid rgba(220, 38, 38, 0.5);
+      border-radius: 0.75rem;
+      color: #ff0000;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 1.05rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 15px #8a0002;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .btn-login:hover:not(:disabled) {
+      transform: scale(1.05);
+      background: rgba(138, 0, 2, 0.1);
+      box-shadow: 0 0 30px #8a0002;
+    }
+    .btn-login:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+    #error-msg {
+      min-height: 2rem;
+      margin-top: 0.5rem;
+    }
+    /* Imagem fallback */
+    .link-card img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: 2px solid rgba(138, 0, 2, 0.5);
+      object-fit: cover;
+      margin-bottom: 0.75rem;
+    }
   </style>
 </head>
 <body>
   <div class="card">
+    <img src="/assets/whbf.png" alt="WHBF">
     <h1 class="text-5xl mb-6 tracking-widest">WHBF DMS</h1>
-    <p class="text-xl mb-10 text-red-300 leading-relaxed">
+    <p class="text-xl text-red-300 leading-relaxed">
+      Discord Message Searcher
+    </p>
+    <p class="text-l mb-10 text-red-300 leading-relaxed">
       Pesquisa de mensagens de servidores de Discord
     </p>
 
     <div class="link-row" style="margin-top: 0; flex-direction: column; gap: 1.5rem; align-items: center;">
-      <input id="email" type="email" placeholder="Mail" class="link-card" style="padding: 1rem 2rem; text-align: center;">
-      <input id="password" type="password" placeholder="Pswd" class="link-card" style="padding: 1rem 2rem; text-align: center;">
-      <button id="btn-login" class="link-card" style="padding: 1rem 2rem;">
-        <div class="text-lg font-bold text-red-500">Login</div>
+      <input id="email" type="email" placeholder="mail" class="input-field">
+      <input id="password" type="password" placeholder="pswd" class="input-field">
+      <button id="btn-login" class="btn-login">
+        Login
       </button>
-      <p id="error-msg" class="text-red-500 mt-2 text-center"></p>
+      <p id="error-msg" class="text-red-500 text-center"></p>
     </div>
   </div>
 
@@ -121,44 +176,81 @@
     <p class="text-gray-500 mb-10 text-sm tracking-widest">- Information -</p>
       <div class="link-row">
         <a href="https://whbf.cc/" target="_blank" class="link-card">
-          <img src="/assets/whbf.png" class="w-20 h-20 rounded-full border border-red-600 mb-4 object-cover">
+          <img src="/assets/whbf.png" alt="WHBF">
           <div class="text-lg font-bold text-red-500">WHBF</div>
           <div class="text-xs text-gray-400 mt-1">Main Website</div>
         </a>
-      </div>
 
-    <div class="link-row">
       <a href="https://www.roblox.com/communities/703659855/WHBF#!/about" target="_blank" class="link-card">
-        <img src="/assets/whbf.png" class="w-20 h-20 rounded-full border border-red-600 mb-4 object-cover">
-        <div class="text-lg font-bold text-red-500">WHBF</div>
+        <img src="/assets/whbf.png" alt="WHBF Roblox">
+        <div class="text-lg font-bold text-red-500">WHBF Roblox</div>
         <div class="text-xs text-gray-400 mt-1">Main Roblox Group</div>
       </a>
 
-      <a href="https://discord.gg/Sa72qkwQCx" target="_blank" class="link-card">
-        <img src="/assets/whbf.png" class="w-20 h-20 rounded-full border border-red-600 mb-4 object-cover">
+      <a href="https://discord.gg/6kurJR2BtK" target="_blank" class="link-card">
+        <img src="/assets/whbf.png" alt="WHBF Center">
         <div class="text-lg font-bold text-red-500">WHBF Center</div>
         <div class="text-xs text-gray-400 mt-1">Discord Server</div>
+      </a>
+      
+      <a href="https://t.me/whbfcc" target="_blank" class="link-card">
+        <img src="/assets/whbf.png" alt="WHBF Telegram">
+        <div class="text-lg font-bold text-red-500">WHBF Telegram</div>
+        <div class="text-xs text-gray-400 mt-1">Telegram Channel</div>
       </a>
     </div>
   </div>
 
   <footer>
-    © 2025 whbf.cc
+    © 2026 whbf.cc
   </footer>
 
   <!-- Falling snowflakes -->
   <script>
-    function createSnowflake() {
-      const flake = document.createElement('div');
-      flake.className = 'snowflake';
-      flake.style.left = Math.random() * 100 + 'vw';
-      flake.style.fontSize = Math.random() * 14 + 8 + 'px';
-      flake.style.animationDuration = Math.random() * 6 + 8 + 's';
-      flake.innerText = '❆';
-      document.body.appendChild(flake);
-      setTimeout(() => flake.remove(), 15000);
+    const flakes = [];
+    let lastTime = performance.now();
+
+    function createParticle() {
+      const p = document.createElement('div');
+      p.className = 'snowflake';
+      p.style.left = Math.random() * window.innerWidth + 'px';
+      p.style.fontSize = Math.random() * 14 + 6 + 'px';
+      p.innerText = '❆';
+
+      document.body.appendChild(p);
+
+      flakes.push({
+        el: p,
+        y: -10,
+        speed: Math.random() * 200 + 300
+      });
     }
-    setInterval(createSnowflake, 180);
+
+    function update(time) {
+      let delta = (time - lastTime) / 1000;
+
+      if (delta > 0.1) delta = 0.1;
+
+      lastTime = time;
+
+      if (Math.random() < delta * 50) {
+        createParticle();
+      }
+
+      flakes.forEach((flake, i) => {
+        flake.y += flake.speed * delta;
+
+        flake.el.style.transform = `translateY(${flake.y}px)`;
+
+        if (flake.y > window.innerHeight + 280) {
+          flake.el.remove();
+          flakes.splice(i, 1);
+        }
+      });
+
+      requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
   </script>
 
   <script type="module">
@@ -177,32 +269,56 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    document.getElementById("btn-login").onclick = async () => {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const loginBtn = document.getElementById("btn-login");
+    const errorMsg = document.getElementById("error-msg");
 
-      if (!email || !password) {
-        document.getElementById("error-msg").textContent = "Please enter email and password";
+    [emailInput, passwordInput].forEach(input => {
+      input.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") loginBtn.click();
+      });
+    });
+
+    loginBtn.onclick = async () => {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {c
+        errorMsg.textContent = "Password errada ou email errado";
         return;
       }
 
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        // Only redirect AFTER successful manual login
-        window.location.href = "/dashboard";  // or "/dashboard.html" — adjust as needed
-      } catch (error) {
-        let errorMessage = "Login failed";
-        if (error.code === 'auth/invalid-email') errorMessage = "Invalid email format";
-        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') errorMessage = "Invalid email or password";
-        if (error.code === 'auth/too-many-requests') errorMessage = "Too many attempts – try again later";
+      loginBtn.disabled = true;
+      loginBtn.textContent = "⏳ ...";
 
-        document.getElementById("error-msg").textContent = errorMessage;
-        console.error(error);
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = "/dashboard";
+      } catch (error) {
+        let errorMessage = "Falha no login";
+        if (error.code === 'auth/invalid-email') errorMessage = "E-mail inválido";
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+          errorMessage = "E-mail ou senha incorretos";
+        }
+        if (error.code === 'auth/too-many-requests') errorMessage = "Muitas tentativas – aguarde";
+        if (error.code === 'auth/network-request-failed') errorMessage = "Erro de rede – verifique sua conexão";
+
+        errorMsg.textContent = errorMessage;
+        console.error("Firebase error:", error);
+      } finally {
+        loginBtn.disabled = false;
+        loginBtn.textContent = "Login";
       }
     };
+
+    [emailInput, passwordInput].forEach(input => {
+      input.addEventListener("input", () => {
+        errorMsg.textContent = "";
+      });
+    });
   </script>
 
-  <!-- Title animation -->
   <script>
     const titles = ["2","23","238","2382","23826","2382","238","23"];
     let tIndex = 0;
@@ -213,4 +329,3 @@
   </script>
 </body>
 </html>
-
