@@ -140,26 +140,35 @@
       min-height: 2rem;
       margin-top: 0.5rem;
     }
-    /* Imagem fallback */
-    .link-card img {
-      width: 70px;
-      height: 70px;
+    /* Imagem do topo - menor */
+    .top-logo {
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
-      border: 2px solid rgba(138, 0, 2, 0.5);
+      object-fit: cover;
+      margin-bottom: 0.5rem;
+    }
+    /* Imagens dos cards - sem borda vermelha */
+    .link-card img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: none;
       object-fit: cover;
       margin-bottom: 0.75rem;
+      background: #000;
     }
   </style>
 </head>
 <body>
   <div class="card">
-    <img src="/assets/whbf.png" alt="WHBF">
+    <img src="/assets/whbf.png" alt="WHBF" class="top-logo">
     <h1 class="text-5xl mb-6 tracking-widest">WHBF DMS</h1>
     <p class="text-xl text-red-300 leading-relaxed">
       Discord Message Searcher
     </p>
     <p class="text-l mb-10 text-red-300 leading-relaxed">
-      Pesquisa de mensagens de servidores de Discord
+      Request a message or information in Discord
     </p>
 
     <div class="link-row" style="margin-top: 0; flex-direction: column; gap: 1.5rem; align-items: center;">
@@ -284,8 +293,8 @@
       const email = emailInput.value.trim();
       const password = passwordInput.value;
 
-      if (!email || !password) {c
-        errorMsg.textContent = "Password errada ou email errado";
+      if (!email || !password) {
+        errorMsg.textContent = "Preencha e-mail e senha";
         return;
       }
 
