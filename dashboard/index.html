@@ -6,42 +6,68 @@
   <title>WHBF DMS - Pesquisador</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    /* ===== ESTILOS GERAIS ===== */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
     body {
       background: #0a0a0a;
       color: #e0e0e0;
-      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
       min-height: 100vh;
       margin: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 2rem 1rem;
+      overflow-x: hidden;
       position: relative;
     }
 
+    /* ===== SNOWFLAKES ===== */
+    .snowflake {
+      position: absolute;
+      top: -10px;
+      color: rgba(255, 255, 255, 0.06);
+      user-select: none;
+      pointer-events: none;
+      animation: fall linear infinite;
+      z-index: 0;
+      font-size: 14px;
+    }
+    @keyframes fall {
+      from { transform: translateY(-10vh) rotate(0deg); }
+      to { transform: translateY(110vh) rotate(360deg); }
+    }
+
+    /* ===== CONTAINER PRINCIPAL ===== */
     .dashboard-container {
       background: rgba(10, 10, 10, 0.95);
       border: 1px solid rgba(180, 40, 40, 0.25);
       border-radius: 16px;
-      padding: 2.5rem;
+      padding: 2.5rem 2.5rem;
       max-width: 1200px;
       width: 100%;
       box-shadow: 0 0 60px rgba(180, 40, 40, 0.06);
       position: relative;
       z-index: 1;
+      backdrop-filter: blur(4px);
     }
 
+    /* ===== TÍTULO ===== */
     .page-title {
       font-size: 2rem;
       font-weight: 300;
       letter-spacing: 6px;
       color: #ffffff;
       text-transform: uppercase;
+      margin: 0;
     }
-    .page-title span { color: #cc3333; font-weight: 500; }
+    .page-title span {
+      color: #cc3333;
+      font-weight: 500;
+    }
 
+    /* ===== CABEÇALHO ===== */
     .header-bar {
       display: flex;
       justify-content: space-between;
@@ -52,7 +78,6 @@
       flex-wrap: wrap;
       gap: 0.75rem;
     }
-
     .user-info {
       display: flex;
       align-items: center;
@@ -60,7 +85,9 @@
       font-size: 0.85rem;
       color: #888;
     }
-    .user-info .user-email { color: #ccc; }
+    .user-info .user-email {
+      color: #ccc;
+    }
     .user-info .user-tier {
       background: rgba(180, 40, 40, 0.15);
       padding: 0.2rem 0.8rem;
@@ -72,6 +99,7 @@
       border: 1px solid rgba(180, 40, 40, 0.2);
     }
 
+    /* ===== BOTÃO SAIR ===== */
     .btn-logout {
       background: transparent;
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -90,28 +118,7 @@
       color: #cc3333;
     }
 
-    .search-counter {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.8rem;
-      color: #555;
-      margin-bottom: 1.5rem;
-      padding: 0.6rem 1rem;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.03);
-    }
-    .search-counter .count { color: #cc3333; font-weight: 500; }
-    .search-counter .divider { color: #333; margin: 0 0.2rem; }
-
-    .search-row {
-      display: flex;
-      flex-direction: row;
-      gap: 1rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-    }
+    /* ===== CAMPO DE BUSCA ===== */
     .search-input {
       background: rgba(0, 0, 0, 0.6);
       border: 1px solid rgba(255, 255, 255, 0.06);
@@ -120,16 +127,18 @@
       border-radius: 10px;
       font-size: 0.95rem;
       transition: all 0.25s ease;
-      flex: 1;
-      min-width: 200px;
+      width: 100%;
       font-family: inherit;
     }
     .search-input:focus {
       outline: none;
       border-color: rgba(180, 40, 40, 0.4);
+      box-shadow: 0 0 30px rgba(180, 40, 40, 0.04);
       background: rgba(0, 0, 0, 0.8);
     }
-    .search-input::placeholder { color: #444; }
+    .search-input::placeholder {
+      color: #444;
+    }
 
     .btn-search {
       background: rgba(180, 40, 40, 0.12);
@@ -149,9 +158,52 @@
       background: rgba(180, 40, 40, 0.2);
       border-color: rgba(180, 40, 40, 0.4);
       transform: translateY(-1px);
+      box-shadow: 0 8px 30px rgba(180, 40, 40, 0.08);
     }
-    .btn-search:disabled { opacity: 0.3; cursor: not-allowed; }
+    .btn-search:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      transform: none !important;
+    }
 
+    .search-row {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .search-row .search-input {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    /* ===== CONTADOR DE BUSCAS ===== */
+    .search-counter {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: #555;
+      margin-bottom: 1.5rem;
+      padding: 0.6rem 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+    .search-counter .count {
+      color: #cc3333;
+      font-weight: 500;
+    }
+    .search-counter .limit {
+      color: #666;
+    }
+    .search-counter .divider {
+      color: #333;
+      margin: 0 0.2rem;
+    }
+
+    /* ===== RESULTADOS ===== */
     #results {
       background: rgba(0, 0, 0, 0.3);
       border: 1px solid rgba(255, 255, 255, 0.04);
@@ -163,10 +215,22 @@
       font-size: 0.9rem;
       line-height: 1.7;
     }
-    #results::-webkit-scrollbar { width: 5px; }
-    #results::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 8px; }
-    #results::-webkit-scrollbar-thumb { background: rgba(180, 40, 40, 0.25); border-radius: 8px; }
+    #results::-webkit-scrollbar {
+      width: 5px;
+    }
+    #results::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+    }
+    #results::-webkit-scrollbar-thumb {
+      background: rgba(180, 40, 40, 0.25);
+      border-radius: 8px;
+    }
+    #results::-webkit-scrollbar-thumb:hover {
+      background: rgba(180, 40, 40, 0.4);
+    }
 
+    /* ===== ESTADO VAZIO ===== */
     .empty-state {
       display: flex;
       flex-direction: column;
@@ -175,11 +239,26 @@
       height: 320px;
       color: #444;
       text-align: center;
+      user-select: none;
     }
-    .empty-state .icon { font-size: 2.2rem; margin-bottom: 0.8rem; opacity: 0.2; }
-    .empty-state h3 { font-weight: 300; color: #555; font-size: 1.1rem; letter-spacing: 1px; }
-    .empty-state p { font-size: 0.8rem; color: #333; }
+    .empty-state .icon {
+      font-size: 2.2rem;
+      margin-bottom: 0.8rem;
+      opacity: 0.2;
+    }
+    .empty-state h3 {
+      font-weight: 300;
+      color: #555;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+    }
+    .empty-state p {
+      font-size: 0.8rem;
+      color: #333;
+      margin-top: 0.2rem;
+    }
 
+    /* ===== CARD DE MENSAGEM ===== */
     .msg-card {
       background: rgba(0, 0, 0, 0.3);
       border: 1px solid rgba(255, 255, 255, 0.04);
@@ -192,6 +271,7 @@
       border-color: rgba(180, 40, 40, 0.15);
       background: rgba(0, 0, 0, 0.5);
     }
+
     .msg-header {
       display: flex;
       flex-wrap: wrap;
@@ -200,9 +280,17 @@
       margin-bottom: 0.4rem;
       font-size: 0.8rem;
     }
-    .msg-author { color: #cc3333; font-weight: 500; }
-    .msg-server { color: #888; }
-    .msg-channel { color: #666; }
+    .msg-author {
+      color: #cc3333;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+    .msg-server {
+      color: #888;
+    }
+    .msg-channel {
+      color: #666;
+    }
     .msg-thread {
       color: #aa8844;
       font-size: 0.7rem;
@@ -211,11 +299,37 @@
       border-radius: 4px;
       border: 1px solid rgba(170, 136, 68, 0.1);
     }
-    .msg-date { color: #444; font-size: 0.65rem; margin-left: auto; white-space: nowrap; }
-    .msg-index { color: #333; font-size: 0.6rem; }
-    .msg-content { color: #d0d0d0; font-size: 0.9rem; white-space: pre-wrap; word-break: break-word; padding: 0.2rem 0; line-height: 1.6; }
-    .msg-footer { margin-top: 0.5rem; display: flex; gap: 1.5rem; font-size: 0.6rem; color: #3a3a3a; }
+    .msg-date {
+      color: #444;
+      font-size: 0.65rem;
+      margin-left: auto;
+      white-space: nowrap;
+    }
+    .msg-index {
+      color: #333;
+      font-size: 0.6rem;
+      margin-left: 0.2rem;
+    }
 
+    .msg-content {
+      color: #d0d0d0;
+      font-size: 0.9rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+      padding: 0.2rem 0;
+      line-height: 1.6;
+    }
+
+    .msg-footer {
+      margin-top: 0.5rem;
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.6rem;
+      color: #3a3a3a;
+      letter-spacing: 0.3px;
+    }
+
+    /* ===== LOADING ===== */
     .loading-spinner {
       border: 2px solid rgba(180, 40, 40, 0.08);
       border-top: 2px solid rgba(180, 40, 40, 0.4);
@@ -225,7 +339,10 @@
       animation: spin 0.9s linear infinite;
       margin: 20px auto;
     }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
 
     .loading-state {
       display: flex;
@@ -235,8 +352,13 @@
       height: 320px;
       color: #444;
     }
-    .loading-state .text { font-size: 0.8rem; color: #333; margin-top: 0.5rem; }
+    .loading-state .text {
+      font-size: 0.8rem;
+      color: #333;
+      margin-top: 0.5rem;
+    }
 
+    /* ===== RESULT INFO ===== */
     #result-info {
       text-align: right;
       margin-top: 0.8rem;
@@ -245,31 +367,19 @@
       letter-spacing: 0.3px;
     }
 
+    /* ===== FOOTER ===== */
     footer {
       margin-top: 2.5rem;
       padding: 1.5rem 0 0.5rem;
       text-align: center;
       color: #222;
       font-size: 0.7rem;
+      position: relative;
       z-index: 1;
       letter-spacing: 2px;
     }
 
-    .snowflake {
-      position: fixed;
-      top: -10px;
-      color: rgba(255, 255, 255, 0.06);
-      user-select: none;
-      pointer-events: none;
-      animation: fall linear infinite;
-      z-index: 0;
-      font-size: 14px;
-    }
-    @keyframes fall {
-      from { transform: translateY(-10vh) rotate(0deg); }
-      to { transform: translateY(110vh) rotate(360deg); }
-    }
-
+    /* ===== RESPONSIVO ===== */
     @media (max-width: 768px) {
       .dashboard-container { padding: 1.5rem 1rem; }
       .page-title { font-size: 1.4rem; letter-spacing: 3px; }
@@ -278,12 +388,20 @@
       .search-row { flex-direction: column; }
       .btn-search { width: 100%; justify-content: center; }
       .search-counter { font-size: 0.7rem; flex-wrap: wrap; }
+      .msg-header { font-size: 0.7rem; }
+      .msg-content { font-size: 0.8rem; }
+    }
+    @media (max-width: 480px) {
+      .page-title { font-size: 1.1rem; letter-spacing: 2px; }
+      .dashboard-container { padding: 1rem 0.8rem; }
     }
   </style>
 </head>
 <body>
 
+  <!-- ===== DASHBOARD ===== -->
   <div class="dashboard-container">
+    <!-- Cabeçalho -->
     <div class="header-bar">
       <h1 class="page-title">WHBF <span>DMS</span></h1>
       <div class="user-info">
@@ -293,19 +411,22 @@
       </div>
     </div>
 
-    <div class="search-counter">
+    <!-- Contador de buscas -->
+    <div class="search-counter" id="search-counter">
       <span>Buscas disponíveis</span>
       <span class="count" id="search-remaining">—</span>
       <span class="divider">/</span>
       <span class="limit" id="search-limit">—</span>
     </div>
 
+    <!-- Campos de busca -->
     <div class="search-row">
       <input id="author-id" type="text" placeholder="ID do autor (17-19 dígitos)" class="search-input">
       <input id="keyword" type="text" placeholder="Palavra-chave (opcional)" class="search-input">
       <button id="btn-search" class="btn-search">Pesquisar</button>
     </div>
 
+    <!-- Resultados -->
     <div id="results">
       <div class="empty-state">
         <div class="icon">⌘</div>
@@ -318,7 +439,7 @@
 
   <footer>© 2026 whbf.cc</footer>
 
-  <!-- NEVE -->
+  <!-- ===== NEVE ===== -->
   <script>
     (function snow() {
       const flakes = [];
@@ -350,16 +471,19 @@
     })();
   </script>
 
-  <!-- TÍTULO ANIMADO -->
+  <!-- ===== TÍTULO ANIMADO ===== -->
   <script>
     (function titleAnim() {
       const titles = ["2","23","238","2382","23826","2382","238","23"];
       let i = 0;
-      setInterval(() => { document.title = titles[i]; i = (i + 1) % titles.length; }, 480);
+      setInterval(() => {
+        document.title = titles[i];
+        i = (i + 1) % titles.length;
+      }, 480);
     })();
   </script>
 
-  <!-- FIREBASE + LÓGICA -->
+  <!-- ===== FIREBASE + LÓGICA ===== -->
   <script type="importmap">
     {
       "imports": {
@@ -371,6 +495,7 @@
   </script>
 
   <script type="module">
+    // ===== IMPORTS =====
     import { initializeApp } from "firebase/app";
     import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
     import {
@@ -379,9 +504,14 @@
       getDoc,
       setDoc,
       updateDoc,
-      runTransaction
+      runTransaction,
+      collection,
+      query,
+      where,
+      getDocs
     } from "firebase/firestore";
 
+    // ===== FIREBASE CONFIG =====
     const firebaseConfig = {
       apiKey: "AIzaSyDXX5y50eUHJtFNa4S4r5LrBoPXpUKeGBQ",
       authDomain: "gsrgszsgz.firebaseapp.com",
@@ -395,7 +525,7 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // ===== ELEMENTOS =====
+    // ===== ELEMENTOS DOM =====
     const resultsDiv = document.getElementById('results');
     const infoDiv = document.getElementById('result-info');
     const authorInput = document.getElementById('author-id');
@@ -407,11 +537,11 @@
     const searchRemaining = document.getElementById('search-remaining');
     const searchLimitEl = document.getElementById('search-limit');
 
+    // ===== VARIÁVEIS =====
     let currentUser = null;
+    let currentUserData = null;
     const RATE_LIMIT_MS = 3000;
     let lastSearchTime = 0;
-
-    // ===== API URL =====
     const API_URL = 'https://ge6c22a3518a389-dms.adb.eu-stockholm-1.oraclecloudapps.com/ords/admin/api/search';
 
     // ===== FUNÇÕES FIRESTORE =====
@@ -419,7 +549,10 @@
     async function getUserData(uid) {
       const ref = doc(db, 'users', uid);
       const snap = await getDoc(ref);
-      return snap.exists() ? { uid, ...snap.data() } : null;
+      if (snap.exists()) {
+        return { uid, ...snap.data() };
+      }
+      return null;
     }
 
     async function ensureUserExists(uid, email) {
@@ -428,7 +561,7 @@
       if (!snap.exists()) {
         const today = new Date().toISOString().split('T')[0];
         await setDoc(ref, {
-          email,
+          email: email,
           tier: 'normal',
           searchLimit: 50,
           searchesToday: 0,
@@ -449,38 +582,48 @@
       let used = data.searchesToday || 0;
 
       if (data.lastResetDate !== today) {
-        await updateDoc(doc(db, 'users', uid), { searchesToday: 0, lastResetDate: today });
+        const ref = doc(db, 'users', uid);
+        await updateDoc(ref, { searchesToday: 0, lastResetDate: today });
         used = 0;
       }
 
       const remaining = Math.max(0, limit - used);
-      return { canSearch: remaining > 0, limit, used, remaining };
+      return {
+        canSearch: remaining > 0,
+        limit,
+        used,
+        remaining
+      };
     }
 
     async function incrementSearch(uid) {
       const ref = doc(db, 'users', uid);
       const today = new Date().toISOString().split('T')[0];
 
-      const result = await runTransaction(db, async (tx) => {
-        const snap = await tx.get(ref);
-        if (!snap.exists()) throw new Error('Usuário não existe');
+      try {
+        const result = await runTransaction(db, async (tx) => {
+          const snap = await tx.get(ref);
+          if (!snap.exists()) throw new Error('Usuário não existe');
 
-        const data = snap.data();
-        const limit = data.searchLimit || 50;
-        let used = data.searchesToday || 0;
-        const lastReset = data.lastResetDate || today;
+          const data = snap.data();
+          const limit = data.searchLimit || 50;
+          let used = data.searchesToday || 0;
+          const lastReset = data.lastResetDate || today;
 
-        if (lastReset !== today) {
-          tx.update(ref, { searchesToday: 1, lastResetDate: today });
-          return { searchesToday: 1, limit };
-        }
+          if (lastReset !== today) {
+            tx.update(ref, { searchesToday: 1, lastResetDate: today });
+            return { searchesToday: 1, limit };
+          }
 
-        const newCount = used + 1;
-        tx.update(ref, { searchesToday: newCount });
-        return { searchesToday: newCount, limit };
-      });
-
-      return result;
+          const newCount = used + 1;
+          tx.update(ref, { searchesToday: newCount });
+          return { searchesToday: newCount, limit };
+        });
+        return result;
+      } catch (error) {
+        console.error('Erro ao incrementar:', error);
+        throw error;
+      }
     }
 
     // ===== ATUALIZAR UI =====
@@ -488,18 +631,22 @@
     async function updateUI(uid) {
       const data = await getUserData(uid);
       if (data) {
+        currentUserData = data;
         const today = new Date().toISOString().split('T')[0];
         const limit = data.searchLimit || 50;
         let used = data.searchesToday || 0;
 
-        if (data.lastResetDate !== today) used = 0;
+        if (data.lastResetDate !== today) {
+          used = 0;
+        }
 
         const remaining = Math.max(0, limit - used);
 
         userEmailEl.textContent = data.email || '—';
-        userTierEl.textContent = (data.tier || 'normal').toUpperCase();
+        userTierEl.textContent = data.tier || 'normal';
         searchRemaining.textContent = remaining;
         searchLimitEl.textContent = limit;
+
         searchBtn.disabled = remaining <= 0;
       }
     }
@@ -508,26 +655,43 @@
 
     function renderMessages(items) {
       if (!items || items.length === 0) {
-        return `<div class="empty-state"><div class="icon">◇</div><h3>Nenhuma mensagem encontrada</h3><p>Tente outro ID ou palavra-chave</p></div>`;
+        return `
+          <div class="empty-state">
+            <div class="icon">◇</div>
+            <h3>Nenhuma mensagem encontrada</h3>
+            <p>Tente outro ID ou palavra-chave</p>
+          </div>
+        `;
       }
 
-      let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;font-size:0.75rem;color:#555;"><span>${items.length} mensagens</span></div>`;
+      let html = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;font-size:0.75rem;color:#555;">
+          <span>${items.length} mensagens</span>
+        </div>
+      `;
 
       items.forEach((msg, idx) => {
+        const author = msg.author || 'Desconhecido';
+        const server = msg.server || 'Servidor';
+        const channel = msg.channel || 'Canal';
+        const thread = msg.thread || '';
+        const content = msg.content || '';
+        const date = msg.created_at || '';
+
         html += `
           <div class="msg-card">
             <div class="msg-header">
-              <span class="msg-author">${escapeHtml(msg.author || 'Desconhecido')}</span>
-              <span class="msg-server">${escapeHtml(msg.server || 'Servidor')}</span>
+              <span class="msg-author">${escapeHtml(author)}</span>
+              <span class="msg-server">${escapeHtml(server)}</span>
               <span style="color:#333;">›</span>
-              <span class="msg-channel">${escapeHtml(msg.channel || 'Canal')}</span>
-              ${msg.thread ? `<span style="color:#333;">›</span><span class="msg-thread">${escapeHtml(msg.thread)}</span>` : ''}
-              <span class="msg-date">${formatDate(msg.created_at)}</span>
+              <span class="msg-channel">${escapeHtml(channel)}</span>
+              ${thread ? `<span style="color:#333;">›</span><span class="msg-thread">${escapeHtml(thread)}</span>` : ''}
+              <span class="msg-date">${formatDate(date)}</span>
               <span class="msg-index">#${idx + 1}</span>
             </div>
-            <div class="msg-content">${escapeHtml(msg.content || '')}</div>
+            <div class="msg-content">${escapeHtml(content)}</div>
             <div class="msg-footer">
-              <span>ID: ${msg.message_id || msg.id || '—'}</span>
+              <span>ID: ${msg.id || '—'}</span>
               ${msg.channel_id ? `<span>Canal: ${msg.channel_id}</span>` : ''}
             </div>
           </div>
@@ -548,8 +712,16 @@
       if (!dateStr) return '—';
       try {
         const d = new Date(dateStr);
-        return d.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-      } catch { return dateStr; }
+        return d.toLocaleString('pt-BR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      } catch {
+        return dateStr;
+      }
     }
 
     // ===== BUSCA =====
@@ -569,6 +741,7 @@
         return;
       }
 
+      // Rate limit
       const now = Date.now();
       if (now - lastSearchTime < RATE_LIMIT_MS) {
         const wait = Math.ceil((RATE_LIMIT_MS - (now - lastSearchTime)) / 1000);
@@ -576,35 +749,54 @@
         return;
       }
 
+      // Verifica limite diário
       const check = await canSearch(currentUser.uid);
       if (!check.canSearch) {
-        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⊘</div><h3>Limite diário atingido</h3><p>${check.used} de ${check.limit} buscas utilizadas</p></div>`;
+        resultsDiv.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">⊘</div>
+            <h3>Limite diário atingido</h3>
+            <p>${check.used} de ${check.limit} buscas utilizadas</p>
+          </div>
+        `;
         await updateUI(currentUser.uid);
         return;
       }
 
       lastSearchTime = now;
 
-      resultsDiv.innerHTML = `<div class="loading-state"><div class="loading-spinner"></div><div class="text">Buscando mensagens...</div></div>`;
+      // Loading
+      resultsDiv.innerHTML = `
+        <div class="loading-state">
+          <div class="loading-spinner"></div>
+          <div class="text">Buscando mensagens...</div>
+        </div>
+      `;
       infoDiv.textContent = '';
 
       try {
+        // Incrementa contador
         await incrementSearch(currentUser.uid);
         await updateUI(currentUser.uid);
 
+        // Token Firebase
+        const token = await currentUser.getIdToken();
+
+        // Monta URL
         const params = new URLSearchParams();
         if (authorId) params.append('author_id', authorId);
         if (keyword) params.append('keyword', keyword);
         const url = `${API_URL}?${params.toString()}`;
 
-        // 🔥 CHAMADA À API COM CREDENCIAIS (COOKIES) 🔥
         const response = await fetch(url, {
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' }
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
         });
 
         if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+          throw new Error(`HTTP ${response.status}`);
         }
 
         const data = await response.json();
@@ -615,7 +807,13 @@
 
       } catch (error) {
         console.error('Erro na busca:', error);
-        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">✗</div><h3>Erro na busca</h3><p>${escapeHtml(error.message)}</p></div>`;
+        resultsDiv.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">✗</div>
+            <h3>Erro na busca</h3>
+            <p>${escapeHtml(error.message)}</p>
+          </div>
+        `;
         infoDiv.textContent = 'Erro';
       }
     }
@@ -623,8 +821,13 @@
     // ===== EVENTOS =====
 
     searchBtn.addEventListener('click', performSearch);
-    authorInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') performSearch(); });
-    keywordInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') performSearch(); });
+
+    authorInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') performSearch();
+    });
+    keywordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') performSearch();
+    });
 
     logoutBtn.addEventListener('click', async () => {
       try {
@@ -648,7 +851,8 @@
       }
     });
 
-    console.log('🔍 WHBF DMS — Pesquisador carregado com credentials: include.');
+    // Mensagem inicial
+    console.log('🔍 WHBF DMS — Pesquisador de Mensagens carregado.');
   </script>
 </body>
 </html>
