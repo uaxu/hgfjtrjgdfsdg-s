@@ -3,13 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WHBF DMS - Dashboard</title>
+  <title>WHBF DMS - Pesquisador</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    /* ===== ESTILOS GERAIS ===== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
     body {
-      background: #000;
-      color: #ff0000;
-      font-family: 'Courier New', Courier, monospace;
+      background: #0a0a0a;
+      color: #e0e0e0;
+      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
       min-height: 100vh;
       margin: 0;
       display: flex;
@@ -19,267 +22,468 @@
       overflow-x: hidden;
       position: relative;
     }
-    .dashboard-container {
-      background: #000;
-      border: 2px solid #8a0002;
-      border-radius: 12px;
-      padding: 3rem 2rem;
-      max-width: 1200px;
-      width: 100%;
-      box-shadow: 0 0 30px #8a0002;
-      position: relative;
-      z-index: 2;
-    }
-    input, button {
-      background: #000;
-      border: 1px solid #8a0002;
-      color: #ff0000;
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-    }
-    input:focus {
-      outline: none;
-      border-color: #ff4d4d;
-    }
-    button {
-      cursor: pointer;
-      transition: all 0.2s;
-      font-weight: bold;
-    }
-    button:hover {
-      background: #1a0000;
-      transform: scale(1.02);
-    }
-    .btn-red {
-      background: #000;
-      border: 1px solid #8a0002;
-      color: #ff0000;
-    }
-    .btn-red:hover {
-      background: #330000;
-    }
-    footer {
-      margin-top: auto;
-      padding: 3rem 0 1.5rem;
-      text-align: center;
-      color: #666;
-      font-size: 0.9rem;
-      position: relative;
-      z-index: 2;
-    }
+
+    /* ===== SNOWFLAKES ===== */
     .snowflake {
       position: absolute;
       top: -10px;
-      color: #8a0002;
+      color: rgba(255, 255, 255, 0.06);
       user-select: none;
       pointer-events: none;
       animation: fall linear infinite;
-      z-index: 1;
+      z-index: 0;
+      font-size: 14px;
     }
     @keyframes fall {
-      from { transform: translateY(-10vh); }
-      to { transform: translateY(110vh); }
+      from { transform: translateY(-10vh) rotate(0deg); }
+      to { transform: translateY(110vh) rotate(360deg); }
     }
-    .search-counter {
-      background: rgba(0,0,0,0.8);
-      border: 1px solid #8a0002;
-      border-radius: 8px;
-      padding: 0.8rem 1.5rem;
-      margin-bottom: 1.5rem;
-      text-align: center;
-      color: #ff0000;
-      font-size: 1.1rem;
-      letter-spacing: 1px;
+
+    /* ===== CONTAINER PRINCIPAL ===== */
+    .dashboard-container {
+      background: rgba(10, 10, 10, 0.95);
+      border: 1px solid rgba(180, 40, 40, 0.25);
+      border-radius: 16px;
+      padding: 2.5rem 2.5rem;
+      max-width: 1200px;
+      width: 100%;
+      box-shadow: 0 0 60px rgba(180, 40, 40, 0.06);
+      position: relative;
+      z-index: 1;
+      backdrop-filter: blur(4px);
     }
-    .search-counter span {
-      font-weight: bold;
-      color: #ff4444;
+
+    /* ===== TÍTULO ===== */
+    .page-title {
+      font-size: 2rem;
+      font-weight: 300;
+      letter-spacing: 6px;
+      color: #ffffff;
+      text-transform: uppercase;
+      margin: 0;
     }
-    .admin-section {
-      margin-top: 2rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid #8a0002;
-      display: none;
+    .page-title span {
+      color: #cc3333;
+      font-weight: 500;
     }
-    .admin-section .admin-row {
+
+    /* ===== CABEÇALHO ===== */
+    .header-bar {
       display: flex;
-      flex-wrap: wrap;
-      gap: 0.8rem;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(180, 40, 40, 0.12);
+      flex-wrap: wrap;
+      gap: 0.75rem;
     }
-    .btn-small {
-      padding: 0.5rem 1rem;
-      font-size: 0.8rem;
-    }
-    .btn-gray {
-      border-color: #444;
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.85rem;
       color: #888;
     }
-    .btn-gray:hover {
-      background: #111;
+    .user-info .user-email {
+      color: #ccc;
     }
+    .user-info .user-tier {
+      background: rgba(180, 40, 40, 0.15);
+      padding: 0.2rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #cc3333;
+      border: 1px solid rgba(180, 40, 40, 0.2);
+    }
+
+    /* ===== BOTÃO SAIR ===== */
+    .btn-logout {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #666;
+      padding: 0.5rem 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+    }
+    .btn-logout:hover {
+      background: rgba(180, 40, 40, 0.08);
+      border-color: rgba(180, 40, 40, 0.3);
+      color: #cc3333;
+    }
+
+    /* ===== CAMPO DE BUSCA ===== */
+    .search-input {
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: #e0e0e0;
+      padding: 0.9rem 1.2rem;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      transition: all 0.25s ease;
+      width: 100%;
+      font-family: inherit;
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: rgba(180, 40, 40, 0.4);
+      box-shadow: 0 0 30px rgba(180, 40, 40, 0.04);
+      background: rgba(0, 0, 0, 0.8);
+    }
+    .search-input::placeholder {
+      color: #444;
+    }
+
+    .btn-search {
+      background: rgba(180, 40, 40, 0.12);
+      border: 1px solid rgba(180, 40, 40, 0.25);
+      color: #e0e0e0;
+      padding: 0.9rem 2.5rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all 0.25s ease;
+      letter-spacing: 1px;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+    .btn-search:hover:not(:disabled) {
+      background: rgba(180, 40, 40, 0.2);
+      border-color: rgba(180, 40, 40, 0.4);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 30px rgba(180, 40, 40, 0.08);
+    }
+    .btn-search:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .search-row {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .search-row .search-input {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    /* ===== CONTADOR DE BUSCAS ===== */
+    .search-counter {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: #555;
+      margin-bottom: 1.5rem;
+      padding: 0.6rem 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+    .search-counter .count {
+      color: #cc3333;
+      font-weight: 500;
+    }
+    .search-counter .limit {
+      color: #666;
+    }
+    .search-counter .divider {
+      color: #333;
+      margin: 0 0.2rem;
+    }
+
     /* ===== RESULTADOS ===== */
     #results {
-      background: rgba(0,0,0,0.6);
-      border: 1px solid #8a0002;
-      border-radius: 8px;
-      padding: 1rem;
-      min-height: 400px;
-      max-height: 70vh;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 1.5rem;
+      min-height: 380px;
+      max-height: 65vh;
       overflow-y: auto;
       font-size: 0.9rem;
-      line-height: 1.6;
+      line-height: 1.7;
     }
     #results::-webkit-scrollbar {
-      width: 8px;
+      width: 5px;
     }
     #results::-webkit-scrollbar-track {
-      background: #0a0a0a;
-      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
     }
     #results::-webkit-scrollbar-thumb {
-      background: #8a0002;
-      border-radius: 4px;
-    }
-    .msg-card {
-      background: rgba(20, 0, 0, 0.5);
-      border: 1px solid rgba(138, 0, 2, 0.3);
+      background: rgba(180, 40, 40, 0.25);
       border-radius: 8px;
-      padding: 0.8rem 1rem;
-      margin-bottom: 0.8rem;
-      transition: all 0.2s ease;
     }
-    .msg-card:hover {
-      border-color: #8a0002;
-      background: rgba(30, 0, 0, 0.6);
-      transform: translateX(4px);
+    #results::-webkit-scrollbar-thumb:hover {
+      background: rgba(180, 40, 40, 0.4);
     }
-    .msg-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #8a0002, #330000);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #fff;
-      border: 2px solid #8a0002;
-      margin-right: 0.8rem;
-      flex-shrink: 0;
-    }
-    .msg-author {
-      color: #ff4444;
-      font-weight: bold;
-    }
-    .msg-date {
-      color: #666;
-      font-size: 0.7rem;
-    }
-    .msg-content {
-      color: #ddd;
-      margin-top: 0.3rem;
-      padding: 0.3rem 0.5rem;
-      background: rgba(0,0,0,0.3);
-      border-radius: 4px;
-      border-left: 2px solid #8a0002;
-    }
-    .msg-badge {
-      font-size: 0.6rem;
-      padding: 0.15rem 0.6rem;
-      border-radius: 12px;
-      background: #1a3300;
-      color: #66ff66;
-      border: 1px solid #336600;
-    }
+
+    /* ===== ESTADO VAZIO ===== */
     .empty-state {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 300px;
+      height: 320px;
       color: #444;
       text-align: center;
+      user-select: none;
     }
-    .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; }
-    .empty-state h3 { color: #666; font-size: 1.2rem; }
-    .empty-state p { font-size: 0.85rem; color: #333; }
-    #result-info { text-align: right; margin-top: 0.8rem; color: #444; font-size: 0.75rem; }
+    .empty-state .icon {
+      font-size: 2.2rem;
+      margin-bottom: 0.8rem;
+      opacity: 0.2;
+    }
+    .empty-state h3 {
+      font-weight: 300;
+      color: #555;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+    }
+    .empty-state p {
+      font-size: 0.8rem;
+      color: #333;
+      margin-top: 0.2rem;
+    }
+
+    /* ===== CARD DE MENSAGEM ===== */
+    .msg-card {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 0.8rem;
+      transition: all 0.2s ease;
+    }
+    .msg-card:hover {
+      border-color: rgba(180, 40, 40, 0.15);
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .msg-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.4rem 1rem;
+      margin-bottom: 0.4rem;
+      font-size: 0.8rem;
+    }
+    .msg-author {
+      color: #cc3333;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+    .msg-server {
+      color: #888;
+    }
+    .msg-channel {
+      color: #666;
+    }
+    .msg-thread {
+      color: #aa8844;
+      font-size: 0.7rem;
+      background: rgba(170, 136, 68, 0.06);
+      padding: 0.1rem 0.6rem;
+      border-radius: 4px;
+      border: 1px solid rgba(170, 136, 68, 0.1);
+    }
+    .msg-date {
+      color: #444;
+      font-size: 0.65rem;
+      margin-left: auto;
+      white-space: nowrap;
+    }
+    .msg-index {
+      color: #333;
+      font-size: 0.6rem;
+      margin-left: 0.2rem;
+    }
+
+    .msg-content {
+      color: #d0d0d0;
+      font-size: 0.9rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+      padding: 0.2rem 0;
+      line-height: 1.6;
+    }
+
+    .msg-footer {
+      margin-top: 0.5rem;
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.6rem;
+      color: #3a3a3a;
+      letter-spacing: 0.3px;
+    }
+
+    /* ===== LOADING ===== */
+    .loading-spinner {
+      border: 2px solid rgba(180, 40, 40, 0.08);
+      border-top: 2px solid rgba(180, 40, 40, 0.4);
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      animation: spin 0.9s linear infinite;
+      margin: 20px auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 320px;
+      color: #444;
+    }
+    .loading-state .text {
+      font-size: 0.8rem;
+      color: #333;
+      margin-top: 0.5rem;
+    }
+
+    /* ===== RESULT INFO ===== */
+    #result-info {
+      text-align: right;
+      margin-top: 0.8rem;
+      color: #333;
+      font-size: 0.7rem;
+      letter-spacing: 0.3px;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      margin-top: 2.5rem;
+      padding: 1.5rem 0 0.5rem;
+      text-align: center;
+      color: #222;
+      font-size: 0.7rem;
+      position: relative;
+      z-index: 1;
+      letter-spacing: 2px;
+    }
+
+    /* ===== RESPONSIVO ===== */
+    @media (max-width: 768px) {
+      .dashboard-container { padding: 1.5rem 1rem; }
+      .page-title { font-size: 1.4rem; letter-spacing: 3px; }
+      .header-bar { flex-direction: column; align-items: stretch; gap: 0.5rem; }
+      .user-info { justify-content: center; }
+      .search-row { flex-direction: column; }
+      .btn-search { width: 100%; justify-content: center; }
+      .search-counter { font-size: 0.7rem; flex-wrap: wrap; }
+      .msg-header { font-size: 0.7rem; }
+      .msg-content { font-size: 0.8rem; }
+    }
+    @media (max-width: 480px) {
+      .page-title { font-size: 1.1rem; letter-spacing: 2px; }
+      .dashboard-container { padding: 1rem 0.8rem; }
+    }
   </style>
 </head>
 <body>
+
+  <!-- ===== DASHBOARD ===== -->
   <div class="dashboard-container">
-    <div class="flex justify-between items-center mb-6">
-      <h1 class="text-4xl">Pesquisador de Mensagens</h1>
-      <div class="flex gap-3 items-center">
-        <span id="user-email" class="text-gray-400 text-sm hidden md:inline"></span>
-        <button id="btn-logout" class="bg-gray-800 hover:bg-gray-700 text-white px-6 py-2 rounded">Sair</button>
+    <!-- Cabeçalho -->
+    <div class="header-bar">
+      <h1 class="page-title">WHBF <span>DMS</span></h1>
+      <div class="user-info">
+        <span class="user-email" id="user-email">—</span>
+        <span class="user-tier" id="user-tier">normal</span>
+        <button class="btn-logout" id="btn-logout">Sair</button>
       </div>
     </div>
 
-    <!-- CONTADOR -->
-    <div class="search-counter">
-      🔍 Buscas restantes hoje: <span id="search-remaining">--</span> / <span id="search-limit">50</span>
-      <span id="search-status" style="display:none; margin-left:1rem; color:#ff0000;">🚫 LIMITE ATINGIDO</span>
+    <!-- Contador de buscas -->
+    <div class="search-counter" id="search-counter">
+      <span>Buscas disponíveis</span>
+      <span class="count" id="search-remaining">—</span>
+      <span class="divider">/</span>
+      <span class="limit" id="search-limit">—</span>
     </div>
 
-    <div class="flex flex-col md:flex-row gap-4 mb-8">
-      <input id="author-id" type="text" placeholder="ID do autor (ex: 123456789012345678)"
-             class="flex-1 bg-black border border-red-700 rounded px-5 py-4 text-lg focus:outline-none focus:border-red-400">
-      <input id="keyword" type="text" placeholder="Palavra-chave (opcional)"
-             class="flex-1 bg-black border border-red-700 rounded px-5 py-4 text-lg focus:outline-none focus:border-red-400">
-      <button id="btn-search" class="btn-red px-10 py-4 text-lg">Pesquisar</button>
+    <!-- Campos de busca -->
+    <div class="search-row">
+      <input id="author-id" type="text" placeholder="ID do autor (17-19 dígitos)" class="search-input">
+      <input id="keyword" type="text" placeholder="Palavra-chave (opcional)" class="search-input">
+      <button id="btn-search" class="btn-search">Pesquisar</button>
     </div>
 
+    <!-- Resultados -->
     <div id="results">
       <div class="empty-state">
-        <div class="icon">📨</div>
-        <h3>Nenhuma mensagem ainda</h3>
-        <p>Digite um ID de autor e clique em Pesquisar</p>
+        <div class="icon">⌘</div>
+        <h3>Nenhuma mensagem</h3>
+        <p>Insira um ID de autor ou palavra-chave</p>
       </div>
     </div>
-    <p id="result-info" class="text-right mt-4 text-gray-400 text-sm"></p>
-
-    <!-- ADMIN -->
-    <div id="admin-section" class="admin-section">
-      <p class="text-gray-500 text-sm tracking-widest text-center mb-3">— Administração —</p>
-      <div class="admin-row">
-        <input id="admin-email" type="email" placeholder="Email do usuário" class="bg-black">
-        <input id="admin-tier" placeholder="Tier (normal/premium/admin)" class="bg-black" style="width:150px;">
-        <button id="btn-set-tier" class="btn-red btn-small">Definir Tier</button>
-        <button id="btn-reset-user" class="btn-red btn-small btn-gray">Resetar Buscas</button>
-      </div>
-    </div>
+    <p id="result-info"></p>
   </div>
 
   <footer>© 2026 whbf.cc</footer>
 
-  <!-- NEVE -->
+  <!-- ===== NEVE ===== -->
   <script>
-    function createSnowflake() {
-      const flake = document.createElement('div');
-      flake.className = 'snowflake';
-      flake.style.left = Math.random() * 100 + 'vw';
-      flake.style.fontSize = Math.random() * 14 + 8 + 'px';
-      flake.style.animationDuration = Math.random() * 6 + 8 + 's';
-      flake.innerText = '❆';
-      document.body.appendChild(flake);
-      setTimeout(() => flake.remove(), 15000);
-    }
-    setInterval(createSnowflake, 180);
+    (function snow() {
+      const flakes = [];
+      let lastTime = performance.now();
+      function createParticle() {
+        const p = document.createElement('div');
+        p.className = 'snowflake';
+        p.style.left = Math.random() * window.innerWidth + 'px';
+        p.style.fontSize = (Math.random() * 12 + 6) + 'px';
+        p.innerText = '❄';
+        document.body.appendChild(p);
+        flakes.push({ el: p, y: -10, speed: Math.random() * 150 + 200 });
+      }
+      function update(time) {
+        const delta = Math.min((time - lastTime) / 1000, 0.1);
+        lastTime = time;
+        if (Math.random() < delta * 30) createParticle();
+        flakes.forEach((flake, i) => {
+          flake.y += flake.speed * delta;
+          flake.el.style.transform = `translateY(${flake.y}px)`;
+          if (flake.y > window.innerHeight + 200) {
+            flake.el.remove();
+            flakes.splice(i, 1);
+          }
+        });
+        requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    })();
   </script>
 
+  <!-- ===== TÍTULO ANIMADO ===== -->
   <script>
-    const titles = ["2","23","238","2382","23826","2382","238","23"];
-    let tIndex = 0;
-    setInterval(() => {
-      document.title = titles[tIndex];
-      tIndex = (tIndex + 1) % titles.length;
-    }, 500);
+    (function titleAnim() {
+      const titles = ["2","23","238","2382","23826","2382","238","23"];
+      let i = 0;
+      setInterval(() => {
+        document.title = titles[i];
+        i = (i + 1) % titles.length;
+      }, 480);
+    })();
   </script>
 
+  <!-- ===== FIREBASE + LÓGICA ===== -->
   <script type="importmap">
     {
       "imports": {
@@ -291,23 +495,23 @@
   </script>
 
   <script type="module">
+    // ===== IMPORTS =====
     import { initializeApp } from "firebase/app";
     import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-    import { 
-      getFirestore, 
-      doc, 
-      getDoc, 
-      setDoc, 
-      updateDoc, 
-      increment, 
-      collection, 
-      query, 
-      where, 
-      getDocs,
-      runTransaction
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      setDoc,
+      updateDoc,
+      runTransaction,
+      collection,
+      query,
+      where,
+      getDocs
     } from "firebase/firestore";
 
-    // ========== FIREBASE CONFIG ==========
+    // ===== FIREBASE CONFIG =====
     const firebaseConfig = {
       apiKey: "AIzaSyDXX5y50eUHJtFNa4S4r5LrBoPXpUKeGBQ",
       authDomain: "gsrgszsgz.firebaseapp.com",
@@ -321,41 +525,44 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // ========== CONFIGURAÇÕES ==========
-    const RATE_LIMIT_MS = 5000;
-    let lastSearchTime = 0;
-    let currentUser = null;
-    let isAdmin = false;
-
-    // ========== ELEMENTOS DOM ==========
+    // ===== ELEMENTOS DOM =====
+    const resultsDiv = document.getElementById('results');
+    const infoDiv = document.getElementById('result-info');
     const authorInput = document.getElementById('author-id');
     const keywordInput = document.getElementById('keyword');
     const searchBtn = document.getElementById('btn-search');
-    const resultsDiv = document.getElementById('results');
-    const infoP = document.getElementById('result-info');
     const logoutBtn = document.getElementById('btn-logout');
+    const userEmailEl = document.getElementById('user-email');
+    const userTierEl = document.getElementById('user-tier');
     const searchRemaining = document.getElementById('search-remaining');
     const searchLimitEl = document.getElementById('search-limit');
-    const searchStatus = document.getElementById('search-status');
-    const userEmailEl = document.getElementById('user-email');
-    const adminSection = document.getElementById('admin-section');
-    const adminEmail = document.getElementById('admin-email');
-    const adminTier = document.getElementById('admin-tier');
-    const setTierBtn = document.getElementById('btn-set-tier');
-    const resetUserBtn = document.getElementById('btn-reset-user');
 
-    // ========== FUNÇÕES FIRESTORE ==========
+    // ===== VARIÁVEIS =====
+    let currentUser = null;
+    let currentUserData = null;
+    const RATE_LIMIT_MS = 3000;
+    let lastSearchTime = 0;
+    const API_URL = 'https://ge6c22a3518a389-dms.adb.eu-stockholm-1.oraclecloudapps.com/ords/admin/api/search';
 
-    // Busca ou cria usuário no Firestore
-    async function getOrCreateUser(uid, email) {
-      const userRef = doc(db, 'users', uid);
-      const userSnap = await getDoc(userRef);
-      
-      if (!userSnap.exists()) {
+    // ===== FUNÇÕES FIRESTORE =====
+
+    async function getUserData(uid) {
+      const ref = doc(db, 'users', uid);
+      const snap = await getDoc(ref);
+      if (snap.exists()) {
+        return { uid, ...snap.data() };
+      }
+      return null;
+    }
+
+    async function ensureUserExists(uid, email) {
+      const ref = doc(db, 'users', uid);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) {
         const today = new Date().toISOString().split('T')[0];
-        await setDoc(userRef, {
+        await setDoc(ref, {
           email: email,
-          tier: 'normal', // normal, premium, admin
+          tier: 'normal',
           searchLimit: 50,
           searchesToday: 0,
           lastResetDate: today,
@@ -363,103 +570,55 @@
         });
         return { uid, email, tier: 'normal', searchLimit: 50, searchesToday: 0, lastResetDate: today };
       }
-      
-      return { uid, ...userSnap.data() };
+      return { uid, ...snap.data() };
     }
 
-    // Busca dados do usuário
-    async function getUserData(uid) {
-      const userRef = doc(db, 'users', uid);
-      const userSnap = await getDoc(userRef);
-      if (userSnap.exists()) {
-        return { uid, ...userSnap.data() };
-      }
-      return null;
-    }
-
-    // Verifica se é admin
-    async function checkIsAdmin(uid) {
-      const data = await getUserData(uid);
-      return data?.tier === 'admin';
-    }
-
-    // Verifica se pode buscar (com reset automático e transação)
     async function canSearch(uid) {
-      const userRef = doc(db, 'users', uid);
+      const data = await getUserData(uid);
+      if (!data) return { canSearch: false, limit: 0, used: 0, remaining: 0 };
+
       const today = new Date().toISOString().split('T')[0];
-      
-      try {
-        const result = await runTransaction(db, async (transaction) => {
-          const userSnap = await transaction.get(userRef);
-          if (!userSnap.exists()) return { canSearch: false, reason: 'Usuário não existe' };
-          
-          const data = userSnap.data();
-          const limit = data.tier === 'premium' ? 100 : data.tier === 'admin' ? 999999 : 50;
-          let searchesToday = data.searchesToday || 0;
-          let lastReset = data.lastResetDate || today;
-          
-          // Reset se for dia novo
-          if (lastReset !== today) {
-            searchesToday = 0;
-            transaction.update(userRef, {
-              searchesToday: 0,
-              lastResetDate: today,
-              searchLimit: limit
-            });
-            return { canSearch: true, limit, searchesToday: 0 };
-          }
-          
-          // Verifica limite
-          if (searchesToday >= limit) {
-            return { canSearch: false, limit, searchesToday };
-          }
-          
-          return { canSearch: true, limit, searchesToday };
-        });
-        
-        return result;
-      } catch (error) {
-        console.error('Erro na transação:', error);
-        return { canSearch: false, reason: 'Erro ao verificar limite' };
+      const limit = data.searchLimit || 50;
+      let used = data.searchesToday || 0;
+
+      if (data.lastResetDate !== today) {
+        const ref = doc(db, 'users', uid);
+        await updateDoc(ref, { searchesToday: 0, lastResetDate: today });
+        used = 0;
       }
+
+      const remaining = Math.max(0, limit - used);
+      return {
+        canSearch: remaining > 0,
+        limit,
+        used,
+        remaining
+      };
     }
 
-    // Incrementa busca (com transação)
     async function incrementSearch(uid) {
-      const userRef = doc(db, 'users', uid);
+      const ref = doc(db, 'users', uid);
       const today = new Date().toISOString().split('T')[0];
-      
+
       try {
-        const result = await runTransaction(db, async (transaction) => {
-          const userSnap = await transaction.get(userRef);
-          if (!userSnap.exists()) throw new Error('Usuário não existe');
-          
-          const data = userSnap.data();
-          const limit = data.tier === 'premium' ? 100 : data.tier === 'admin' ? 999999 : 50;
-          let searchesToday = data.searchesToday || 0;
-          let lastReset = data.lastResetDate || today;
-          
-          // Reset se for dia novo
+        const result = await runTransaction(db, async (tx) => {
+          const snap = await tx.get(ref);
+          if (!snap.exists()) throw new Error('Usuário não existe');
+
+          const data = snap.data();
+          const limit = data.searchLimit || 50;
+          let used = data.searchesToday || 0;
+          const lastReset = data.lastResetDate || today;
+
           if (lastReset !== today) {
-            searchesToday = 1;
-            transaction.update(userRef, {
-              searchesToday: 1,
-              lastResetDate: today,
-              searchLimit: limit
-            });
+            tx.update(ref, { searchesToday: 1, lastResetDate: today });
             return { searchesToday: 1, limit };
           }
-          
-          // Incrementa
-          const newCount = searchesToday + 1;
-          transaction.update(userRef, {
-            searchesToday: newCount,
-            searchLimit: limit
-          });
-          
+
+          const newCount = used + 1;
+          tx.update(ref, { searchesToday: newCount });
           return { searchesToday: newCount, limit };
         });
-        
         return result;
       } catch (error) {
         console.error('Erro ao incrementar:', error);
@@ -467,104 +626,73 @@
       }
     }
 
-    // ========== FUNÇÕES ADMIN ==========
-
-    // Buscar usuário por email
-    async function findUserByEmail(email) {
-      const usersRef = collection(db, 'users');
-      const q = query(usersRef, where('email', '==', email));
-      const querySnapshot = await getDocs(q);
-      if (!querySnapshot.empty) {
-        const docSnap = querySnapshot.docs[0];
-        return { uid: docSnap.id, ...docSnap.data() };
-      }
-      return null;
-    }
-
-    // Definir tier de um usuário
-    async function setUserTier(uid, tier) {
-      const userRef = doc(db, 'users', uid);
-      const limit = tier === 'premium' ? 100 : tier === 'admin' ? 999999 : 50;
-      await updateDoc(userRef, {
-        tier: tier,
-        searchLimit: limit
-      });
-    }
-
-    // Resetar buscas de um usuário
-    async function resetUserSearches(uid) {
-      const userRef = doc(db, 'users', uid);
-      await updateDoc(userRef, {
-        searchesToday: 0,
-        lastResetDate: new Date().toISOString().split('T')[0]
-      });
-    }
-
-    // ========== UPDATE UI ==========
+    // ===== ATUALIZAR UI =====
 
     async function updateUI(uid) {
       const data = await getUserData(uid);
       if (data) {
+        currentUserData = data;
         const today = new Date().toISOString().split('T')[0];
-        const limit = data.tier === 'premium' ? 100 : data.tier === 'admin' ? 999999 : 50;
-        let remaining = limit - (data.searchesToday || 0);
-        
+        const limit = data.searchLimit || 50;
+        let used = data.searchesToday || 0;
+
         if (data.lastResetDate !== today) {
-          remaining = limit;
+          used = 0;
         }
-        
-        remaining = Math.max(0, remaining);
+
+        const remaining = Math.max(0, limit - used);
+
+        userEmailEl.textContent = data.email || '—';
+        userTierEl.textContent = data.tier || 'normal';
         searchRemaining.textContent = remaining;
         searchLimitEl.textContent = limit;
-        
-        if (remaining <= 0) {
-          searchStatus.style.display = 'inline';
-          searchBtn.disabled = true;
-        } else {
-          searchStatus.style.display = 'none';
-          searchBtn.disabled = false;
-        }
-        
-        userEmailEl.textContent = data.email;
+
+        searchBtn.disabled = remaining <= 0;
       }
     }
 
-    // ========== RENDERIZA RESULTADOS ==========
+    // ===== RENDERIZAR RESULTADOS =====
 
-    function renderMessages(messages, authorId) {
-      if (!messages || messages.length === 0) {
+    function renderMessages(items) {
+      if (!items || items.length === 0) {
         return `
           <div class="empty-state">
-            <div class="icon">📭</div>
+            <div class="icon">◇</div>
             <h3>Nenhuma mensagem encontrada</h3>
-            <p>Para o ID ${authorId}</p>
+            <p>Tente outro ID ou palavra-chave</p>
           </div>
         `;
       }
 
-      let html = `<div style="margin-bottom:1rem;color:#666;font-size:0.8rem;">📬 <span style="color:#ff0000;">${messages.length}</span> mensagens encontradas</div>`;
+      let html = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;font-size:0.75rem;color:#555;">
+          <span>${items.length} mensagens</span>
+        </div>
+      `;
 
-      messages.forEach((msg, index) => {
-        const authorName = msg.author_name || `User${String(index + 1).padStart(2, '0')}`;
-        const initial = authorName.charAt(0).toUpperCase();
-        const isNew = msg.created_at && (new Date() - new Date(msg.created_at)) < 86400000;
-        const badgeText = isNew ? '🆕 Nova' : '📌 Antiga';
-        const badgeStyle = isNew ? 'background:#1a3300;color:#66ff66;border-color:#336600;' : 'background:#1a1a1a;color:#666;border-color:#333;';
+      items.forEach((msg, idx) => {
+        const author = msg.author || 'Desconhecido';
+        const server = msg.server || 'Servidor';
+        const channel = msg.channel || 'Canal';
+        const thread = msg.thread || '';
+        const content = msg.content || '';
+        const date = msg.created_at || '';
 
         html += `
           <div class="msg-card">
-            <div style="display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;">
-              <span class="msg-avatar">${initial}</span>
-              <span class="msg-author">${authorName}</span>
-              <span style="color:#555;font-size:0.7rem;">#${msg.author_id || authorId}</span>
-              ${msg.thread_title ? `<span style="color:#ffaa00;font-size:0.75rem;background:rgba(255,170,0,0.08);padding:0.1rem 0.6rem;border-radius:4px;border:1px solid rgba(255,170,0,0.15);">📂 ${msg.thread_title}</span>` : ''}
-              <span style="font-size:0.6rem;padding:0.15rem 0.6rem;border-radius:12px;${badgeStyle}">${badgeText}</span>
-              <span class="msg-date">${msg.created_at || 'Data desconhecida'}</span>
+            <div class="msg-header">
+              <span class="msg-author">${escapeHtml(author)}</span>
+              <span class="msg-server">${escapeHtml(server)}</span>
+              <span style="color:#333;">›</span>
+              <span class="msg-channel">${escapeHtml(channel)}</span>
+              ${thread ? `<span style="color:#333;">›</span><span class="msg-thread">${escapeHtml(thread)}</span>` : ''}
+              <span class="msg-date">${formatDate(date)}</span>
+              <span class="msg-index">#${idx + 1}</span>
             </div>
-            <div class="msg-content">${(msg.content || 'Sem conteúdo').replace(/\n/g, '<br>').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
-            <div style="margin-top:0.3rem;display:flex;gap:1rem;font-size:0.65rem;color:#444;">
-              <span>📎 ID: ${msg.id || 'N/A'}</span>
-              ${msg.channel_id ? `<span>📢 Canal: ${msg.channel_id}</span>` : ''}
+            <div class="msg-content">${escapeHtml(content)}</div>
+            <div class="msg-footer">
+              <span>ID: ${msg.id || '—'}</span>
+              ${msg.channel_id ? `<span>Canal: ${msg.channel_id}</span>` : ''}
             </div>
           </div>
         `;
@@ -573,177 +701,158 @@
       return html;
     }
 
-    // ========== LOGOUT ==========
+    function escapeHtml(text) {
+      if (!text) return '';
+      const el = document.createElement('div');
+      el.textContent = text;
+      return el.innerHTML;
+    }
 
-    logoutBtn.onclick = async () => {
+    function formatDate(dateStr) {
+      if (!dateStr) return '—';
       try {
-        await signOut(auth);
-        window.location.href = "/";
-      } catch (error) {
-        console.error("Erro ao sair:", error);
-        alert("Falha ao sair. Tenta de novo.");
+        const d = new Date(dateStr);
+        return d.toLocaleString('pt-BR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      } catch {
+        return dateStr;
       }
-    };
+    }
 
-    // ========== SEARCH ==========
+    // ===== BUSCA =====
 
-    searchBtn.onclick = async () => {
+    async function performSearch() {
       if (!currentUser) {
-        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">🔒</div><h3>Faça login primeiro</h3></div>`;
-        return;
-      }
-
-      const now = Date.now();
-      if (now - lastSearchTime < RATE_LIMIT_MS) {
-        const remaining = Math.ceil((RATE_LIMIT_MS - (now - lastSearchTime)) / 1000);
-        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⏳</div><h3>Aguarde ${remaining} segundos</h3></div>`;
+        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⊘</div><h3>Faça login primeiro</h3></div>`;
         return;
       }
 
       const authorId = authorInput.value.trim();
-      if (!authorId || !/^\d{17,19}$/.test(authorId)) {
-        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">❌</div><h3>ID inválido</h3><p>Digite um Discord ID válido (17-19 dígitos)</p></div>`;
+      const keyword = keywordInput.value.trim();
+
+      if (!authorId && !keyword) {
+        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">◈</div><h3>Informe um ID ou palavra-chave</h3></div>`;
+        infoDiv.textContent = '';
         return;
       }
 
-      // Verifica limite
+      // Rate limit
+      const now = Date.now();
+      if (now - lastSearchTime < RATE_LIMIT_MS) {
+        const wait = Math.ceil((RATE_LIMIT_MS - (now - lastSearchTime)) / 1000);
+        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⏱</div><h3>Aguarde ${wait}s</h3><p>Intervalo entre buscas</p></div>`;
+        return;
+      }
+
+      // Verifica limite diário
       const check = await canSearch(currentUser.uid);
       if (!check.canSearch) {
-        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">🚫</div><h3>Limite diário excedido</h3><p>Volte amanhã!</p></div>`;
+        resultsDiv.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">⊘</div>
+            <h3>Limite diário atingido</h3>
+            <p>${check.used} de ${check.limit} buscas utilizadas</p>
+          </div>
+        `;
         await updateUI(currentUser.uid);
         return;
       }
 
       lastSearchTime = now;
-      resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⏳</div><h3>Buscando...</h3></div>`;
-      infoP.textContent = "";
+
+      // Loading
+      resultsDiv.innerHTML = `
+        <div class="loading-state">
+          <div class="loading-spinner"></div>
+          <div class="text">Buscando mensagens...</div>
+        </div>
+      `;
+      infoDiv.textContent = '';
 
       try {
         // Incrementa contador
         await incrementSearch(currentUser.uid);
         await updateUI(currentUser.uid);
 
-        // Faz a busca na API
-        const params = new URLSearchParams({
-          author_id: authorId,
-          limit: 100
-        });
-        if (keywordInput.value.trim()) {
-          params.append("keyword", keywordInput.value.trim());
-        }
+        // Token Firebase
+        const token = await currentUser.getIdToken();
 
-        const response = await fetch(`https://scraper.whbf.cc/api/search?${params}`, {
-          method: "GET",
-          headers: { "Accept": "application/json" }
+        // Monta URL
+        const params = new URLSearchParams();
+        if (authorId) params.append('author_id', authorId);
+        if (keyword) params.append('keyword', keyword);
+        const url = `${API_URL}?${params.toString()}`;
+
+        const response = await fetch(url, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
         });
 
         if (!response.ok) {
-          throw new Error(`Erro ${response.status}: ${await response.text()}`);
+          throw new Error(`HTTP ${response.status}`);
         }
 
         const data = await response.json();
-        resultsDiv.innerHTML = renderMessages(data, authorId);
-        infoP.textContent = `Mostrando ${data.length} mensagens • ${new Date().toLocaleString()}`;
+        const items = data.items || [];
 
-      } catch (err) {
-        console.error(err);
-        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">❌</div><h3>Erro ao buscar</h3><p>${err.message}</p></div>`;
-      }
-    };
+        resultsDiv.innerHTML = renderMessages(items);
+        infoDiv.textContent = items.length > 0 ? `${items.length} mensagens encontradas` : 'Nenhum resultado';
 
-    // ========== ADMIN ==========
-
-    setTierBtn.onclick = async () => {
-      if (!currentUser || !isAdmin) {
-        alert('⚠️ Apenas administradores podem fazer isso');
-        return;
-      }
-
-      const email = adminEmail.value.trim();
-      const tier = adminTier.value.trim().toLowerCase();
-      
-      if (!email || !['normal', 'premium', 'admin'].includes(tier)) {
-        alert('Preencha email e tier (normal, premium ou admin)');
-        return;
-      }
-
-      try {
-        const user = await findUserByEmail(email);
-        if (!user) {
-          alert('Usuário não encontrado');
-          return;
-        }
-
-        await setUserTier(user.uid, tier);
-        alert(`✅ Tier atualizado para ${email}: ${tier}`);
-        
-        if (currentUser.uid === user.uid) {
-          await updateUI(currentUser.uid);
-        }
       } catch (error) {
-        console.error('Erro:', error);
-        alert('❌ Erro ao definir tier');
+        console.error('Erro na busca:', error);
+        resultsDiv.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">✗</div>
+            <h3>Erro na busca</h3>
+            <p>${escapeHtml(error.message)}</p>
+          </div>
+        `;
+        infoDiv.textContent = 'Erro';
       }
-    };
+    }
 
-    resetUserBtn.onclick = async () => {
-      if (!currentUser || !isAdmin) {
-        alert('⚠️ Apenas administradores podem fazer isso');
-        return;
-      }
+    // ===== EVENTOS =====
 
-      const email = adminEmail.value.trim();
-      if (!email) {
-        alert('Digite o email do usuário');
-        return;
-      }
+    searchBtn.addEventListener('click', performSearch);
 
+    authorInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') performSearch();
+    });
+    keywordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') performSearch();
+    });
+
+    logoutBtn.addEventListener('click', async () => {
       try {
-        const user = await findUserByEmail(email);
-        if (!user) {
-          alert('Usuário não encontrado');
-          return;
-        }
-
-        await resetUserSearches(user.uid);
-        alert(`✅ Buscas resetadas para ${email}`);
-        
-        if (currentUser.uid === user.uid) {
-          await updateUI(currentUser.uid);
-        }
+        await signOut(auth);
+        window.location.href = '/';
       } catch (error) {
-        console.error('Erro:', error);
-        alert('❌ Erro ao resetar buscas');
+        console.error('Erro ao sair:', error);
+        alert('Falha ao sair. Tente novamente.');
       }
-    };
+    });
 
-    // ========== AUTH STATE ==========
+    // ===== AUTH STATE =====
 
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         currentUser = user;
-        await getOrCreateUser(user.uid, user.email);
-        isAdmin = await checkIsAdmin(user.uid);
+        await ensureUserExists(user.uid, user.email);
         await updateUI(user.uid);
-        
-        if (isAdmin) {
-          adminSection.style.display = 'block';
-        }
       } else {
-        window.location.href = "/";
+        window.location.href = '/';
       }
     });
 
-    // ========== ENTER KEY ==========
-
-    authorInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') searchBtn.click();
-    });
-    keywordInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') searchBtn.click();
-    });
-
-    console.log('✅ WHBF DMS com Firestore + limites por tier carregado!');
+    // Mensagem inicial
+    console.log('🔍 WHBF DMS — Pesquisador de Mensagens carregado.');
   </script>
 </body>
 </html>
