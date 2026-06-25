@@ -379,7 +379,8 @@
       getDoc,
       setDoc,
       updateDoc,
-      runTransaction
+      runTransaction,
+      increment
     } from "firebase/firestore";
 
     const firebaseConfig = {
@@ -459,28 +460,17 @@
 
     async function incrementSearch(uid) {
       const ref = doc(db, 'users', uid);
-      const today = new Date().toISOString().split('T')[0];
-
-      const result = await runTransaction(db, async (tx) => {
-        const snap = await tx.get(ref);
-        if (!snap.exists()) throw new Error('Usuário não existe');
-
-        const data = snap.data();
-        const limit = data.searchLimit || 50;
-        let used = data.searchesToday || 0;
-        const lastReset = data.lastResetDate || today;
-
-        if (lastReset !== today) {
-          tx.update(ref, { searchesToday: 1, lastResetDate: today });
-          return { searchesToday: 1, limit };
-        }
-
-        const newCount = used + 1;
-        tx.update(ref, { searchesToday: newCount });
-        return { searchesToday: newCount, limit };
-      });
-
-      return result;
+      try {
+        // Usando increment() para evitar transação
+        await updateDoc(ref, {
+          searchesToday: increment(1)
+        });
+        const data = await getUserData(uid);
+        return { searchesToday: data.searchesToday, limit: data.searchLimit };
+      } catch (error) {
+        console.error('Erro ao incrementar:', error);
+        throw error;
+      }
     }
 
     // ===== ATUALIZAR UI =====
@@ -589,7 +579,7 @@
       infoDiv.textContent = '';
 
       try {
-        // 🔥 INCREMENTA O CONTADOR NO FIRESTORE 🔥
+        // Incrementa o contador no Firestore
         await incrementSearch(currentUser.uid);
         await updateUI(currentUser.uid);
 
@@ -598,7 +588,7 @@
         if (keyword) params.append('keyword', keyword);
         const url = `${API_URL}?${params.toString()}`;
 
-        // 🔥 CHAMADA À API COM CREDENCIAIS (COOKIES) 🔥
+        // Chamada à API com credentials
         const response = await fetch(url, {
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' }
@@ -644,12 +634,14 @@
         currentUser = user;
         await ensureUserExists(user.uid, user.email);
         await updateUI(user.uid);
+        console.log('✅ Utilizador autenticado:', user.email);
+        console.log('📊 Dados do utilizador:', await getUserData(user.uid));
       } else {
         window.location.href = '/';
       }
     });
 
-    console.log('🔍 WHBF DMS — Pesquisador carregado com Firestore + API Oracle.');
+    console.log('🔍 WHBF DMS — Pesquisador carregado com Firestore + increment().');
   </script>
 </body>
 </html>
