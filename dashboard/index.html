@@ -558,59 +558,59 @@
         resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⊘</div><h3>Faça login primeiro</h3></div>`;
         return;
       }
-
+    
       const authorId = authorInput.value.trim();
       const keyword = keywordInput.value.trim();
-
+    
       if (!authorId && !keyword) {
         resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">◈</div><h3>Informe um ID ou palavra-chave</h3></div>`;
         infoDiv.textContent = '';
         return;
       }
-
+    
       const now = Date.now();
       if (now - lastSearchTime < RATE_LIMIT_MS) {
         const wait = Math.ceil((RATE_LIMIT_MS - (now - lastSearchTime)) / 1000);
         resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⏱</div><h3>Aguarde ${wait}s</h3><p>Intervalo entre buscas</p></div>`;
         return;
       }
-
+    
       const check = await canSearch(currentUser.uid);
       if (!check.canSearch) {
         resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⊘</div><h3>Limite diário atingido</h3><p>${check.used} de ${check.limit} buscas utilizadas</p></div>`;
         await updateUI(currentUser.uid);
         return;
       }
-
+    
       lastSearchTime = now;
-
+    
       resultsDiv.innerHTML = `<div class="loading-state"><div class="loading-spinner"></div><div class="text">Buscando mensagens...</div></div>`;
       infoDiv.textContent = '';
-
+    
       try {
         await incrementSearch(currentUser.uid);
         await updateUI(currentUser.uid);
-
+    
         const params = new URLSearchParams();
         if (authorId) params.append('author_id', authorId);
         if (keyword) params.append('keyword', keyword);
         const url = `${API_URL}?${params.toString()}`;
-
-        // 🔥 CHAMADA SEM AUTENTICAÇÃO 🔥
+    
+        // 🔥 CHAMADA SEM AUTENTICAÇÃO - CORRIGIDA 🔥
         const response = await fetch(url, {
           headers: { 'Content-Type': 'application/json' }
         });
-
+    
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${await response.text()}`);
         }
-
+    
         const data = await response.json();
         const items = data.items || [];
-
+    
         resultsDiv.innerHTML = renderMessages(items);
         infoDiv.textContent = items.length > 0 ? `${items.length} mensagens encontradas` : 'Nenhum resultado';
-
+    
       } catch (error) {
         console.error('Erro na busca:', error);
         resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">✗</div><h3>Erro na busca</h3><p>${escapeHtml(error.message)}</p></div>`;
