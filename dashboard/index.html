@@ -451,7 +451,7 @@
     let currentKeyword = '';
     let totalCount = 0;
     let allMessages = [];
-    const PAGE_LIMIT = 20;
+    const PAGE_LIMIT = 100;  // 🔥 100 MENSAGENS POR PÁGINA 🔥
 
     // ===== API URL =====
     const API_URL = 'https://ge6c22a3518a389-dms.adb.eu-stockholm-1.oraclecloudapps.com/ords/admin/api/search';
@@ -652,7 +652,7 @@
         const data = await response.json();
         const items = data.items || [];
 
-        // 🔥 SE A API NÃO DEVOLVER MAIS DE 20, PÁRA AQUI 🔥
+        // Se não houver mais itens
         if (items.length === 0) {
           if (loadMore) {
             loadMoreBtn.style.display = 'none';
@@ -668,11 +668,10 @@
           totalCount = data.count;
         }
 
-        // Se recebemos menos de PAGE_SIZE, é a última página
+        // Se recebemos menos de PAGE_LIMIT, é a última página
         const hasMore = items.length === PAGE_LIMIT;
 
-        // 🔥 VERIFICA SE HÁ MAIS PÁGINAS PELO COUNT 🔥
-        // Se o count for 0 ou igual ao número de itens, não há mais
+        // Verifica se há mais páginas pelo count
         const hasMoreFromCount = totalCount > 0 && (currentOffset + items.length) < totalCount;
 
         // Usa hasMoreFromCount se disponível, senão usa hasMore
@@ -759,8 +758,7 @@
       }
     });
 
-    console.log('🔍 WHBF DMS — Pesquisador carregado com paginação.');
-    console.log('📌 NOTA: A API atual só retorna 20 mensagens. Para ver todas, corrige a API no backend.');
+    console.log('🔍 WHBF DMS — Pesquisador carregado com paginação de 100 mensagens.');
   </script>
 </body>
 </html>
