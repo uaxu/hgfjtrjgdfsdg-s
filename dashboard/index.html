@@ -451,7 +451,8 @@
     let currentKeyword = '';
     let totalCount = 0;
     let allMessages = [];
-    const PAGE_LIMIT = 100;  // 🔥 100 MENSAGENS POR PÁGINA 🔥
+    let hasMoreMessages = true;
+    const PAGE_LIMIT = 100;  // 100 por página
 
     // ===== API URL =====
     const API_URL = 'https://ge6c22a3518a389-dms.adb.eu-stockholm-1.oraclecloudapps.com/ords/admin/api/search';
@@ -588,6 +589,7 @@
       const authorId = loadMore ? currentAuthorId : authorInput.value.trim();
       const keyword = loadMore ? currentKeyword : keywordInput.value.trim();
 
+      // Reset da pesquisa
       if (!loadMore) {
         if (!authorId && !keyword) {
           resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">◈</div><h3>Informe um ID ou palavra-chave</h3></div>`;
@@ -599,11 +601,13 @@
         currentKeyword = keyword;
         allMessages = [];
         totalCount = 0;
+        hasMoreMessages = true;
         loadMoreBtn.style.display = 'none';
         loadMoreBtn.textContent = 'Carregar mais';
         loadMoreBtn.disabled = false;
       }
 
+      // Rate limit
       const now = Date.now();
       if (now - lastSearchTime < RATE_LIMIT_MS) {
         const wait = Math.ceil((RATE_LIMIT_MS - (now - lastSearchTime)) / 1000);
@@ -611,6 +615,7 @@
         return;
       }
 
+      // Verifica limite diário (apenas primeira busca)
       if (!loadMore) {
         const check = await canSearch(currentUser.uid);
         if (!check.canSearch) {
@@ -624,6 +629,7 @@
 
       lastSearchTime = now;
 
+      // Mostra loading
       if (!loadMore) {
         resultsDiv.innerHTML = `<div class="loading-state"><div class="loading-spinner"></div><div class="text">Buscando mensagens...</div></div>`;
         infoDiv.textContent = '';
@@ -654,6 +660,7 @@
 
         // Se não houver mais itens
         if (items.length === 0) {
+          hasMoreMessages = false;
           if (loadMore) {
             loadMoreBtn.style.display = 'none';
             loadMoreBtn.textContent = 'Sem mais mensagens';
@@ -668,15 +675,6 @@
           totalCount = data.count;
         }
 
-        // Se recebemos menos de PAGE_LIMIT, é a última página
-        const hasMore = items.length === PAGE_LIMIT;
-
-        // Verifica se há mais páginas pelo count
-        const hasMoreFromCount = totalCount > 0 && (currentOffset + items.length) < totalCount;
-
-        // Usa hasMoreFromCount se disponível, senão usa hasMore
-        const hasMoreFinal = hasMoreFromCount || (hasMore && totalCount === 0);
-
         // Acumula mensagens
         if (loadMore) {
           allMessages = [...allMessages, ...items];
@@ -686,6 +684,14 @@
 
         // Atualiza offset
         currentOffset += items.length;
+
+        // Verifica se há mais mensagens
+        if (totalCount > 0) {
+          hasMoreMessages = allMessages.length < totalCount;
+        } else {
+          // Se o count não for confiável, assume que há mais se recebemos PAGE_LIMIT
+          hasMoreMessages = items.length === PAGE_LIMIT;
+        }
 
         // Renderiza
         resultsDiv.innerHTML = renderMessages(allMessages, totalCount || allMessages.length);
@@ -700,7 +706,7 @@
         }
 
         // Mostra/oculta botão "Carregar mais"
-        if (hasMoreFinal) {
+        if (hasMoreMessages) {
           loadMoreBtn.style.display = 'inline-block';
           loadMoreBtn.textContent = 'Carregar mais';
           loadMoreBtn.disabled = false;
