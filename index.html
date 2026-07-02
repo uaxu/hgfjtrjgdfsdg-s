@@ -3,417 +3,269 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WHBF DMS - Pesquisador</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    
     body {
-      background: #0a0a0a;
-      color: #e0e0e0;
-      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      background: #000;
+      color: #ff0000;
+      font-family: 'Courier New', Courier, monospace;
       min-height: 100vh;
       margin: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 2rem 1rem;
+      overflow-x: hidden;
       position: relative;
     }
-
-    .dashboard-container {
-      background: rgba(10, 10, 10, 0.95);
-      border: 1px solid rgba(180, 40, 40, 0.25);
-      border-radius: 16px;
-      padding: 2.5rem;
-      max-width: 1200px;
-      width: 100%;
-      box-shadow: 0 0 60px rgba(180, 40, 40, 0.06);
-      position: relative;
-      z-index: 1;
-    }
-
-    .page-title {
-      font-size: 2rem;
-      font-weight: 300;
-      letter-spacing: 6px;
-      color: #ffffff;
-      text-transform: uppercase;
-    }
-    .page-title span { color: #cc3333; font-weight: 500; }
-
-    .header-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid rgba(180, 40, 40, 0.12);
-      flex-wrap: wrap;
-      gap: 0.75rem;
-    }
-
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      font-size: 0.85rem;
-      color: #888;
-    }
-    .user-info .user-email { color: #ccc; }
-    .user-info .user-tier {
-      background: rgba(180, 40, 40, 0.15);
-      padding: 0.2rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #cc3333;
-      border: 1px solid rgba(180, 40, 40, 0.2);
-    }
-
-    .btn-logout {
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      color: #666;
-      padding: 0.5rem 1.2rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      transition: all 0.2s;
-      font-weight: 400;
-      letter-spacing: 0.5px;
-    }
-    .btn-logout:hover {
-      background: rgba(180, 40, 40, 0.08);
-      border-color: rgba(180, 40, 40, 0.3);
-      color: #cc3333;
-    }
-
-    .search-counter {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.8rem;
-      color: #555;
-      margin-bottom: 1.5rem;
-      padding: 0.6rem 1rem;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.03);
-    }
-    .search-counter .count { color: #cc3333; font-weight: 500; }
-    .search-counter .divider { color: #333; margin: 0 0.2rem; }
-
-    .search-row {
-      display: flex;
-      flex-direction: row;
-      gap: 1rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-    }
-    .search-input {
-      background: rgba(0, 0, 0, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      color: #e0e0e0;
-      padding: 0.9rem 1.2rem;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      transition: all 0.25s ease;
-      flex: 1;
-      min-width: 200px;
-      font-family: inherit;
-    }
-    .search-input:focus {
-      outline: none;
-      border-color: rgba(180, 40, 40, 0.4);
-      background: rgba(0, 0, 0, 0.8);
-    }
-    .search-input::placeholder { color: #444; }
-
-    .btn-search {
-      background: rgba(180, 40, 40, 0.12);
-      border: 1px solid rgba(180, 40, 40, 0.25);
-      color: #e0e0e0;
-      padding: 0.9rem 2.5rem;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 0.95rem;
-      font-weight: 500;
-      transition: all 0.25s ease;
-      letter-spacing: 1px;
-      white-space: nowrap;
-      font-family: inherit;
-    }
-    .btn-search:hover:not(:disabled) {
-      background: rgba(180, 40, 40, 0.2);
-      border-color: rgba(180, 40, 40, 0.4);
-      transform: translateY(-1px);
-    }
-    .btn-search:disabled { opacity: 0.3; cursor: not-allowed; }
-
-    .btn-load-more {
-      background: rgba(180, 40, 40, 0.08);
-      border: 1px solid rgba(180, 40, 40, 0.15);
-      color: #888;
-      padding: 0.6rem 1.5rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      transition: all 0.25s ease;
-      letter-spacing: 0.5px;
-      font-family: inherit;
-      display: none;
-      margin-top: 0.8rem;
-    }
-    .btn-load-more:hover:not(:disabled) {
-      background: rgba(180, 40, 40, 0.15);
-      border-color: rgba(180, 40, 40, 0.3);
-      color: #cc3333;
-    }
-    .btn-load-more:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
-
-    #results {
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.04);
+    .card {
+      background: #000;
+      border: 2px solid #8a0002;
       border-radius: 12px;
-      padding: 1.5rem;
-      min-height: 380px;
-      max-height: 65vh;
-      overflow-y: auto;
-      font-size: 0.9rem;
-      line-height: 1.7;
+      padding: 4rem 2rem;
+      max-width: 900px;
+      text-align: center;
+      box-shadow: 0 0 30px #8a0002;
+      margin-bottom: 3rem;
+      width: 100%;
+      position: relative;
+      z-index: 2;
     }
-    #results::-webkit-scrollbar { width: 5px; }
-    #results::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 8px; }
-    #results::-webkit-scrollbar-thumb { background: rgba(180, 40, 40, 0.25); border-radius: 8px; }
-
-    .empty-state {
+    .link-card {
+      width: 20%;
+      height: auto;
+      background: #000;
+      border: 1px solid rgba(220, 38, 38, 0.5);
+      border-radius: 0.75rem;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 320px;
-      color: #444;
-      text-align: center;
+      transition: transform 0.2s;
+      box-shadow: 0 0 15px #8a0002;
+      text-decoration: none;
+      color: inherit;
+      padding: 1rem 0.5rem;
     }
-    .empty-state .icon { font-size: 2.2rem; margin-bottom: 0.8rem; opacity: 0.2; }
-    .empty-state h3 { font-weight: 300; color: #555; font-size: 1.1rem; letter-spacing: 1px; }
-    .empty-state p { font-size: 0.8rem; color: #333; }
-
-    .msg-card {
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      border-radius: 10px;
-      padding: 1rem 1.2rem;
-      margin-bottom: 0.8rem;
-      transition: all 0.2s ease;
+    .link-card:hover {
+      transform: scale(1.05);
     }
-    .msg-card:hover {
-      border-color: rgba(180, 40, 40, 0.15);
-      background: rgba(0, 0, 0, 0.5);
-    }
-    .msg-header {
+    .link-row {
       display: flex;
       flex-wrap: wrap;
-      align-items: center;
-      gap: 0.4rem 1rem;
-      margin-bottom: 0.4rem;
-      font-size: 0.8rem;
-    }
-    .msg-author { color: #cc3333; font-weight: 500; }
-    .msg-server { color: #888; }
-    .msg-channel { color: #666; }
-    .msg-thread {
-      color: #aa8844;
-      font-size: 0.7rem;
-      background: rgba(170, 136, 68, 0.06);
-      padding: 0.1rem 0.6rem;
-      border-radius: 4px;
-      border: 1px solid rgba(170, 136, 68, 0.1);
-    }
-    .msg-date { color: #444; font-size: 0.65rem; margin-left: auto; white-space: nowrap; }
-    .msg-index { color: #333; font-size: 0.6rem; }
-    .msg-content { color: #d0d0d0; font-size: 0.9rem; white-space: pre-wrap; word-break: break-word; padding: 0.2rem 0; line-height: 1.6; }
-    .msg-footer { margin-top: 0.5rem; display: flex; gap: 1.5rem; font-size: 0.6rem; color: #3a3a3a; }
-
-    .loading-spinner {
-      border: 2px solid rgba(180, 40, 40, 0.08);
-      border-top: 2px solid rgba(180, 40, 40, 0.4);
-      border-radius: 50%;
-      width: 32px;
-      height: 32px;
-      animation: spin 0.9s linear infinite;
-      margin: 20px auto;
-    }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-    .loading-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       justify-content: center;
-      height: 320px;
-      color: #444;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
     }
-    .loading-state .text { font-size: 0.8rem; color: #333; margin-top: 0.5rem; }
-
-    #result-info {
-      text-align: right;
-      margin-top: 0.8rem;
-      color: #333;
-      font-size: 0.7rem;
-      letter-spacing: 0.3px;
-    }
-
-    .footer-actions {
-      display: flex;
-      justify-content: center;
-      margin-top: 0.8rem;
-    }
-
     footer {
-      margin-top: 2.5rem;
-      padding: 1.5rem 0 0.5rem;
+      margin-top: auto;
+      padding: 3rem 0 1.5rem;
       text-align: center;
-      color: #222;
-      font-size: 0.7rem;
-      z-index: 1;
-      letter-spacing: 2px;
+      color: #666;
+      font-size: 0.9rem;
+      position: relative;
+      z-index: 2;
     }
-
     .snowflake {
-      position: fixed;
+      position: absolute;
       top: -10px;
-      color: rgba(255, 255, 255, 0.06);
+      color: #8a0002;
       user-select: none;
       pointer-events: none;
       animation: fall linear infinite;
-      z-index: 0;
-      font-size: 14px;
+      z-index: 1;
     }
     @keyframes fall {
-      from { transform: translateY(-10vh) rotate(0deg); }
-      to { transform: translateY(110vh) rotate(360deg); }
+      from { transform: translateY(-10vh); }
+      to { transform: translateY(110vh); }
     }
-
-    @media (max-width: 768px) {
-      .dashboard-container { padding: 1.5rem 1rem; }
-      .page-title { font-size: 1.4rem; letter-spacing: 3px; }
-      .header-bar { flex-direction: column; align-items: stretch; gap: 0.5rem; }
-      .user-info { justify-content: center; }
-      .search-row { flex-direction: column; }
-      .btn-search { width: 100%; justify-content: center; }
-      .search-counter { font-size: 0.7rem; flex-wrap: wrap; }
+    @media (max-width: 900px) {
+      .link-card {
+        width: 45%;
+      }
+    }
+    /* Estilos para os campos */
+    .input-field {
+      width: 80%;
+      max-width: 400px;
+      padding: 1rem;
+      text-align: center;
+      background: #000;
+      border: 1px solid rgba(220, 38, 38, 0.5);
+      border-radius: 0.75rem;
+      color: #ff0000;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 1rem;
+      box-shadow: 0 0 15px #8a0002;
+      transition: all 0.3s ease;
+    }
+    .input-field:focus {
+      outline: none;
+      border-color: #ff0000;
+      box-shadow: 0 0 30px #8a0002;
+      transform: scale(1.02);
+    }
+    .input-field::placeholder {
+      color: #444;
+      letter-spacing: 1px;
+    }
+    .btn-login {
+      width: 80%;
+      max-width: 400px;
+      padding: 1rem;
+      background: #000;
+      border: 1px solid rgba(220, 38, 38, 0.5);
+      border-radius: 0.75rem;
+      color: #ff0000;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 1.05rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 15px #8a0002;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .btn-login:hover:not(:disabled) {
+      transform: scale(1.05);
+      background: rgba(138, 0, 2, 0.1);
+      box-shadow: 0 0 30px #8a0002;
+    }
+    .btn-login:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+    #error-msg {
+      min-height: 2rem;
+      margin-top: 0.5rem;
+    }
+    /* Imagem do topo - centralizada e maior */
+    .top-logo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin: 0 auto 0.5rem;
+      display: block;
+    }
+    /* Imagens dos cards - sem borda vermelha */
+    .link-card img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: none;
+      object-fit: cover;
+      margin-bottom: 0.75rem;
+      background: #000;
     }
   </style>
 </head>
 <body>
+  <div class="card">
+    <img src="/assets/whbf.png" alt="WHBF" class="top-logo">
+    <h1 class="text-5xl mb-6 tracking-widest">WHBF DMS</h1>
+    <p class="text-xl text-red-300 leading-relaxed">
+      Discord Message Searcher
+    </p>
+    <p class="text-l mb-10 text-red-300 leading-relaxed">
+      Request a message or information in Discord
+    </p>
 
-  <div class="dashboard-container">
-    <div class="header-bar">
-      <h1 class="page-title">WHBF <span>DMS</span></h1>
-      <div class="user-info">
-        <span class="user-email" id="user-email">—</span>
-        <span class="user-tier" id="user-tier">normal</span>
-        <button class="btn-logout" id="btn-logout">Sair</button>
-      </div>
+    <div class="link-row" style="margin-top: 0; flex-direction: column; gap: 1.5rem; align-items: center;">
+      <input id="email" type="email" placeholder="mail" class="input-field">
+      <input id="password" type="password" placeholder="pswd" class="input-field">
+      <button id="btn-login" class="btn-login">
+        Login
+      </button>
+      <p id="error-msg" class="text-red-500 text-center"></p>
     </div>
-
-    <div class="search-counter">
-      <span>Buscas disponíveis</span>
-      <span class="count" id="search-remaining">—</span>
-      <span class="divider">/</span>
-      <span class="limit" id="search-limit">—</span>
-    </div>
-
-    <div class="search-row">
-      <input id="author-id" type="text" placeholder="ID do autor (17-19 dígitos)" class="search-input">
-      <input id="keyword" type="text" placeholder="Palavra-chave (opcional)" class="search-input">
-      <button id="btn-search" class="btn-search">Pesquisar</button>
-    </div>
-
-    <div id="results">
-      <div class="empty-state">
-        <div class="icon">⌘</div>
-        <h3>Nenhuma mensagem</h3>
-        <p>Insira um ID de autor ou palavra-chave</p>
-      </div>
-    </div>
-    <div class="footer-actions">
-      <button id="btn-load-more" class="btn-load-more">Carregar mais</button>
-    </div>
-    <p id="result-info"></p>
   </div>
 
-  <footer>© 2026 whbf.cc</footer>
+  <div class="card">
+    <p class="text-gray-500 mb-10 text-sm tracking-widest">- Information -</p>
+      <div class="link-row">
+        <a href="https://whbf.cc/" target="_blank" class="link-card">
+          <img src="/assets/whbf.png" alt="WHBF">
+          <div class="text-lg font-bold text-red-500">WHBF</div>
+          <div class="text-xs text-gray-400 mt-1">Main Website</div>
+        </a>
 
-  <!-- NEVE -->
+      <a href="https://www.roblox.com/communities/703659855/WHBF#!/about" target="_blank" class="link-card">
+        <img src="/assets/whbf.png" alt="WHBF Roblox">
+        <div class="text-lg font-bold text-red-500">WHBF Roblox</div>
+        <div class="text-xs text-gray-400 mt-1">Main Roblox Group</div>
+      </a>
+
+      <a href="https://discord.com/invite/fm7pSzyAT6" target="_blank" class="link-card">
+        <img src="/assets/whbf.png" alt="WHBF Center">
+        <div class="text-lg font-bold text-red-500">WHBF Center</div>
+        <div class="text-xs text-gray-400 mt-1">Discord Server</div>
+      </a>
+      
+      <a href="https://t.me/whbfcc" target="_blank" class="link-card">
+        <img src="/assets/whbf.png" alt="WHBF Telegram">
+        <div class="text-lg font-bold text-red-500">WHBF Telegram</div>
+        <div class="text-xs text-gray-400 mt-1">Telegram Channel</div>
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    © 2026 whbf.cc
+  </footer>
+
+  <!-- Falling snowflakes -->
   <script>
-    (function snow() {
-      const flakes = [];
-      let lastTime = performance.now();
-      function createParticle() {
-        const p = document.createElement('div');
-        p.className = 'snowflake';
-        p.style.left = Math.random() * window.innerWidth + 'px';
-        p.style.fontSize = (Math.random() * 12 + 6) + 'px';
-        p.innerText = '❄';
-        document.body.appendChild(p);
-        flakes.push({ el: p, y: -10, speed: Math.random() * 150 + 200 });
-      }
-      function update(time) {
-        const delta = Math.min((time - lastTime) / 1000, 0.1);
-        lastTime = time;
-        if (Math.random() < delta * 30) createParticle();
-        flakes.forEach((flake, i) => {
-          flake.y += flake.speed * delta;
-          flake.el.style.transform = `translateY(${flake.y}px)`;
-          if (flake.y > window.innerHeight + 200) {
-            flake.el.remove();
-            flakes.splice(i, 1);
-          }
-        });
-        requestAnimationFrame(update);
-      }
-      requestAnimationFrame(update);
-    })();
-  </script>
+    const flakes = [];
+    let lastTime = performance.now();
 
-  <!-- TÍTULO ANIMADO -->
-  <script>
-    (function titleAnim() {
-      const titles = ["2","23","238","2382","23826","2382","238","23"];
-      let i = 0;
-      setInterval(() => { document.title = titles[i]; i = (i + 1) % titles.length; }, 480);
-    })();
-  </script>
+    function createParticle() {
+      const p = document.createElement('div');
+      p.className = 'snowflake';
+      p.style.left = Math.random() * window.innerWidth + 'px';
+      p.style.fontSize = Math.random() * 14 + 6 + 'px';
+      p.innerText = '❆';
 
-  <!-- FIREBASE + LÓGICA -->
-  <script type="importmap">
-    {
-      "imports": {
-        "firebase/app": "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js",
-        "firebase/auth": "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js",
-        "firebase/firestore": "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js"
-      }
+      document.body.appendChild(p);
+
+      flakes.push({
+        el: p,
+        y: -10,
+        speed: Math.random() * 200 + 300
+      });
     }
+
+    function update(time) {
+      let delta = (time - lastTime) / 1000;
+
+      if (delta > 0.1) delta = 0.1;
+
+      lastTime = time;
+
+      if (Math.random() < delta * 50) {
+        createParticle();
+      }
+
+      flakes.forEach((flake, i) => {
+        flake.y += flake.speed * delta;
+
+        flake.el.style.transform = `translateY(${flake.y}px)`;
+
+        if (flake.y > window.innerHeight + 280) {
+          flake.el.remove();
+          flakes.splice(i, 1);
+        }
+      });
+
+      requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
   </script>
 
   <script type="module">
-    import { initializeApp } from "firebase/app";
-    import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-    import {
-      getFirestore,
-      doc,
-      getDoc,
-      setDoc,
-      updateDoc,
-      increment
-    } from "firebase/firestore";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDXX5y50eUHJtFNa4S4r5LrBoPXpUKeGBQ",
@@ -426,345 +278,64 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
 
-    // ===== ELEMENTOS =====
-    const resultsDiv = document.getElementById('results');
-    const infoDiv = document.getElementById('result-info');
-    const authorInput = document.getElementById('author-id');
-    const keywordInput = document.getElementById('keyword');
-    const searchBtn = document.getElementById('btn-search');
-    const loadMoreBtn = document.getElementById('btn-load-more');
-    const logoutBtn = document.getElementById('btn-logout');
-    const userEmailEl = document.getElementById('user-email');
-    const userTierEl = document.getElementById('user-tier');
-    const searchRemaining = document.getElementById('search-remaining');
-    const searchLimitEl = document.getElementById('search-limit');
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const loginBtn = document.getElementById("btn-login");
+    const errorMsg = document.getElementById("error-msg");
 
-    let currentUser = null;
-    const RATE_LIMIT_MS = 3000;
-    let lastSearchTime = 0;
-
-    // ===== PAGINAÇÃO =====
-    let currentOffset = 0;
-    let currentAuthorId = '';
-    let currentKeyword = '';
-    let totalCount = 0;
-    let allMessages = [];
-    let hasMoreMessages = true;
-    const PAGE_LIMIT = 100;  // 100 por página
-
-    // ===== API URL =====
-    const API_URL = 'https://ge6c22a3518a389-dms.adb.eu-stockholm-1.oraclecloudapps.com/ords/admin/api/search';
-
-    // ===== FUNÇÕES FIRESTORE =====
-
-    async function getUserData(uid) {
-      const ref = doc(db, 'users', uid);
-      const snap = await getDoc(ref);
-      return snap.exists() ? { uid, ...snap.data() } : null;
-    }
-
-    async function ensureUserExists(uid, email) {
-      const ref = doc(db, 'users', uid);
-      const snap = await getDoc(ref);
-      if (!snap.exists()) {
-        const today = new Date().toISOString().split('T')[0];
-        await setDoc(ref, {
-          email,
-          tier: 'normal',
-          searchLimit: 50,
-          searchesToday: 0,
-          lastResetDate: today,
-          createdAt: new Date().toISOString()
-        });
-        return { uid, email, tier: 'normal', searchLimit: 50, searchesToday: 0, lastResetDate: today };
-      }
-      return { uid, ...snap.data() };
-    }
-
-    async function canSearch(uid) {
-      const data = await getUserData(uid);
-      if (!data) return { canSearch: false, limit: 0, used: 0, remaining: 0 };
-
-      const today = new Date().toISOString().split('T')[0];
-      const limit = data.searchLimit || 50;
-      let used = data.searchesToday || 0;
-
-      if (data.lastResetDate !== today) {
-        await updateDoc(doc(db, 'users', uid), { searchesToday: 0, lastResetDate: today });
-        used = 0;
-      }
-
-      const remaining = Math.max(0, limit - used);
-      return { canSearch: remaining > 0, limit, used, remaining };
-    }
-
-    async function incrementSearch(uid) {
-      const ref = doc(db, 'users', uid);
-      await updateDoc(ref, { searchesToday: increment(1) });
-      const data = await getUserData(uid);
-      return { searchesToday: data.searchesToday, limit: data.searchLimit };
-    }
-
-    // ===== ATUALIZAR UI =====
-
-    async function updateUI(uid) {
-      const data = await getUserData(uid);
-      if (data) {
-        const today = new Date().toISOString().split('T')[0];
-        const limit = data.searchLimit || 50;
-        let used = data.searchesToday || 0;
-
-        if (data.lastResetDate !== today) used = 0;
-
-        const remaining = Math.max(0, limit - used);
-
-        userEmailEl.textContent = data.email || '—';
-        userTierEl.textContent = (data.tier || 'normal').toUpperCase();
-        searchRemaining.textContent = remaining;
-        searchLimitEl.textContent = limit;
-        searchBtn.disabled = remaining <= 0;
-      }
-    }
-
-    // ===== RENDERIZAR RESULTADOS =====
-
-    function renderMessages(items, total) {
-      if (!items || items.length === 0) {
-        return `<div class="empty-state"><div class="icon">◇</div><h3>Nenhuma mensagem encontrada</h3><p>Tente outro ID ou palavra-chave</p></div>`;
-      }
-
-      let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;font-size:0.75rem;color:#555;">
-        <span>${items.length} mensagens ${total ? `de ${total}` : ''}</span>
-      </div>`;
-
-      items.forEach((msg, idx) => {
-        html += `
-          <div class="msg-card">
-            <div class="msg-header">
-              <span class="msg-author">${escapeHtml(msg.author || 'Desconhecido')}</span>
-              <span class="msg-server">${escapeHtml(msg.server || 'Servidor')}</span>
-              <span style="color:#333;">›</span>
-              <span class="msg-channel">${escapeHtml(msg.channel || 'Canal')}</span>
-              ${msg.thread ? `<span style="color:#333;">›</span><span class="msg-thread">${escapeHtml(msg.thread)}</span>` : ''}
-              <span class="msg-date">${formatDate(msg.created_at)}</span>
-              <span class="msg-index">#${idx + 1}</span>
-            </div>
-            <div class="msg-content">${escapeHtml(msg.content || '')}</div>
-            <div class="msg-footer">
-              <span>ID: ${msg.message_id || msg.id || '—'}</span>
-              ${msg.channel_id ? `<span>Canal: ${msg.channel_id}</span>` : ''}
-            </div>
-          </div>
-        `;
+    [emailInput, passwordInput].forEach(input => {
+      input.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") loginBtn.click();
       });
+    });
 
-      return html;
-    }
+    loginBtn.onclick = async () => {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
 
-    function escapeHtml(text) {
-      if (!text) return '';
-      const el = document.createElement('div');
-      el.textContent = text;
-      return el.innerHTML;
-    }
-
-    function formatDate(dateStr) {
-      if (!dateStr) return '—';
-      try {
-        const d = new Date(dateStr);
-        return d.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-      } catch { return dateStr; }
-    }
-
-    // ===== BUSCA =====
-
-    async function performSearch(loadMore = false) {
-      if (!currentUser) {
-        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⊘</div><h3>Faça login primeiro</h3></div>`;
+      if (!email || !password) {
+        errorMsg.textContent = "Preencha e-mail e senha";
         return;
       }
 
-      const authorId = loadMore ? currentAuthorId : authorInput.value.trim();
-      const keyword = loadMore ? currentKeyword : keywordInput.value.trim();
-
-      // Reset da pesquisa
-      if (!loadMore) {
-        if (!authorId && !keyword) {
-          resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">◈</div><h3>Informe um ID ou palavra-chave</h3></div>`;
-          infoDiv.textContent = '';
-          return;
-        }
-        currentOffset = 0;
-        currentAuthorId = authorId;
-        currentKeyword = keyword;
-        allMessages = [];
-        totalCount = 0;
-        hasMoreMessages = true;
-        loadMoreBtn.style.display = 'none';
-        loadMoreBtn.textContent = 'Carregar mais';
-        loadMoreBtn.disabled = false;
-      }
-
-      // Rate limit
-      const now = Date.now();
-      if (now - lastSearchTime < RATE_LIMIT_MS) {
-        const wait = Math.ceil((RATE_LIMIT_MS - (now - lastSearchTime)) / 1000);
-        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⏱</div><h3>Aguarde ${wait}s</h3><p>Intervalo entre buscas</p></div>`;
-        return;
-      }
-
-      // Verifica limite diário (apenas primeira busca)
-      if (!loadMore) {
-        const check = await canSearch(currentUser.uid);
-        if (!check.canSearch) {
-          resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⊘</div><h3>Limite diário atingido</h3><p>${check.used} de ${check.limit} buscas utilizadas</p></div>`;
-          await updateUI(currentUser.uid);
-          return;
-        }
-        await incrementSearch(currentUser.uid);
-        await updateUI(currentUser.uid);
-      }
-
-      lastSearchTime = now;
-
-      // Mostra loading
-      if (!loadMore) {
-        resultsDiv.innerHTML = `<div class="loading-state"><div class="loading-spinner"></div><div class="text">Buscando mensagens...</div></div>`;
-        infoDiv.textContent = '';
-      } else {
-        loadMoreBtn.textContent = '⏳ Carregando...';
-        loadMoreBtn.disabled = true;
-      }
+      loginBtn.disabled = true;
+      loginBtn.textContent = "⏳ ...";
 
       try {
-        const params = new URLSearchParams();
-        if (authorId) params.append('author_id', authorId);
-        if (keyword) params.append('keyword', keyword);
-        params.append('limit', PAGE_LIMIT);
-        params.append('offset', currentOffset);
-        const url = `${API_URL}?${params.toString()}`;
-
-        const response = await fetch(url, {
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' }
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${await response.text()}`);
-        }
-
-        const data = await response.json();
-        const items = data.items || [];
-
-        // Se não houver mais itens
-        if (items.length === 0) {
-          hasMoreMessages = false;
-          if (loadMore) {
-            loadMoreBtn.style.display = 'none';
-            loadMoreBtn.textContent = 'Sem mais mensagens';
-            loadMoreBtn.disabled = true;
-            infoDiv.textContent = `${allMessages.length} mensagens carregadas (fim da lista)`;
-          }
-          return;
-        }
-
-        // Guarda o total real se for a primeira página
-        if (!loadMore && data.count && data.count > 0) {
-          totalCount = data.count;
-        }
-
-        // Acumula mensagens
-        if (loadMore) {
-          allMessages = [...allMessages, ...items];
-        } else {
-          allMessages = items;
-        }
-
-        // Atualiza offset
-        currentOffset += items.length;
-
-        // Verifica se há mais mensagens
-        if (totalCount > 0) {
-          hasMoreMessages = allMessages.length < totalCount;
-        } else {
-          // Se o count não for confiável, assume que há mais se recebemos PAGE_LIMIT
-          hasMoreMessages = items.length === PAGE_LIMIT;
-        }
-
-        // Renderiza
-        resultsDiv.innerHTML = renderMessages(allMessages, totalCount || allMessages.length);
-        
-        // Atualiza info
-        if (totalCount > 0) {
-          infoDiv.textContent = `Mostrando ${allMessages.length} de ${totalCount} mensagens`;
-        } else {
-          infoDiv.textContent = allMessages.length > 0 
-            ? `Mostrando ${allMessages.length} mensagens` 
-            : 'Nenhum resultado';
-        }
-
-        // Mostra/oculta botão "Carregar mais"
-        if (hasMoreMessages) {
-          loadMoreBtn.style.display = 'inline-block';
-          loadMoreBtn.textContent = 'Carregar mais';
-          loadMoreBtn.disabled = false;
-        } else {
-          loadMoreBtn.style.display = 'none';
-          if (allMessages.length > 0 && totalCount > 0 && allMessages.length === totalCount) {
-            infoDiv.textContent = `${totalCount} mensagens encontradas (todas carregadas)`;
-          }
-        }
-
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = "/dashboard";
       } catch (error) {
-        console.error('Erro na busca:', error);
-        if (!loadMore) {
-          resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">✗</div><h3>Erro na busca</h3><p>${escapeHtml(error.message)}</p></div>`;
-        } else {
-          loadMoreBtn.textContent = '❌ Tentar novamente';
-          loadMoreBtn.disabled = false;
+        let errorMessage = "Falha no login";
+        if (error.code === 'auth/invalid-email') errorMessage = "E-mail inválido";
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+          errorMessage = "E-mail ou senha incorretos";
         }
-        infoDiv.textContent = 'Erro';
+        if (error.code === 'auth/too-many-requests') errorMessage = "Muitas tentativas – aguarde";
+        if (error.code === 'auth/network-request-failed') errorMessage = "Erro de rede – verifique sua conexão";
+
+        errorMsg.textContent = errorMessage;
+        console.error("Firebase error:", error);
+      } finally {
+        loginBtn.disabled = false;
+        loginBtn.textContent = "Login";
       }
-    }
+    };
 
-    // ===== EVENTOS =====
-
-    searchBtn.addEventListener('click', () => performSearch(false));
-    loadMoreBtn.addEventListener('click', () => performSearch(true));
-
-    authorInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') performSearch(false);
+    [emailInput, passwordInput].forEach(input => {
+      input.addEventListener("input", () => {
+        errorMsg.textContent = "";
+      });
     });
-    keywordInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') performSearch(false);
-    });
+  </script>
 
-    logoutBtn.addEventListener('click', async () => {
-      try {
-        await signOut(auth);
-        window.location.href = '/';
-      } catch (error) {
-        console.error('Erro ao sair:', error);
-        alert('Falha ao sair. Tente novamente.');
-      }
-    });
-
-    // ===== AUTH STATE =====
-
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        currentUser = user;
-        await ensureUserExists(user.uid, user.email);
-        await updateUI(user.uid);
-        console.log('✅ Utilizador autenticado:', user.email);
-      } else {
-        window.location.href = '/';
-      }
-    });
-
-    console.log('🔍 WHBF DMS — Pesquisador carregado com paginação de 100 mensagens.');
+  <script>
+    const titles = ["2","23","238","2382","23826","2382","238","23"];
+    let tIndex = 0;
+    setInterval(() => {
+      document.title = titles[tIndex];
+      tIndex = (tIndex + 1) % titles.length;
+    }, 500);
   </script>
 </body>
 </html>
