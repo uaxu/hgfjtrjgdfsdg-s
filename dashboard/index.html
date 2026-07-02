@@ -392,7 +392,7 @@
     })();
   </script>
 
-  <!-- FIREBASE -->
+  <!-- FIREBASE + LÓGICA -->
   <script type="importmap">
     {
       "imports": {
@@ -451,8 +451,7 @@
     let currentKeyword = '';
     let totalCount = 0;
     let allMessages = [];
-    let isLoadingMore = false;
-    const PAGE_LIMIT = 20;  // Limite máximo da API
+    const PAGE_LIMIT = 20;
 
     // ===== API URL =====
     const API_URL = 'https://ge6c22a3518a389-dms.adb.eu-stockholm-1.oraclecloudapps.com/ords/admin/api/search';
@@ -578,7 +577,7 @@
       } catch { return dateStr; }
     }
 
-    // ===== BUSCA PRINCIPAL =====
+    // ===== BUSCA =====
 
     async function performSearch(loadMore = false) {
       if (!currentUser) {
@@ -589,7 +588,6 @@
       const authorId = loadMore ? currentAuthorId : authorInput.value.trim();
       const keyword = loadMore ? currentKeyword : keywordInput.value.trim();
 
-      // Se for uma nova busca (não "carregar mais"), reseta tudo
       if (!loadMore) {
         if (!authorId && !keyword) {
           resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">◈</div><h3>Informe um ID ou palavra-chave</h3></div>`;
@@ -600,12 +598,12 @@
         currentAuthorId = authorId;
         currentKeyword = keyword;
         allMessages = [];
+        totalCount = 0;
         loadMoreBtn.style.display = 'none';
         loadMoreBtn.textContent = 'Carregar mais';
         loadMoreBtn.disabled = false;
       }
 
-      // Rate limit
       const now = Date.now();
       if (now - lastSearchTime < RATE_LIMIT_MS) {
         const wait = Math.ceil((RATE_LIMIT_MS - (now - lastSearchTime)) / 1000);
@@ -613,7 +611,6 @@
         return;
       }
 
-      // Verifica limite diário apenas na primeira busca
       if (!loadMore) {
         const check = await canSearch(currentUser.uid);
         if (!check.canSearch) {
@@ -621,21 +618,18 @@
           await updateUI(currentUser.uid);
           return;
         }
-        // Incrementa contador
         await incrementSearch(currentUser.uid);
         await updateUI(currentUser.uid);
       }
 
       lastSearchTime = now;
 
-      // Mostra loading
       if (!loadMore) {
         resultsDiv.innerHTML = `<div class="loading-state"><div class="loading-spinner"></div><div class="text">Buscando mensagens...</div></div>`;
         infoDiv.textContent = '';
       } else {
         loadMoreBtn.textContent = '⏳ Carregando...';
         loadMoreBtn.disabled = true;
-        isLoadingMore = true;
       }
 
       try {
@@ -657,34 +651,63 @@
 
         const data = await response.json();
         const items = data.items || [];
-        const total = data.count || items.length;
+
+        // 🔥 SE A API NÃO DEVOLVER MAIS DE 20, PÁRA AQUI 🔥
+        if (items.length === 0) {
+          if (loadMore) {
+            loadMoreBtn.style.display = 'none';
+            loadMoreBtn.textContent = 'Sem mais mensagens';
+            loadMoreBtn.disabled = true;
+            infoDiv.textContent = `${allMessages.length} mensagens carregadas (fim da lista)`;
+          }
+          return;
+        }
+
+        // Guarda o total real se for a primeira página
+        if (!loadMore && data.count && data.count > 0) {
+          totalCount = data.count;
+        }
+
+        // Se recebemos menos de PAGE_SIZE, é a última página
         const hasMore = items.length === PAGE_LIMIT;
+
+        // 🔥 VERIFICA SE HÁ MAIS PÁGINAS PELO COUNT 🔥
+        // Se o count for 0 ou igual ao número de itens, não há mais
+        const hasMoreFromCount = totalCount > 0 && (currentOffset + items.length) < totalCount;
+
+        // Usa hasMoreFromCount se disponível, senão usa hasMore
+        const hasMoreFinal = hasMoreFromCount || (hasMore && totalCount === 0);
 
         // Acumula mensagens
         if (loadMore) {
           allMessages = [...allMessages, ...items];
         } else {
           allMessages = items;
-          totalCount = total;
         }
 
-        // Atualiza offset para a próxima página
+        // Atualiza offset
         currentOffset += items.length;
 
         // Renderiza
-        resultsDiv.innerHTML = renderMessages(allMessages, totalCount);
-        infoDiv.textContent = allMessages.length > 0 
-          ? `Mostrando ${allMessages.length} de ${totalCount} mensagens` 
-          : 'Nenhum resultado';
+        resultsDiv.innerHTML = renderMessages(allMessages, totalCount || allMessages.length);
+        
+        // Atualiza info
+        if (totalCount > 0) {
+          infoDiv.textContent = `Mostrando ${allMessages.length} de ${totalCount} mensagens`;
+        } else {
+          infoDiv.textContent = allMessages.length > 0 
+            ? `Mostrando ${allMessages.length} mensagens` 
+            : 'Nenhum resultado';
+        }
 
         // Mostra/oculta botão "Carregar mais"
-        if (hasMore && allMessages.length < totalCount) {
+        if (hasMoreFinal) {
           loadMoreBtn.style.display = 'inline-block';
           loadMoreBtn.textContent = 'Carregar mais';
           loadMoreBtn.disabled = false;
         } else {
           loadMoreBtn.style.display = 'none';
-          if (allMessages.length > 0 && allMessages.length === totalCount) {
+          if (allMessages.length > 0 && totalCount > 0 && allMessages.length === totalCount) {
             infoDiv.textContent = `${totalCount} mensagens encontradas (todas carregadas)`;
           }
         }
@@ -698,8 +721,6 @@
           loadMoreBtn.disabled = false;
         }
         infoDiv.textContent = 'Erro';
-      } finally {
-        isLoadingMore = false;
       }
     }
 
@@ -733,13 +754,13 @@
         await ensureUserExists(user.uid, user.email);
         await updateUI(user.uid);
         console.log('✅ Utilizador autenticado:', user.email);
-        console.log('📊 Dados do utilizador:', await getUserData(user.uid));
       } else {
         window.location.href = '/';
       }
     });
 
     console.log('🔍 WHBF DMS — Pesquisador carregado com paginação.');
+    console.log('📌 NOTA: A API atual só retorna 20 mensagens. Para ver todas, corrige a API no backend.');
   </script>
 </body>
 </html>
