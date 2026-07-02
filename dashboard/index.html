@@ -152,6 +152,30 @@
     }
     .btn-search:disabled { opacity: 0.3; cursor: not-allowed; }
 
+    .btn-load-more {
+      background: rgba(180, 40, 40, 0.08);
+      border: 1px solid rgba(180, 40, 40, 0.15);
+      color: #888;
+      padding: 0.6rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.25s ease;
+      letter-spacing: 0.5px;
+      font-family: inherit;
+      display: none;
+      margin-top: 0.8rem;
+    }
+    .btn-load-more:hover:not(:disabled) {
+      background: rgba(180, 40, 40, 0.15);
+      border-color: rgba(180, 40, 40, 0.3);
+      color: #cc3333;
+    }
+    .btn-load-more:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
     #results {
       background: rgba(0, 0, 0, 0.3);
       border: 1px solid rgba(255, 255, 255, 0.04);
@@ -245,6 +269,12 @@
       letter-spacing: 0.3px;
     }
 
+    .footer-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 0.8rem;
+    }
+
     footer {
       margin-top: 2.5rem;
       padding: 1.5rem 0 0.5rem;
@@ -313,6 +343,9 @@
         <p>Insira um ID de autor ou palavra-chave</p>
       </div>
     </div>
+    <div class="footer-actions">
+      <button id="btn-load-more" class="btn-load-more">Carregar mais</button>
+    </div>
     <p id="result-info"></p>
   </div>
 
@@ -379,7 +412,6 @@
       getDoc,
       setDoc,
       updateDoc,
-      runTransaction,
       increment
     } from "firebase/firestore";
 
@@ -402,6 +434,7 @@
     const authorInput = document.getElementById('author-id');
     const keywordInput = document.getElementById('keyword');
     const searchBtn = document.getElementById('btn-search');
+    const loadMoreBtn = document.getElementById('btn-load-more');
     const logoutBtn = document.getElementById('btn-logout');
     const userEmailEl = document.getElementById('user-email');
     const userTierEl = document.getElementById('user-tier');
@@ -411,6 +444,15 @@
     let currentUser = null;
     const RATE_LIMIT_MS = 3000;
     let lastSearchTime = 0;
+
+    // ===== PAGINAÇÃO =====
+    let currentOffset = 0;
+    let currentAuthorId = '';
+    let currentKeyword = '';
+    let totalCount = 0;
+    let allMessages = [];
+    let isLoadingMore = false;
+    const PAGE_LIMIT = 20;  // Limite máximo da API
 
     // ===== API URL =====
     const API_URL = 'https://ge6c22a3518a389-dms.adb.eu-stockholm-1.oraclecloudapps.com/ords/admin/api/search';
@@ -460,17 +502,9 @@
 
     async function incrementSearch(uid) {
       const ref = doc(db, 'users', uid);
-      try {
-        // Usando increment() para evitar transação
-        await updateDoc(ref, {
-          searchesToday: increment(1)
-        });
-        const data = await getUserData(uid);
-        return { searchesToday: data.searchesToday, limit: data.searchLimit };
-      } catch (error) {
-        console.error('Erro ao incrementar:', error);
-        throw error;
-      }
+      await updateDoc(ref, { searchesToday: increment(1) });
+      const data = await getUserData(uid);
+      return { searchesToday: data.searchesToday, limit: data.searchLimit };
     }
 
     // ===== ATUALIZAR UI =====
@@ -496,12 +530,14 @@
 
     // ===== RENDERIZAR RESULTADOS =====
 
-    function renderMessages(items) {
+    function renderMessages(items, total) {
       if (!items || items.length === 0) {
         return `<div class="empty-state"><div class="icon">◇</div><h3>Nenhuma mensagem encontrada</h3><p>Tente outro ID ou palavra-chave</p></div>`;
       }
 
-      let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;font-size:0.75rem;color:#555;"><span>${items.length} mensagens</span></div>`;
+      let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;font-size:0.75rem;color:#555;">
+        <span>${items.length} mensagens ${total ? `de ${total}` : ''}</span>
+      </div>`;
 
       items.forEach((msg, idx) => {
         html += `
@@ -542,23 +578,34 @@
       } catch { return dateStr; }
     }
 
-    // ===== BUSCA =====
+    // ===== BUSCA PRINCIPAL =====
 
-    async function performSearch() {
+    async function performSearch(loadMore = false) {
       if (!currentUser) {
         resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⊘</div><h3>Faça login primeiro</h3></div>`;
         return;
       }
 
-      const authorId = authorInput.value.trim();
-      const keyword = keywordInput.value.trim();
+      const authorId = loadMore ? currentAuthorId : authorInput.value.trim();
+      const keyword = loadMore ? currentKeyword : keywordInput.value.trim();
 
-      if (!authorId && !keyword) {
-        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">◈</div><h3>Informe um ID ou palavra-chave</h3></div>`;
-        infoDiv.textContent = '';
-        return;
+      // Se for uma nova busca (não "carregar mais"), reseta tudo
+      if (!loadMore) {
+        if (!authorId && !keyword) {
+          resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">◈</div><h3>Informe um ID ou palavra-chave</h3></div>`;
+          infoDiv.textContent = '';
+          return;
+        }
+        currentOffset = 0;
+        currentAuthorId = authorId;
+        currentKeyword = keyword;
+        allMessages = [];
+        loadMoreBtn.style.display = 'none';
+        loadMoreBtn.textContent = 'Carregar mais';
+        loadMoreBtn.disabled = false;
       }
 
+      // Rate limit
       const now = Date.now();
       if (now - lastSearchTime < RATE_LIMIT_MS) {
         const wait = Math.ceil((RATE_LIMIT_MS - (now - lastSearchTime)) / 1000);
@@ -566,29 +613,39 @@
         return;
       }
 
-      const check = await canSearch(currentUser.uid);
-      if (!check.canSearch) {
-        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⊘</div><h3>Limite diário atingido</h3><p>${check.used} de ${check.limit} buscas utilizadas</p></div>`;
+      // Verifica limite diário apenas na primeira busca
+      if (!loadMore) {
+        const check = await canSearch(currentUser.uid);
+        if (!check.canSearch) {
+          resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⊘</div><h3>Limite diário atingido</h3><p>${check.used} de ${check.limit} buscas utilizadas</p></div>`;
+          await updateUI(currentUser.uid);
+          return;
+        }
+        // Incrementa contador
+        await incrementSearch(currentUser.uid);
         await updateUI(currentUser.uid);
-        return;
       }
 
       lastSearchTime = now;
 
-      resultsDiv.innerHTML = `<div class="loading-state"><div class="loading-spinner"></div><div class="text">Buscando mensagens...</div></div>`;
-      infoDiv.textContent = '';
+      // Mostra loading
+      if (!loadMore) {
+        resultsDiv.innerHTML = `<div class="loading-state"><div class="loading-spinner"></div><div class="text">Buscando mensagens...</div></div>`;
+        infoDiv.textContent = '';
+      } else {
+        loadMoreBtn.textContent = '⏳ Carregando...';
+        loadMoreBtn.disabled = true;
+        isLoadingMore = true;
+      }
 
       try {
-        // Incrementa o contador no Firestore
-        await incrementSearch(currentUser.uid);
-        await updateUI(currentUser.uid);
-
         const params = new URLSearchParams();
         if (authorId) params.append('author_id', authorId);
         if (keyword) params.append('keyword', keyword);
+        params.append('limit', PAGE_LIMIT);
+        params.append('offset', currentOffset);
         const url = `${API_URL}?${params.toString()}`;
 
-        // Chamada à API com credentials
         const response = await fetch(url, {
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' }
@@ -600,22 +657,63 @@
 
         const data = await response.json();
         const items = data.items || [];
+        const total = data.count || items.length;
+        const hasMore = items.length === PAGE_LIMIT;
 
-        resultsDiv.innerHTML = renderMessages(items);
-        infoDiv.textContent = items.length > 0 ? `${items.length} mensagens encontradas` : 'Nenhum resultado';
+        // Acumula mensagens
+        if (loadMore) {
+          allMessages = [...allMessages, ...items];
+        } else {
+          allMessages = items;
+          totalCount = total;
+        }
+
+        // Atualiza offset para a próxima página
+        currentOffset += items.length;
+
+        // Renderiza
+        resultsDiv.innerHTML = renderMessages(allMessages, totalCount);
+        infoDiv.textContent = allMessages.length > 0 
+          ? `Mostrando ${allMessages.length} de ${totalCount} mensagens` 
+          : 'Nenhum resultado';
+
+        // Mostra/oculta botão "Carregar mais"
+        if (hasMore && allMessages.length < totalCount) {
+          loadMoreBtn.style.display = 'inline-block';
+          loadMoreBtn.textContent = 'Carregar mais';
+          loadMoreBtn.disabled = false;
+        } else {
+          loadMoreBtn.style.display = 'none';
+          if (allMessages.length > 0 && allMessages.length === totalCount) {
+            infoDiv.textContent = `${totalCount} mensagens encontradas (todas carregadas)`;
+          }
+        }
 
       } catch (error) {
         console.error('Erro na busca:', error);
-        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">✗</div><h3>Erro na busca</h3><p>${escapeHtml(error.message)}</p></div>`;
+        if (!loadMore) {
+          resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">✗</div><h3>Erro na busca</h3><p>${escapeHtml(error.message)}</p></div>`;
+        } else {
+          loadMoreBtn.textContent = '❌ Tentar novamente';
+          loadMoreBtn.disabled = false;
+        }
         infoDiv.textContent = 'Erro';
+      } finally {
+        isLoadingMore = false;
       }
     }
 
     // ===== EVENTOS =====
 
-    searchBtn.addEventListener('click', performSearch);
-    authorInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') performSearch(); });
-    keywordInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') performSearch(); });
+    searchBtn.addEventListener('click', () => performSearch(false));
+    loadMoreBtn.addEventListener('click', () => performSearch(true));
+
+    authorInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') performSearch(false);
+    });
+    keywordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') performSearch(false);
+    });
 
     logoutBtn.addEventListener('click', async () => {
       try {
@@ -641,7 +739,7 @@
       }
     });
 
-    console.log('🔍 WHBF DMS — Pesquisador carregado com Firestore + increment().');
+    console.log('🔍 WHBF DMS — Pesquisador carregado com paginação.');
   </script>
 </body>
 </html>
