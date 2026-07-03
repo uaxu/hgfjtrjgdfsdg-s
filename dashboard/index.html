@@ -1,945 +1,901 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WHBF DMS - Pesquisador</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    
-    body {
-      background: #0a0a0a;
-      color: #e0e0e0;
-      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-      min-height: 100vh;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem 1rem;
-      position: relative;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WHBF DMS - Pesquisador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    .dashboard-container {
-      background: rgba(10, 10, 10, 0.95);
-      border: 1px solid rgba(180, 40, 40, 0.25);
-      border-radius: 16px;
-      padding: 2.5rem;
-      max-width: 1200px;
-      width: 100%;
-      box-shadow: 0 0 60px rgba(180, 40, 40, 0.06);
-      position: relative;
-      z-index: 1;
-    }
+        body {
+            background: #0a0a0a;
+            color: #e0e0e0;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
 
-    .page-title {
-      font-size: 2rem;
-      font-weight: 300;
-      letter-spacing: 6px;
-      color: #ffffff;
-      text-transform: uppercase;
-    }
-    .page-title span { color: #cc3333; font-weight: 500; }
+        .container {
+            background: rgba(10, 10, 10, 0.95);
+            border: 1px solid rgba(180, 40, 40, 0.25);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 1000px;
+            width: 100%;
+            box-shadow: 0 0 60px rgba(180, 40, 40, 0.06);
+        }
 
-    .header-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid rgba(180, 40, 40, 0.12);
-      flex-wrap: wrap;
-      gap: 0.75rem;
-    }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(180, 40, 40, 0.1);
+        }
 
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      font-size: 0.85rem;
-      color: #888;
-    }
-    .user-info .user-email { color: #ccc; }
-    .user-info .user-tier {
-      background: rgba(180, 40, 40, 0.15);
-      padding: 0.2rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #cc3333;
-      border: 1px solid rgba(180, 40, 40, 0.2);
-    }
+        .title {
+            font-size: 1.8rem;
+            font-weight: 300;
+            letter-spacing: 4px;
+            color: #fff;
+        }
+        .title span {
+            color: #cc3333;
+            font-weight: 500;
+        }
 
-    .btn-logout {
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      color: #666;
-      padding: 0.5rem 1.2rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      transition: all 0.2s;
-      font-weight: 400;
-      letter-spacing: 0.5px;
-    }
-    .btn-logout:hover {
-      background: rgba(180, 40, 40, 0.08);
-      border-color: rgba(180, 40, 40, 0.3);
-      color: #cc3333;
-    }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: #888;
+        }
+        .user-email {
+            color: #ccc;
+        }
+        .user-tier {
+            background: rgba(180, 40, 40, 0.15);
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            color: #cc3333;
+            border: 1px solid rgba(180, 40, 40, 0.2);
+        }
 
-    .search-counter {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.8rem;
-      color: #555;
-      margin-bottom: 1.5rem;
-      padding: 0.6rem 1rem;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.03);
-    }
-    .search-counter .count { color: #cc3333; font-weight: 500; }
-    .search-counter .divider { color: #333; margin: 0 0.2rem; }
+        .btn-logout {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #666;
+            padding: 0.4rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        .btn-logout:hover {
+            background: rgba(180, 40, 40, 0.08);
+            border-color: rgba(180, 40, 40, 0.3);
+            color: #cc3333;
+        }
 
-    .search-row {
-      display: flex;
-      flex-direction: row;
-      gap: 1rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-    }
-    .search-input {
-      background: rgba(0, 0, 0, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      color: #e0e0e0;
-      padding: 0.9rem 1.2rem;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      transition: all 0.25s ease;
-      flex: 1;
-      min-width: 200px;
-      font-family: inherit;
-    }
-    .search-input:focus {
-      outline: none;
-      border-color: rgba(180, 40, 40, 0.4);
-      background: rgba(0, 0, 0, 0.8);
-    }
-    .search-input::placeholder { color: #444; }
+        .search-counter {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: #555;
+            margin-bottom: 1.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+        .search-counter .count {
+            color: #cc3333;
+            font-weight: 500;
+        }
+        .search-counter .divider {
+            color: #333;
+        }
 
-    .btn-search {
-      background: rgba(180, 40, 40, 0.12);
-      border: 1px solid rgba(180, 40, 40, 0.25);
-      color: #e0e0e0;
-      padding: 0.9rem 2.5rem;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 0.95rem;
-      font-weight: 500;
-      transition: all 0.25s ease;
-      letter-spacing: 1px;
-      white-space: nowrap;
-      font-family: inherit;
-    }
-    .btn-search:hover:not(:disabled) {
-      background: rgba(180, 40, 40, 0.2);
-      border-color: rgba(180, 40, 40, 0.4);
-      transform: translateY(-1px);
-    }
-    .btn-search:disabled { opacity: 0.3; cursor: not-allowed; }
+        .search-row {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .search-input {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #e0e0e0;
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            flex: 1;
+            min-width: 180px;
+            font-family: inherit;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: rgba(180, 40, 40, 0.4);
+            background: rgba(0, 0, 0, 0.8);
+        }
+        .search-input::placeholder {
+            color: #444;
+        }
 
-    #results {
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      border-radius: 12px;
-      padding: 1.5rem;
-      min-height: 380px;
-      max-height: 50vh;
-      overflow-y: auto;
-      font-size: 0.9rem;
-      line-height: 1.7;
-    }
-    #results::-webkit-scrollbar { width: 5px; }
-    #results::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 8px; }
-    #results::-webkit-scrollbar-thumb { background: rgba(180, 40, 40, 0.25); border-radius: 8px; }
+        .btn-search {
+            background: rgba(180, 40, 40, 0.12);
+            border: 1px solid rgba(180, 40, 40, 0.25);
+            color: #e0e0e0;
+            padding: 0.8rem 2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.25s ease;
+            font-family: inherit;
+        }
+        .btn-search:hover:not(:disabled) {
+            background: rgba(180, 40, 40, 0.2);
+            border-color: rgba(180, 40, 40, 0.4);
+            transform: translateY(-1px);
+        }
+        .btn-search:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
 
-    /* ===== PAGINAÇÃO ===== */
-    .pagination {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 0.4rem;
-      margin-top: 1.2rem;
-      flex-wrap: wrap;
-    }
-    .pagination button {
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      color: #888;
-      padding: 0.4rem 0.9rem;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      transition: all 0.2s ease;
-      font-family: inherit;
-      min-width: 36px;
-      text-align: center;
-    }
-    .pagination button:hover:not(:disabled) {
-      background: rgba(180, 40, 40, 0.15);
-      border-color: rgba(180, 40, 40, 0.3);
-      color: #cc3333;
-    }
-    .pagination button.active {
-      background: rgba(180, 40, 40, 0.2);
-      border-color: rgba(180, 40, 40, 0.4);
-      color: #cc3333;
-      font-weight: 600;
-    }
-    .pagination button:disabled {
-      opacity: 0.2;
-      cursor: not-allowed;
-    }
-    .pagination .page-info {
-      color: #444;
-      font-size: 0.75rem;
-      padding: 0 0.5rem;
-    }
-    .pagination .page-jump {
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-      margin-left: 0.5rem;
-    }
-    .pagination .page-jump input {
-      background: rgba(0, 0, 0, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      color: #e0e0e0;
-      padding: 0.3rem 0.5rem;
-      border-radius: 4px;
-      width: 50px;
-      font-size: 0.8rem;
-      text-align: center;
-      font-family: inherit;
-    }
-    .pagination .page-jump input:focus {
-      outline: none;
-      border-color: rgba(180, 40, 40, 0.4);
-    }
-    .pagination .page-jump button {
-      padding: 0.3rem 0.6rem;
-      font-size: 0.7rem;
-      min-width: auto;
-    }
+        #results {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            padding: 1.2rem;
+            min-height: 350px;
+            max-height: 50vh;
+            overflow-y: auto;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        #results::-webkit-scrollbar {
+            width: 5px;
+        }
+        #results::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        #results::-webkit-scrollbar-thumb {
+            background: rgba(180, 40, 40, 0.25);
+            border-radius: 8px;
+        }
 
-    .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 320px;
-      color: #444;
-      text-align: center;
-    }
-    .empty-state .icon { font-size: 2.2rem; margin-bottom: 0.8rem; opacity: 0.2; }
-    .empty-state h3 { font-weight: 300; color: #555; font-size: 1.1rem; letter-spacing: 1px; }
-    .empty-state p { font-size: 0.8rem; color: #333; }
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 300px;
+            color: #444;
+            text-align: center;
+        }
+        .empty-state .icon {
+            font-size: 2rem;
+            margin-bottom: 0.8rem;
+            opacity: 0.2;
+        }
+        .empty-state h3 {
+            font-weight: 300;
+            color: #555;
+            font-size: 1rem;
+        }
+        .empty-state p {
+            font-size: 0.8rem;
+            color: #333;
+        }
 
-    .msg-card {
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      border-radius: 10px;
-      padding: 1rem 1.2rem;
-      margin-bottom: 0.8rem;
-      transition: all 0.2s ease;
-    }
-    .msg-card:hover {
-      border-color: rgba(180, 40, 40, 0.15);
-      background: rgba(0, 0, 0, 0.5);
-    }
-    .msg-header {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 0.4rem 1rem;
-      margin-bottom: 0.4rem;
-      font-size: 0.8rem;
-    }
-    .msg-author { color: #cc3333; font-weight: 500; }
-    .msg-server { color: #888; }
-    .msg-channel { color: #666; }
-    .msg-thread {
-      color: #aa8844;
-      font-size: 0.7rem;
-      background: rgba(170, 136, 68, 0.06);
-      padding: 0.1rem 0.6rem;
-      border-radius: 4px;
-      border: 1px solid rgba(170, 136, 68, 0.1);
-    }
-    .msg-date { color: #444; font-size: 0.65rem; margin-left: auto; white-space: nowrap; }
-    .msg-index { color: #333; font-size: 0.6rem; }
-    .msg-content { color: #d0d0d0; font-size: 0.9rem; white-space: pre-wrap; word-break: break-word; padding: 0.2rem 0; line-height: 1.6; }
-    .msg-footer { margin-top: 0.5rem; display: flex; gap: 1.5rem; font-size: 0.6rem; color: #3a3a3a; }
+        .msg-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.6rem;
+            transition: all 0.2s ease;
+        }
+        .msg-card:hover {
+            border-color: rgba(180, 40, 40, 0.15);
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .msg-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.3rem 0.8rem;
+            margin-bottom: 0.3rem;
+            font-size: 0.75rem;
+        }
+        .msg-author {
+            color: #cc3333;
+            font-weight: 500;
+        }
+        .msg-server {
+            color: #888;
+        }
+        .msg-channel {
+            color: #666;
+        }
+        .msg-date {
+            color: #444;
+            font-size: 0.6rem;
+            margin-left: auto;
+            white-space: nowrap;
+        }
+        .msg-content {
+            color: #d0d0d0;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .msg-footer {
+            margin-top: 0.3rem;
+            display: flex;
+            gap: 1rem;
+            font-size: 0.55rem;
+            color: #3a3a3a;
+        }
 
-    .loading-spinner {
-      border: 2px solid rgba(180, 40, 40, 0.08);
-      border-top: 2px solid rgba(180, 40, 40, 0.4);
-      border-radius: 50%;
-      width: 32px;
-      height: 32px;
-      animation: spin 0.9s linear infinite;
-      margin: 20px auto;
-    }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loading-spinner {
+            border: 2px solid rgba(180, 40, 40, 0.08);
+            border-top: 2px solid rgba(180, 40, 40, 0.4);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 0.9s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
 
-    .loading-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 320px;
-      color: #444;
-    }
-    .loading-state .text { font-size: 0.8rem; color: #333; margin-top: 0.5rem; }
+        .loading-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 300px;
+            color: #444;
+        }
 
-    #result-info {
-      text-align: right;
-      margin-top: 0.8rem;
-      color: #333;
-      font-size: 0.7rem;
-      letter-spacing: 0.3px;
-    }
+        #result-info {
+            text-align: right;
+            margin-top: 0.5rem;
+            color: #333;
+            font-size: 0.7rem;
+        }
 
-    footer {
-      margin-top: 2.5rem;
-      padding: 1.5rem 0 0.5rem;
-      text-align: center;
-      color: #222;
-      font-size: 0.7rem;
-      z-index: 1;
-      letter-spacing: 2px;
-    }
+        /* Paginação */
+        .pagination {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            gap: 0.3rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        .pagination button {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #888;
+            padding: 0.3rem 0.7rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            min-width: 32px;
+            text-align: center;
+        }
+        .pagination button:hover:not(:disabled) {
+            background: rgba(180, 40, 40, 0.15);
+            border-color: rgba(180, 40, 40, 0.3);
+            color: #cc3333;
+        }
+        .pagination button.active {
+            background: rgba(180, 40, 40, 0.2);
+            border-color: rgba(180, 40, 40, 0.4);
+            color: #cc3333;
+            font-weight: 600;
+        }
+        .pagination button:disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
+        }
+        .pagination .page-info {
+            color: #444;
+            font-size: 0.7rem;
+            padding: 0 0.3rem;
+        }
+        .pagination .page-jump {
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+            margin-left: 0.3rem;
+        }
+        .pagination .page-jump input {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #e0e0e0;
+            padding: 0.2rem 0.3rem;
+            border-radius: 4px;
+            width: 40px;
+            font-size: 0.7rem;
+            text-align: center;
+            font-family: inherit;
+        }
+        .pagination .page-jump input:focus {
+            outline: none;
+            border-color: rgba(180, 40, 40, 0.4);
+        }
+        .pagination .page-jump button {
+            padding: 0.2rem 0.5rem;
+            font-size: 0.65rem;
+            min-width: auto;
+        }
 
-    .snowflake {
-      position: fixed;
-      top: -10px;
-      color: rgba(255, 255, 255, 0.06);
-      user-select: none;
-      pointer-events: none;
-      animation: fall linear infinite;
-      z-index: 0;
-      font-size: 14px;
-    }
-    @keyframes fall {
-      from { transform: translateY(-10vh) rotate(0deg); }
-      to { transform: translateY(110vh) rotate(360deg); }
-    }
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            color: rgba(255, 255, 255, 0.04);
+            user-select: none;
+            pointer-events: none;
+            animation: fall linear infinite;
+            z-index: 0;
+            font-size: 12px;
+        }
+        @keyframes fall {
+            from {
+                transform: translateY(-10vh) rotate(0deg);
+            }
+            to {
+                transform: translateY(110vh) rotate(360deg);
+            }
+        }
 
-    @media (max-width: 768px) {
-      .dashboard-container { padding: 1.5rem 1rem; }
-      .page-title { font-size: 1.4rem; letter-spacing: 3px; }
-      .header-bar { flex-direction: column; align-items: stretch; gap: 0.5rem; }
-      .user-info { justify-content: center; }
-      .search-row { flex-direction: column; }
-      .btn-search { width: 100%; justify-content: center; }
-      .search-counter { font-size: 0.7rem; flex-wrap: wrap; }
-      .pagination { gap: 0.3rem; }
-      .pagination button { padding: 0.3rem 0.6rem; font-size: 0.7rem; min-width: 30px; }
-      .pagination .page-jump input { width: 40px; font-size: 0.7rem; }
-      .pagination .page-jump { margin-left: 0.2rem; }
-    }
-  </style>
+        footer {
+            margin-top: 2rem;
+            padding: 1rem 0 0.3rem;
+            text-align: center;
+            color: #222;
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+            }
+            .title {
+                font-size: 1.3rem;
+                letter-spacing: 2px;
+            }
+            .search-row {
+                flex-direction: column;
+            }
+            .btn-search {
+                width: 100%;
+            }
+            .pagination button {
+                padding: 0.2rem 0.4rem;
+                font-size: 0.6rem;
+                min-width: 26px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-  <div class="dashboard-container">
-    <div class="header-bar">
-      <h1 class="page-title">WHBF <span>DMS</span></h1>
-      <div class="user-info">
-        <span class="user-email" id="user-email">—</span>
-        <span class="user-tier" id="user-tier">normal</span>
-        <button class="btn-logout" id="btn-logout">Sair</button>
-      </div>
-    </div>
-
-    <div class="search-counter">
-      <span>Buscas disponíveis</span>
-      <span class="count" id="search-remaining">—</span>
-      <span class="divider">/</span>
-      <span class="limit" id="search-limit">—</span>
-    </div>
-
-    <div class="search-row">
-      <input id="author-id" type="text" placeholder="ID do autor (17-19 dígitos)" class="search-input">
-      <input id="keyword" type="text" placeholder="Palavra-chave (opcional)" class="search-input">
-      <button id="btn-search" class="btn-search">Pesquisar</button>
-    </div>
-
-    <div id="results">
-      <div class="empty-state">
-        <div class="icon">⌘</div>
-        <h3>Nenhuma mensagem</h3>
-        <p>Insira um ID de autor ou palavra-chave</p>
-      </div>
-    </div>
-
-    <!-- Paginação -->
-    <div id="pagination-container" class="pagination" style="display: none;">
-      <button id="page-first">««</button>
-      <button id="page-prev5">-5</button>
-      <button id="page-prev">‹</button>
-      <div id="page-numbers" style="display: flex; gap: 0.3rem; flex-wrap: wrap;"></div>
-      <button id="page-next">›</button>
-      <button id="page-next5">+5</button>
-      <button id="page-last">»»</button>
-      
-      <div class="page-jump">
-        <span style="color:#555;font-size:0.7rem;">Ir para</span>
-        <input id="page-jump-input" type="number" min="1" value="1">
-        <button id="page-jump-btn">Ir</button>
-      </div>
-      
-      <span class="page-info" id="page-info"></span>
-    </div>
-
-    <p id="result-info"></p>
-  </div>
-
-  <footer>© 2026 whbf.cc</footer>
-
-  <!-- NEVE -->
-  <script>
-    (function snow() {
-      const flakes = [];
-      let lastTime = performance.now();
-      function createParticle() {
-        const p = document.createElement('div');
-        p.className = 'snowflake';
-        p.style.left = Math.random() * window.innerWidth + 'px';
-        p.style.fontSize = (Math.random() * 12 + 6) + 'px';
-        p.innerText = '❄';
-        document.body.appendChild(p);
-        flakes.push({ el: p, y: -10, speed: Math.random() * 150 + 200 });
-      }
-      function update(time) {
-        const delta = Math.min((time - lastTime) / 1000, 0.1);
-        lastTime = time;
-        if (Math.random() < delta * 30) createParticle();
-        flakes.forEach((flake, i) => {
-          flake.y += flake.speed * delta;
-          flake.el.style.transform = `translateY(${flake.y}px)`;
-          if (flake.y > window.innerHeight + 200) {
-            flake.el.remove();
-            flakes.splice(i, 1);
-          }
-        });
-        requestAnimationFrame(update);
-      }
-      requestAnimationFrame(update);
-    })();
-  </script>
-
-  <!-- TÍTULO ANIMADO -->
-  <script>
-    (function titleAnim() {
-      const titles = ["2","23","238","2382","23826","2382","238","23"];
-      let i = 0;
-      setInterval(() => { document.title = titles[i]; i = (i + 1) % titles.length; }, 480);
-    })();
-  </script>
-
-  <!-- FIREBASE + LÓGICA -->
-  <script type="importmap">
-    {
-      "imports": {
-        "firebase/app": "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js",
-        "firebase/auth": "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js",
-        "firebase/firestore": "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js"
-      }
-    }
-  </script>
-
-  <script type="module">
-    import { initializeApp } from "firebase/app";
-    import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-    import {
-      getFirestore,
-      doc,
-      getDoc,
-      setDoc,
-      updateDoc,
-      increment
-    } from "firebase/firestore";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDXX5y50eUHJtFNa4S4r5LrBoPXpUKeGBQ",
-      authDomain: "gsrgszsgz.firebaseapp.com",
-      projectId: "gsrgszsgz",
-      storageBucket: "gsrgszsgz.firebasestorage.app",
-      messagingSenderId: "896231461425",
-      appId: "1:896231461425:web:f5e1692a5d727ff1ed7b10"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    // ===== ELEMENTOS =====
-    const resultsDiv = document.getElementById('results');
-    const infoDiv = document.getElementById('result-info');
-    const authorInput = document.getElementById('author-id');
-    const keywordInput = document.getElementById('keyword');
-    const searchBtn = document.getElementById('btn-search');
-    const logoutBtn = document.getElementById('btn-logout');
-    const userEmailEl = document.getElementById('user-email');
-    const userTierEl = document.getElementById('user-tier');
-    const searchRemaining = document.getElementById('search-remaining');
-    const searchLimitEl = document.getElementById('search-limit');
-
-    // Paginação
-    const paginationContainer = document.getElementById('pagination-container');
-    const pageNumbers = document.getElementById('page-numbers');
-    const pagePrev = document.getElementById('page-prev');
-    const pageNext = document.getElementById('page-next');
-    const pagePrev5 = document.getElementById('page-prev5');
-    const pageNext5 = document.getElementById('page-next5');
-    const pageFirst = document.getElementById('page-first');
-    const pageLast = document.getElementById('page-last');
-    const pageInfo = document.getElementById('page-info');
-    const jumpInput = document.getElementById('page-jump-input');
-    const jumpBtn = document.getElementById('page-jump-btn');
-
-    let currentUser = null;
-    const RATE_LIMIT_MS = 3000;
-    let lastSearchTime = 0;
-
-    // ===== ESTADO =====
-    let currentPage = 1;
-    let totalPages = 0;
-    let totalMessages = 0;
-    let currentAuthorId = '';
-    let currentKeyword = '';
-    const PAGE_LIMIT = 100;
-    
-    // ===== CACHE =====
-    const pageCache = new Map();
-
-    // ===== API URL =====
-    const API_URL = 'https://ge6c22a3518a389-dms.adb.eu-stockholm-1.oraclecloudapps.com/ords/admin/api/search';
-
-    // ===== FUNÇÕES FIRESTORE =====
-
-    async function getUserData(uid) {
-      const ref = doc(db, 'users', uid);
-      const snap = await getDoc(ref);
-      return snap.exists() ? { uid, ...snap.data() } : null;
-    }
-
-    async function ensureUserExists(uid, email) {
-      const ref = doc(db, 'users', uid);
-      const snap = await getDoc(ref);
-      if (!snap.exists()) {
-        const today = new Date().toISOString().split('T')[0];
-        await setDoc(ref, {
-          email,
-          tier: 'normal',
-          searchLimit: 50,
-          searchesToday: 0,
-          lastResetDate: today,
-          createdAt: new Date().toISOString()
-        });
-        return { uid, email, tier: 'normal', searchLimit: 50, searchesToday: 0, lastResetDate: today };
-      }
-      return { uid, ...snap.data() };
-    }
-
-    async function canSearch(uid) {
-      const data = await getUserData(uid);
-      if (!data) return { canSearch: false, limit: 0, used: 0, remaining: 0 };
-
-      const today = new Date().toISOString().split('T')[0];
-      const limit = data.searchLimit || 50;
-      let used = data.searchesToday || 0;
-
-      if (data.lastResetDate !== today) {
-        await updateDoc(doc(db, 'users', uid), { searchesToday: 0, lastResetDate: today });
-        used = 0;
-      }
-
-      const remaining = Math.max(0, limit - used);
-      return { canSearch: remaining > 0, limit, used, remaining };
-    }
-
-    async function incrementSearch(uid) {
-      const ref = doc(db, 'users', uid);
-      await updateDoc(ref, { searchesToday: increment(1) });
-      const data = await getUserData(uid);
-      return { searchesToday: data.searchesToday, limit: data.searchLimit };
-    }
-
-    // ===== ATUALIZAR UI =====
-
-    async function updateUI(uid) {
-      const data = await getUserData(uid);
-      if (data) {
-        const today = new Date().toISOString().split('T')[0];
-        const limit = data.searchLimit || 50;
-        let used = data.searchesToday || 0;
-
-        if (data.lastResetDate !== today) used = 0;
-
-        const remaining = Math.max(0, limit - used);
-
-        userEmailEl.textContent = data.email || '—';
-        userTierEl.textContent = (data.tier || 'normal').toUpperCase();
-        searchRemaining.textContent = remaining;
-        searchLimitEl.textContent = limit;
-        searchBtn.disabled = remaining <= 0;
-      }
-    }
-
-    // ===== RENDERIZAR RESULTADOS =====
-
-    function renderMessages(items, total) {
-      if (!items || items.length === 0) {
-        return `<div class="empty-state"><div class="icon">◇</div><h3>Nenhuma mensagem encontrada</h3><p>Tente outro ID ou palavra-chave</p></div>`;
-      }
-
-      let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;font-size:0.75rem;color:#555;">
-        <span>${items.length} mensagens ${total ? `de ${total}` : ''}</span>
-      </div>`;
-
-      items.forEach((msg, idx) => {
-        html += `
-          <div class="msg-card">
-            <div class="msg-header">
-              <span class="msg-author">${escapeHtml(msg.author || 'Desconhecido')}</span>
-              <span class="msg-server">${escapeHtml(msg.server || 'Servidor')}</span>
-              <span style="color:#333;">›</span>
-              <span class="msg-channel">${escapeHtml(msg.channel || 'Canal')}</span>
-              ${msg.thread ? `<span style="color:#333;">›</span><span class="msg-thread">${escapeHtml(msg.thread)}</span>` : ''}
-              <span class="msg-date">${formatDate(msg.created_at)}</span>
-              <span class="msg-index">#${idx + 1}</span>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1 class="title">WHBF <span>DMS</span></h1>
+            <div class="user-info">
+                <span class="user-email" id="user-email">—</span>
+                <span class="user-tier" id="user-tier">normal</span>
+                <button class="btn-logout" id="btn-logout">Sair</button>
             </div>
-            <div class="msg-content">${escapeHtml(msg.content || '')}</div>
-            <div class="msg-footer">
-              <span>ID: ${msg.message_id || msg.id || '—'}</span>
-              ${msg.channel_id ? `<span>Canal: ${msg.channel_id}</span>` : ''}
+        </div>
+
+        <!-- CONTADOR -->
+        <div class="search-counter">
+            <span>Buscas disponíveis</span>
+            <span class="count" id="search-remaining">—</span>
+            <span class="divider">/</span>
+            <span class="limit" id="search-limit">—</span>
+        </div>
+
+        <!-- BUSCA -->
+        <div class="search-row">
+            <input id="author-id" type="text" placeholder="ID do autor (17-19 dígitos)" class="search-input">
+            <input id="keyword" type="text" placeholder="Palavra-chave (opcional)" class="search-input">
+            <button id="btn-search" class="btn-search">Pesquisar</button>
+        </div>
+
+        <!-- RESULTADOS -->
+        <div id="results">
+            <div class="empty-state">
+                <div class="icon">⌘</div>
+                <h3>Nenhuma mensagem</h3>
+                <p>Insira um ID de autor ou palavra-chave</p>
             </div>
-          </div>
-        `;
-      });
+        </div>
 
-      return html;
-    }
+        <!-- PAGINAÇÃO -->
+        <div id="pagination-container" class="pagination">
+            <button id="page-first">««</button>
+            <button id="page-prev5">-5</button>
+            <button id="page-prev">‹</button>
+            <div id="page-numbers" style="display:flex;gap:0.2rem;flex-wrap:wrap;"></div>
+            <button id="page-next">›</button>
+            <button id="page-next5">+5</button>
+            <button id="page-last">»»</button>
+            <div class="page-jump">
+                <span style="color:#555;font-size:0.65rem;">Ir</span>
+                <input id="page-jump-input" type="number" min="1" value="1">
+                <button id="page-jump-btn">OK</button>
+            </div>
+            <span class="page-info" id="page-info"></span>
+        </div>
 
-    function escapeHtml(text) {
-      if (!text) return '';
-      const el = document.createElement('div');
-      el.textContent = text;
-      return el.innerHTML;
-    }
+        <p id="result-info"></p>
+    </div>
 
-    function formatDate(dateStr) {
-      if (!dateStr) return '—';
-      try {
-        const d = new Date(dateStr);
-        return d.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-      } catch { return dateStr; }
-    }
+    <footer>© 2026 whbf.cc</footer>
 
-    // ===== RENDERIZAR PAGINAÇÃO =====
+    <!-- NEVE -->
+    <script>
+        (function snow() {
+            const flakes = [];
+            let lastTime = performance.now();
 
-    function renderPagination(page, totalPages, totalMessages) {
-      if (totalPages <= 1) {
-        paginationContainer.style.display = 'none';
-        return;
-      }
+            function createParticle() {
+                const p = document.createElement('div');
+                p.className = 'snowflake';
+                p.style.left = Math.random() * window.innerWidth + 'px';
+                p.style.fontSize = (Math.random() * 10 + 6) + 'px';
+                p.innerText = '❄';
+                document.body.appendChild(p);
+                flakes.push({ el: p, y: -10, speed: Math.random() * 150 + 150 });
+            }
 
-      paginationContainer.style.display = 'flex';
-      pageInfo.textContent = `${totalMessages} mensagens • Página ${page} de ${totalPages}`;
-      jumpInput.max = totalPages;
-      jumpInput.value = page;
+            function update(time) {
+                const delta = Math.min((time - lastTime) / 1000, 0.1);
+                lastTime = time;
+                if (Math.random() < delta * 30) createParticle();
+                flakes.forEach((flake, i) => {
+                    flake.y += flake.speed * delta;
+                    flake.el.style.transform = `translateY(${flake.y}px)`;
+                    if (flake.y > window.innerHeight + 200) {
+                        flake.el.remove();
+                        flakes.splice(i, 1);
+                    }
+                });
+                requestAnimationFrame(update);
+            }
+            requestAnimationFrame(update);
+        })();
+    </script>
 
-      pagePrev.disabled = page <= 1;
-      pageNext.disabled = page >= totalPages;
-      pagePrev5.disabled = page <= 5;
-      pageNext5.disabled = page > totalPages - 5;
-      pageFirst.disabled = page <= 1;
-      pageLast.disabled = page >= totalPages;
+    <!-- TÍTULO ANIMADO -->
+    <script>
+        (function titleAnim() {
+            const titles = ["2", "23", "238", "2382", "23826", "2382", "238", "23"];
+            let i = 0;
+            setInterval(() => { document.title = titles[i];
+                i = (i + 1) % titles.length; }, 480);
+        })();
+    </script>
 
-      pageNumbers.innerHTML = '';
-      
-      let startPage = Math.max(1, page - 2);
-      let endPage = Math.min(totalPages, page + 2);
-      
-      if (endPage - startPage < 4) {
-        if (startPage > 1) startPage = Math.max(1, endPage - 4);
-        if (endPage < totalPages) endPage = Math.min(totalPages, startPage + 4);
-      }
-
-      if (startPage > 1) {
-        const btn = createPageButton(1);
-        pageNumbers.appendChild(btn);
-        if (startPage > 2) {
-          const dots = document.createElement('span');
-          dots.textContent = '…';
-          dots.style.color = '#444';
-          dots.style.padding = '0 0.2rem';
-          pageNumbers.appendChild(dots);
+    <!-- FIREBASE + LÓGICA -->
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js",
+                "firebase/auth": "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js",
+                "firebase/firestore": "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js"
+            }
         }
-      }
+    </script>
 
-      for (let i = startPage; i <= endPage; i++) {
-        const btn = createPageButton(i);
-        if (i === page) btn.classList.add('active');
-        pageNumbers.appendChild(btn);
-      }
+    <script type="module">
+        import { initializeApp } from "firebase/app";
+        import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment } from "firebase/firestore";
 
-      if (endPage < totalPages) {
-        if (endPage < totalPages - 1) {
-          const dots = document.createElement('span');
-          dots.textContent = '…';
-          dots.style.color = '#444';
-          dots.style.padding = '0 0.2rem';
-          pageNumbers.appendChild(dots);
+        // ===== CONFIG =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXX5y50eUHJtFNa4S4r5LrBoPXpUKeGBQ",
+            authDomain: "gsrgszsgz.firebaseapp.com",
+            projectId: "gsrgszsgz",
+            storageBucket: "gsrgszsgz.firebasestorage.app",
+            messagingSenderId: "896231461425",
+            appId: "1:896231461425:web:f5e1692a5d727ff1ed7b10"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // ===== ELEMENTOS =====
+        const resultsDiv = document.getElementById('results');
+        const infoDiv = document.getElementById('result-info');
+        const authorInput = document.getElementById('author-id');
+        const keywordInput = document.getElementById('keyword');
+        const searchBtn = document.getElementById('btn-search');
+        const logoutBtn = document.getElementById('btn-logout');
+        const userEmailEl = document.getElementById('user-email');
+        const userTierEl = document.getElementById('user-tier');
+        const searchRemaining = document.getElementById('search-remaining');
+        const searchLimitEl = document.getElementById('search-limit');
+
+        const paginationContainer = document.getElementById('pagination-container');
+        const pageNumbers = document.getElementById('page-numbers');
+        const pagePrev = document.getElementById('page-prev');
+        const pageNext = document.getElementById('page-next');
+        const pagePrev5 = document.getElementById('page-prev5');
+        const pageNext5 = document.getElementById('page-next5');
+        const pageFirst = document.getElementById('page-first');
+        const pageLast = document.getElementById('page-last');
+        const pageInfo = document.getElementById('page-info');
+        const jumpInput = document.getElementById('page-jump-input');
+        const jumpBtn = document.getElementById('page-jump-btn');
+
+        // ===== VARIAVEIS =====
+        let currentUser = null;
+        let currentPage = 1;
+        let totalPages = 0;
+        let totalMessages = 0;
+        let currentAuthorId = '';
+        let currentKeyword = '';
+        const PAGE_LIMIT = 100;
+        const RATE_LIMIT_MS = 3000;
+        let lastSearchTime = 0;
+        const pageCache = new Map();
+
+        // ===== API =====
+        const API_URL = 'https://ge6c22a3518a389-dms.adb.eu-stockholm-1.oraclecloudapps.com/ords/admin/api/search';
+
+        // ===== FUNÇÕES FIRESTORE =====
+        async function getUserData(uid) {
+            const ref = doc(db, 'users', uid);
+            const snap = await getDoc(ref);
+            return snap.exists() ? { uid, ...snap.data() } : null;
         }
-        const btn = createPageButton(totalPages);
-        pageNumbers.appendChild(btn);
-      }
-    }
 
-    function createPageButton(pageNum) {
-      const btn = document.createElement('button');
-      btn.textContent = pageNum;
-      btn.addEventListener('click', () => {
-        if (pageNum !== currentPage) {
-          loadPage(pageNum);
+        async function ensureUserExists(uid, email) {
+            const ref = doc(db, 'users', uid);
+            const snap = await getDoc(ref);
+            if (!snap.exists()) {
+                const today = new Date().toISOString().split('T')[0];
+                await setDoc(ref, {
+                    email,
+                    tier: 'normal',
+                    searchLimit: 50,
+                    searchesToday: 0,
+                    lastResetDate: today,
+                    createdAt: new Date().toISOString()
+                });
+                return { uid, email, tier: 'normal', searchLimit: 50, searchesToday: 0, lastResetDate: today };
+            }
+            return { uid, ...snap.data() };
         }
-      });
-      return btn;
-    }
 
-    // ===== CARREGAR PÁGINA COM CACHE =====
+        async function canSearch(uid) {
+            const data = await getUserData(uid);
+            if (!data) return { canSearch: false, limit: 0, used: 0, remaining: 0 };
+            const today = new Date().toISOString().split('T')[0];
+            const limit = data.searchLimit || 50;
+            let used = data.searchesToday || 0;
+            if (data.lastResetDate !== today) {
+                await updateDoc(doc(db, 'users', uid), { searchesToday: 0, lastResetDate: today });
+                used = 0;
+            }
+            const remaining = Math.max(0, limit - used);
+            return { canSearch: remaining > 0, limit, used, remaining };
+        }
 
-    async function loadPage(page) {
-      if (!currentUser) return;
-      if (page < 1 || page > totalPages) return;
+        async function incrementSearch(uid) {
+            const ref = doc(db, 'users', uid);
+            await updateDoc(ref, { searchesToday: increment(1) });
+            const data = await getUserData(uid);
+            return { searchesToday: data.searchesToday, limit: data.searchLimit };
+        }
 
-      // Verifica cache
-      const cacheKey = `${currentAuthorId}_${currentKeyword}_${page}`;
-      if (pageCache.has(cacheKey)) {
-        console.log(`📦 Página ${page} carregada da cache`);
-        const cached = pageCache.get(cacheKey);
-        currentPage = page;
-        currentData = cached.items;
-        resultsDiv.innerHTML = renderMessages(cached.items, totalMessages);
-        renderPagination(currentPage, totalPages, totalMessages);
-        infoDiv.textContent = `Mostrando ${cached.items.length} de ${totalMessages} mensagens (página ${page} de ${totalPages}) [cache]`;
-        return;
-      }
+        // ===== UI =====
+        async function updateUI(uid) {
+            const data = await getUserData(uid);
+            if (data) {
+                const today = new Date().toISOString().split('T')[0];
+                const limit = data.searchLimit || 50;
+                let used = data.searchesToday || 0;
+                if (data.lastResetDate !== today) used = 0;
+                const remaining = Math.max(0, limit - used);
+                userEmailEl.textContent = data.email || '—';
+                userTierEl.textContent = (data.tier || 'normal').toUpperCase();
+                searchRemaining.textContent = remaining;
+                searchLimitEl.textContent = limit;
+                searchBtn.disabled = remaining <= 0;
+            }
+        }
 
-      const offset = (page - 1) * PAGE_LIMIT;
-      currentPage = page;
+        // ===== RENDER =====
+        function renderMessages(items) {
+            if (!items || items.length === 0) {
+                return `<div class="empty-state"><div class="icon">◇</div><h3>Nenhuma mensagem</h3><p>Tente outro ID</p></div>`;
+            }
+            let html = `<div style="display:flex;justify-content:space-between;margin-bottom:0.8rem;font-size:0.7rem;color:#555;">
+                <span>${items.length} mensagens</span>
+            </div>`;
+            items.forEach((msg, idx) => {
+                html += `
+                <div class="msg-card">
+                    <div class="msg-header">
+                        <span class="msg-author">${escapeHtml(msg.author || 'Desconhecido')}</span>
+                        <span class="msg-server">${escapeHtml(msg.server || 'Servidor')}</span>
+                        <span style="color:#333;">›</span>
+                        <span class="msg-channel">${escapeHtml(msg.channel || 'Canal')}</span>
+                        <span class="msg-date">${formatDate(msg.created_at)}</span>
+                    </div>
+                    <div class="msg-content">${escapeHtml(msg.content || '')}</div>
+                    <div class="msg-footer">
+                        <span>ID: ${msg.message_id || msg.id || '—'}</span>
+                    </div>
+                </div>
+                `;
+            });
+            return html;
+        }
 
-      resultsDiv.innerHTML = `<div class="loading-state"><div class="loading-spinner"></div><div class="text">Carregando página ${page}...</div></div>`;
+        function escapeHtml(text) {
+            if (!text) return '';
+            const el = document.createElement('div');
+            el.textContent = text;
+            return el.innerHTML;
+        }
 
-      try {
-        const params = new URLSearchParams();
-        if (currentAuthorId) params.append('author_id', currentAuthorId);
-        if (currentKeyword) params.append('keyword', currentKeyword);
-        params.append('limit', PAGE_LIMIT);
-        params.append('offset', offset);
-        const url = `${API_URL}?${params.toString()}`;
+        function formatDate(dateStr) {
+            if (!dateStr) return '—';
+            try {
+                const d = new Date(dateStr);
+                return d.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit',
+                    minute: '2-digit' });
+            } catch { return dateStr; }
+        }
 
-        const response = await fetch(url, {
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' }
+        // ===== PAGINAÇÃO =====
+        function renderPagination(page, totalPages, totalMessages) {
+            if (totalPages <= 1) {
+                paginationContainer.style.display = 'none';
+                return;
+            }
+            paginationContainer.style.display = 'flex';
+            pageInfo.textContent = `${totalMessages} msgs • ${page}/${totalPages}`;
+            jumpInput.max = totalPages;
+            jumpInput.value = page;
+
+            pagePrev.disabled = page <= 1;
+            pageNext.disabled = page >= totalPages;
+            pagePrev5.disabled = page <= 5;
+            pageNext5.disabled = page > totalPages - 5;
+            pageFirst.disabled = page <= 1;
+            pageLast.disabled = page >= totalPages;
+
+            pageNumbers.innerHTML = '';
+            let start = Math.max(1, page - 2);
+            let end = Math.min(totalPages, page + 2);
+            if (end - start < 4) {
+                if (start > 1) start = Math.max(1, end - 4);
+                if (end < totalPages) end = Math.min(totalPages, start + 4);
+            }
+            if (start > 1) {
+                pageNumbers.appendChild(createPageBtn(1));
+                if (start > 2) { const d = document.createElement('span');
+                    d.textContent = '…';
+                    d.style.color = '#444';
+                    d.style.padding = '0 0.2rem';
+                    pageNumbers.appendChild(d); }
+            }
+            for (let i = start; i <= end; i++) {
+                const btn = createPageBtn(i);
+                if (i === page) btn.classList.add('active');
+                pageNumbers.appendChild(btn);
+            }
+            if (end < totalPages) {
+                if (end < totalPages - 1) { const d = document.createElement('span');
+                    d.textContent = '…';
+                    d.style.color = '#444';
+                    d.style.padding = '0 0.2rem';
+                    pageNumbers.appendChild(d); }
+                pageNumbers.appendChild(createPageBtn(totalPages));
+            }
+        }
+
+        function createPageBtn(num) {
+            const btn = document.createElement('button');
+            btn.textContent = num;
+            btn.addEventListener('click', () => { if (num !== currentPage) loadPage(num); });
+            return btn;
+        }
+
+        // ===== CARREGAR PÁGINA =====
+        async function loadPage(page) {
+            if (!currentUser || page < 1 || page > totalPages) return;
+
+            const cacheKey = `${currentAuthorId}_${currentKeyword}_${page}`;
+            if (pageCache.has(cacheKey)) {
+                const cached = pageCache.get(cacheKey);
+                currentPage = page;
+                resultsDiv.innerHTML = renderMessages(cached.items);
+                renderPagination(currentPage, totalPages, totalMessages);
+                infoDiv.textContent = `Página ${page}/${totalPages} [cache]`;
+                return;
+            }
+
+            const offset = (page - 1) * PAGE_LIMIT;
+            currentPage = page;
+            resultsDiv.innerHTML = `<div class="loading-state"><div class="loading-spinner"></div><div class="text">Carregando página ${page}...</div></div>`;
+
+            try {
+                const params = new URLSearchParams();
+                if (currentAuthorId) params.append('author_id', currentAuthorId);
+                if (currentKeyword) params.append('keyword', currentKeyword);
+                params.append('limit', PAGE_LIMIT);
+                params.append('offset', offset);
+                const response = await fetch(`${API_URL}?${params.toString()}`, {
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                const items = data.items || [];
+                if (items.length === 0 && page > 1) { loadPage(page - 1); return; }
+
+                pageCache.set(cacheKey, { items });
+                currentPage = page;
+                resultsDiv.innerHTML = renderMessages(items);
+                renderPagination(currentPage, totalPages, totalMessages);
+                infoDiv.textContent = `Página ${page}/${totalPages}`;
+            } catch (error) {
+                console.error(error);
+                resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">✗</div><h3>Erro</h3><p>${escapeHtml(error.message)}</p></div>`;
+            }
+        }
+
+        // ===== BUSCA =====
+        async function performSearch() {
+            if (!currentUser) return;
+            const authorId = authorInput.value.trim();
+            const keyword = keywordInput.value.trim();
+            if (!authorId && !keyword) {
+                resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">◈</div><h3>Informe um ID</h3></div>`;
+                paginationContainer.style.display = 'none';
+                return;
+            }
+
+            const now = Date.now();
+            if (now - lastSearchTime < RATE_LIMIT_MS) {
+                const wait = Math.ceil((RATE_LIMIT_MS - (now - lastSearchTime)) / 1000);
+                resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⏱</div><h3>Aguarde ${wait}s</h3></div>`;
+                return;
+            }
+
+            const check = await canSearch(currentUser.uid);
+            if (!check.canSearch) {
+                resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⊘</div><h3>Limite diário atingido</h3><p>${check.used}/${check.limit}</p></div>`;
+                await updateUI(currentUser.uid);
+                return;
+            }
+
+            lastSearchTime = now;
+            await incrementSearch(currentUser.uid);
+            await updateUI(currentUser.uid);
+
+            pageCache.clear();
+            currentAuthorId = authorId;
+            currentKeyword = keyword;
+            currentPage = 1;
+            totalMessages = 0;
+            totalPages = 0;
+
+            resultsDiv.innerHTML = `<div class="loading-state"><div class="loading-spinner"></div><div class="text">Buscando...</div></div>`;
+
+            try {
+                const params = new URLSearchParams();
+                params.append('author_id', authorId);
+                if (keyword) params.append('keyword', keyword);
+                params.append('limit', PAGE_LIMIT);
+                params.append('offset', 0);
+                const response = await fetch(`${API_URL}?${params.toString()}`, {
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                const items = data.items || [];
+                const count = data.count || items.length;
+
+                if (items.length === 0) {
+                    resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">◇</div><h3>Nenhuma mensagem</h3></div>`;
+                    paginationContainer.style.display = 'none';
+                    return;
+                }
+
+                totalMessages = count;
+                totalPages = Math.ceil(count / PAGE_LIMIT);
+                pageCache.set(`${authorId}_${keyword}_1`, { items });
+
+                resultsDiv.innerHTML = renderMessages(items);
+                renderPagination(1, totalPages, count);
+                infoDiv.textContent = `${items.length} de ${count} mensagens • Página 1/${totalPages}`;
+            } catch (error) {
+                console.error(error);
+                resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">✗</div><h3>Erro na busca</h3><p>${escapeHtml(error.message)}</p></div>`;
+                paginationContainer.style.display = 'none';
+            }
+        }
+
+        // ===== EVENTOS =====
+        searchBtn.addEventListener('click', performSearch);
+        authorInput.addEventListener('keypress', e => { if (e.key === 'Enter') performSearch(); });
+        keywordInput.addEventListener('keypress', e => { if (e.key === 'Enter') performSearch(); });
+
+        pagePrev.addEventListener('click', () => { if (currentPage > 1) loadPage(currentPage - 1); });
+        pageNext.addEventListener('click', () => { if (currentPage < totalPages) loadPage(currentPage + 1); });
+        pagePrev5.addEventListener('click', () => { loadPage(Math.max(1, currentPage - 5)); });
+        pageNext5.addEventListener('click', () => { loadPage(Math.min(totalPages, currentPage + 5)); });
+        pageFirst.addEventListener('click', () => loadPage(1));
+        pageLast.addEventListener('click', () => loadPage(totalPages));
+        jumpBtn.addEventListener('click', () => {
+            const p = parseInt(jumpInput.value);
+            if (p >= 1 && p <= totalPages) loadPage(p);
+        });
+        jumpInput.addEventListener('keypress', e => { if (e.key === 'Enter') jumpBtn.click(); });
+
+        logoutBtn.addEventListener('click', async () => {
+            await signOut(auth);
+            window.location.href = '/';
         });
 
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-
-        const data = await response.json();
-        const items = data.items || [];
-
-        if (items.length === 0 && page > 1) {
-          loadPage(page - 1);
-          return;
-        }
-
-        // Guarda na cache
-        pageCache.set(cacheKey, { items, page, timestamp: Date.now() });
-        console.log(`💾 Página ${page} guardada na cache`);
-
-        currentData = items;
-        resultsDiv.innerHTML = renderMessages(items, totalMessages);
-        renderPagination(currentPage, totalPages, totalMessages);
-        infoDiv.textContent = `Mostrando ${items.length} de ${totalMessages} mensagens (página ${page} de ${totalPages})`;
-
-      } catch (error) {
-        console.error('Erro:', error);
-        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">✗</div><h3>Erro ao carregar página</h3><p>${escapeHtml(error.message)}</p></div>`;
-      }
-    }
-
-    // ===== PRIMEIRA BUSCA =====
-
-    async function performSearch() {
-      if (!currentUser) {
-        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⊘</div><h3>Faça login primeiro</h3></div>`;
-        return;
-      }
-
-      const authorId = authorInput.value.trim();
-      const keyword = keywordInput.value.trim();
-
-      if (!authorId && !keyword) {
-        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">◈</div><h3>Informe um ID ou palavra-chave</h3></div>`;
-        infoDiv.textContent = '';
-        paginationContainer.style.display = 'none';
-        return;
-      }
-
-      const now = Date.now();
-      if (now - lastSearchTime < RATE_LIMIT_MS) {
-        const wait = Math.ceil((RATE_LIMIT_MS - (now - lastSearchTime)) / 1000);
-        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⏱</div><h3>Aguarde ${wait}s</h3><p>Intervalo entre buscas</p></div>`;
-        return;
-      }
-
-      const check = await canSearch(currentUser.uid);
-      if (!check.canSearch) {
-        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⊘</div><h3>Limite diário atingido</h3><p>${check.used} de ${check.limit} buscas utilizadas</p></div>`;
-        await updateUI(currentUser.uid);
-        return;
-      }
-
-      lastSearchTime = now;
-      await incrementSearch(currentUser.uid);
-      await updateUI(currentUser.uid);
-
-      // Limpa cache antiga
-      pageCache.clear();
-
-      currentAuthorId = authorId;
-      currentKeyword = keyword;
-      currentPage = 1;
-      currentData = [];
-      totalMessages = 0;
-      totalPages = 0;
-
-      resultsDiv.innerHTML = `<div class="loading-state"><div class="loading-spinner"></div><div class="text">Buscando mensagens...</div></div>`;
-      infoDiv.textContent = '';
-
-      try {
-        const params = new URLSearchParams();
-        if (authorId) params.append('author_id', authorId);
-        if (keyword) params.append('keyword', keyword);
-        params.append('limit', PAGE_LIMIT);
-        params.append('offset', 0);
-        const url = `${API_URL}?${params.toString()}`;
-
-        const response = await fetch(url, {
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' }
+        // ===== AUTH =====
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                await ensureUserExists(user.uid, user.email);
+                await updateUI(user.uid);
+                console.log('✅ Logado:', user.email);
+            } else {
+                window.location.href = '/';
+            }
         });
 
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
+        console.log('🔍 WHBF DMS carregado!');
+    </script>
 
-        const data = await response.json();
-        const items = data.items || [];
-        const count = data.count || items.length;
-
-        if (items.length === 0) {
-          resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">◇</div><h3>Nenhuma mensagem encontrada</h3><p>Tente outro ID ou palavra-chave</p></div>`;
-          infoDiv.textContent = '';
-          paginationContainer.style.display = 'none';
-          return;
-        }
-
-        totalMessages = count;
-        totalPages = Math.ceil(count / PAGE_LIMIT);
-        currentData = items;
-
-        // Guarda página 1 na cache
-        pageCache.set(`${authorId}_${keyword}_1`, { items, page: 1, timestamp: Date.now() });
-
-        resultsDiv.innerHTML = renderMessages(items, count);
-        renderPagination(1, totalPages, count);
-        infoDiv.textContent = `Mostrando ${items.length} de ${count} mensagens (página 1 de ${totalPages})`;
-
-      } catch (error) {
-        console.error('Erro:', error);
-        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">✗</div><h3>Erro na busca</h3><p>${escapeHtml(error.message)}</p></div>`;
-        infoDiv.textContent = 'Erro';
-        paginationContainer.style.display = 'none';
-      }
-    }
-
-    // ===== EVENTOS =====
-
-    searchBtn.addEventListener('click', performSearch);
-
-    authorInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') performSearch();
-    });
-    keywordInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') performSearch();
-    });
-
-    // Eventos de paginação
-    pagePrev.addEventListener('click', () => { if (currentPage > 1) loadPage(currentPage - 1); });
-    pageNext.addEventListener('click', () => { if (currentPage < totalPages) loadPage(currentPage + 1); });
-    pagePrev5.addEventListener('click', () => { if (currentPage > 5) loadPage(currentPage - 5); else loadPage(1); });
-    pageNext5.addEventListener('click', () => { if (currentPage + 5 <= totalPages) loadPage(currentPage + 5); else loadPage(totalPages); });
-    pageFirst.addEventListener('click', () => loadPage(1));
-    pageLast.addEventListener('click', () => loadPage(totalPages));
-
-    jumpBtn.addEventListener('click', () => {
-      const page = parseInt(jumpInput.value);
-      if (page >= 1 && page <= totalPages) {
-        loadPage(page);
-      }
-    });
-
-    jumpInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') jumpBtn.click();
-    });
-
-    logoutBtn.addEventListener('click', async () => {
-      try {
-        await signOut(auth);
-        window.location.href = '/';
-      } catch (error) {
-        console.error('Erro ao sair:', error);
-        alert('Falha ao sair. Tente novamente.');
-      }
-    });
-
-    // ===== AUTH STATE =====
-
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        currentUser = user;
-        await ensureUserExists(user.uid, user.email);
-        await updateUI(user.uid);
-        console.log('✅ Utilizador autenticado:', user.email);
-      } else {
-        window.location.href = '/';
-      }
-    });
-
-    console.log('🔍 WHBF DMS — Pesquisador com cache e paginação avançada carregado!');
-    console.log('📦 Cache: As páginas carregadas ficam guardadas no browser.');
-    console.log('🔄 Navegação: Use -5, +5, primeira, última ou vá para página específica.');
-  </script>
 </body>
 </html>
