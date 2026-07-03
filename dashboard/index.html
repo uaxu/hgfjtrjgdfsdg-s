@@ -152,37 +152,13 @@
     }
     .btn-search:disabled { opacity: 0.3; cursor: not-allowed; }
 
-    .btn-load-more {
-      background: rgba(180, 40, 40, 0.08);
-      border: 1px solid rgba(180, 40, 40, 0.15);
-      color: #888;
-      padding: 0.6rem 1.5rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      transition: all 0.25s ease;
-      letter-spacing: 0.5px;
-      font-family: inherit;
-      display: none;
-      margin-top: 0.8rem;
-    }
-    .btn-load-more:hover:not(:disabled) {
-      background: rgba(180, 40, 40, 0.15);
-      border-color: rgba(180, 40, 40, 0.3);
-      color: #cc3333;
-    }
-    .btn-load-more:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
-
     #results {
       background: rgba(0, 0, 0, 0.3);
       border: 1px solid rgba(255, 255, 255, 0.04);
       border-radius: 12px;
       padding: 1.5rem;
       min-height: 380px;
-      max-height: 65vh;
+      max-height: 50vh;
       overflow-y: auto;
       font-size: 0.9rem;
       line-height: 1.7;
@@ -190,6 +166,75 @@
     #results::-webkit-scrollbar { width: 5px; }
     #results::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 8px; }
     #results::-webkit-scrollbar-thumb { background: rgba(180, 40, 40, 0.25); border-radius: 8px; }
+
+    /* ===== PAGINAÇÃO ===== */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 1.2rem;
+      flex-wrap: wrap;
+    }
+    .pagination button {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: #888;
+      padding: 0.4rem 0.9rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      min-width: 36px;
+      text-align: center;
+    }
+    .pagination button:hover:not(:disabled) {
+      background: rgba(180, 40, 40, 0.15);
+      border-color: rgba(180, 40, 40, 0.3);
+      color: #cc3333;
+    }
+    .pagination button.active {
+      background: rgba(180, 40, 40, 0.2);
+      border-color: rgba(180, 40, 40, 0.4);
+      color: #cc3333;
+      font-weight: 600;
+    }
+    .pagination button:disabled {
+      opacity: 0.2;
+      cursor: not-allowed;
+    }
+    .pagination .page-info {
+      color: #444;
+      font-size: 0.75rem;
+      padding: 0 0.5rem;
+    }
+    .pagination .page-jump {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      margin-left: 0.5rem;
+    }
+    .pagination .page-jump input {
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: #e0e0e0;
+      padding: 0.3rem 0.5rem;
+      border-radius: 4px;
+      width: 50px;
+      font-size: 0.8rem;
+      text-align: center;
+      font-family: inherit;
+    }
+    .pagination .page-jump input:focus {
+      outline: none;
+      border-color: rgba(180, 40, 40, 0.4);
+    }
+    .pagination .page-jump button {
+      padding: 0.3rem 0.6rem;
+      font-size: 0.7rem;
+      min-width: auto;
+    }
 
     .empty-state {
       display: flex;
@@ -269,12 +314,6 @@
       letter-spacing: 0.3px;
     }
 
-    .footer-actions {
-      display: flex;
-      justify-content: center;
-      margin-top: 0.8rem;
-    }
-
     footer {
       margin-top: 2.5rem;
       padding: 1.5rem 0 0.5rem;
@@ -308,6 +347,10 @@
       .search-row { flex-direction: column; }
       .btn-search { width: 100%; justify-content: center; }
       .search-counter { font-size: 0.7rem; flex-wrap: wrap; }
+      .pagination { gap: 0.3rem; }
+      .pagination button { padding: 0.3rem 0.6rem; font-size: 0.7rem; min-width: 30px; }
+      .pagination .page-jump input { width: 40px; font-size: 0.7rem; }
+      .pagination .page-jump { margin-left: 0.2rem; }
     }
   </style>
 </head>
@@ -343,9 +386,26 @@
         <p>Insira um ID de autor ou palavra-chave</p>
       </div>
     </div>
-    <div class="footer-actions">
-      <button id="btn-load-more" class="btn-load-more">Carregar mais</button>
+
+    <!-- Paginação -->
+    <div id="pagination-container" class="pagination" style="display: none;">
+      <button id="page-first">««</button>
+      <button id="page-prev5">-5</button>
+      <button id="page-prev">‹</button>
+      <div id="page-numbers" style="display: flex; gap: 0.3rem; flex-wrap: wrap;"></div>
+      <button id="page-next">›</button>
+      <button id="page-next5">+5</button>
+      <button id="page-last">»»</button>
+      
+      <div class="page-jump">
+        <span style="color:#555;font-size:0.7rem;">Ir para</span>
+        <input id="page-jump-input" type="number" min="1" value="1">
+        <button id="page-jump-btn">Ir</button>
+      </div>
+      
+      <span class="page-info" id="page-info"></span>
     </div>
+
     <p id="result-info"></p>
   </div>
 
@@ -434,25 +494,39 @@
     const authorInput = document.getElementById('author-id');
     const keywordInput = document.getElementById('keyword');
     const searchBtn = document.getElementById('btn-search');
-    const loadMoreBtn = document.getElementById('btn-load-more');
     const logoutBtn = document.getElementById('btn-logout');
     const userEmailEl = document.getElementById('user-email');
     const userTierEl = document.getElementById('user-tier');
     const searchRemaining = document.getElementById('search-remaining');
     const searchLimitEl = document.getElementById('search-limit');
 
+    // Paginação
+    const paginationContainer = document.getElementById('pagination-container');
+    const pageNumbers = document.getElementById('page-numbers');
+    const pagePrev = document.getElementById('page-prev');
+    const pageNext = document.getElementById('page-next');
+    const pagePrev5 = document.getElementById('page-prev5');
+    const pageNext5 = document.getElementById('page-next5');
+    const pageFirst = document.getElementById('page-first');
+    const pageLast = document.getElementById('page-last');
+    const pageInfo = document.getElementById('page-info');
+    const jumpInput = document.getElementById('page-jump-input');
+    const jumpBtn = document.getElementById('page-jump-btn');
+
     let currentUser = null;
     const RATE_LIMIT_MS = 3000;
     let lastSearchTime = 0;
 
-    // ===== PAGINAÇÃO =====
-    let currentOffset = 0;
+    // ===== ESTADO =====
+    let currentPage = 1;
+    let totalPages = 0;
+    let totalMessages = 0;
     let currentAuthorId = '';
     let currentKeyword = '';
-    let totalCount = 0;
-    let allMessages = [];
-    let hasMoreMessages = true;
-    const PAGE_LIMIT = 100;  // 100 por página
+    const PAGE_LIMIT = 100;
+    
+    // ===== CACHE =====
+    const pageCache = new Map();
 
     // ===== API URL =====
     const API_URL = 'https://ge6c22a3518a389-dms.adb.eu-stockholm-1.oraclecloudapps.com/ords/admin/api/search';
@@ -578,72 +652,108 @@
       } catch { return dateStr; }
     }
 
-    // ===== BUSCA =====
+    // ===== RENDERIZAR PAGINAÇÃO =====
 
-    async function performSearch(loadMore = false) {
-      if (!currentUser) {
-        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⊘</div><h3>Faça login primeiro</h3></div>`;
+    function renderPagination(page, totalPages, totalMessages) {
+      if (totalPages <= 1) {
+        paginationContainer.style.display = 'none';
         return;
       }
 
-      const authorId = loadMore ? currentAuthorId : authorInput.value.trim();
-      const keyword = loadMore ? currentKeyword : keywordInput.value.trim();
+      paginationContainer.style.display = 'flex';
+      pageInfo.textContent = `${totalMessages} mensagens • Página ${page} de ${totalPages}`;
+      jumpInput.max = totalPages;
+      jumpInput.value = page;
 
-      // Reset da pesquisa
-      if (!loadMore) {
-        if (!authorId && !keyword) {
-          resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">◈</div><h3>Informe um ID ou palavra-chave</h3></div>`;
-          infoDiv.textContent = '';
-          return;
-        }
-        currentOffset = 0;
-        currentAuthorId = authorId;
-        currentKeyword = keyword;
-        allMessages = [];
-        totalCount = 0;
-        hasMoreMessages = true;
-        loadMoreBtn.style.display = 'none';
-        loadMoreBtn.textContent = 'Carregar mais';
-        loadMoreBtn.disabled = false;
+      pagePrev.disabled = page <= 1;
+      pageNext.disabled = page >= totalPages;
+      pagePrev5.disabled = page <= 5;
+      pageNext5.disabled = page > totalPages - 5;
+      pageFirst.disabled = page <= 1;
+      pageLast.disabled = page >= totalPages;
+
+      pageNumbers.innerHTML = '';
+      
+      let startPage = Math.max(1, page - 2);
+      let endPage = Math.min(totalPages, page + 2);
+      
+      if (endPage - startPage < 4) {
+        if (startPage > 1) startPage = Math.max(1, endPage - 4);
+        if (endPage < totalPages) endPage = Math.min(totalPages, startPage + 4);
       }
 
-      // Rate limit
-      const now = Date.now();
-      if (now - lastSearchTime < RATE_LIMIT_MS) {
-        const wait = Math.ceil((RATE_LIMIT_MS - (now - lastSearchTime)) / 1000);
-        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⏱</div><h3>Aguarde ${wait}s</h3><p>Intervalo entre buscas</p></div>`;
+      if (startPage > 1) {
+        const btn = createPageButton(1);
+        pageNumbers.appendChild(btn);
+        if (startPage > 2) {
+          const dots = document.createElement('span');
+          dots.textContent = '…';
+          dots.style.color = '#444';
+          dots.style.padding = '0 0.2rem';
+          pageNumbers.appendChild(dots);
+        }
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        const btn = createPageButton(i);
+        if (i === page) btn.classList.add('active');
+        pageNumbers.appendChild(btn);
+      }
+
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+          const dots = document.createElement('span');
+          dots.textContent = '…';
+          dots.style.color = '#444';
+          dots.style.padding = '0 0.2rem';
+          pageNumbers.appendChild(dots);
+        }
+        const btn = createPageButton(totalPages);
+        pageNumbers.appendChild(btn);
+      }
+    }
+
+    function createPageButton(pageNum) {
+      const btn = document.createElement('button');
+      btn.textContent = pageNum;
+      btn.addEventListener('click', () => {
+        if (pageNum !== currentPage) {
+          loadPage(pageNum);
+        }
+      });
+      return btn;
+    }
+
+    // ===== CARREGAR PÁGINA COM CACHE =====
+
+    async function loadPage(page) {
+      if (!currentUser) return;
+      if (page < 1 || page > totalPages) return;
+
+      // Verifica cache
+      const cacheKey = `${currentAuthorId}_${currentKeyword}_${page}`;
+      if (pageCache.has(cacheKey)) {
+        console.log(`📦 Página ${page} carregada da cache`);
+        const cached = pageCache.get(cacheKey);
+        currentPage = page;
+        currentData = cached.items;
+        resultsDiv.innerHTML = renderMessages(cached.items, totalMessages);
+        renderPagination(currentPage, totalPages, totalMessages);
+        infoDiv.textContent = `Mostrando ${cached.items.length} de ${totalMessages} mensagens (página ${page} de ${totalPages}) [cache]`;
         return;
       }
 
-      // Verifica limite diário (apenas primeira busca)
-      if (!loadMore) {
-        const check = await canSearch(currentUser.uid);
-        if (!check.canSearch) {
-          resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⊘</div><h3>Limite diário atingido</h3><p>${check.used} de ${check.limit} buscas utilizadas</p></div>`;
-          await updateUI(currentUser.uid);
-          return;
-        }
-        await incrementSearch(currentUser.uid);
-        await updateUI(currentUser.uid);
-      }
+      const offset = (page - 1) * PAGE_LIMIT;
+      currentPage = page;
 
-      lastSearchTime = now;
-
-      // Mostra loading
-      if (!loadMore) {
-        resultsDiv.innerHTML = `<div class="loading-state"><div class="loading-spinner"></div><div class="text">Buscando mensagens...</div></div>`;
-        infoDiv.textContent = '';
-      } else {
-        loadMoreBtn.textContent = '⏳ Carregando...';
-        loadMoreBtn.disabled = true;
-      }
+      resultsDiv.innerHTML = `<div class="loading-state"><div class="loading-spinner"></div><div class="text">Carregando página ${page}...</div></div>`;
 
       try {
         const params = new URLSearchParams();
-        if (authorId) params.append('author_id', authorId);
-        if (keyword) params.append('keyword', keyword);
+        if (currentAuthorId) params.append('author_id', currentAuthorId);
+        if (currentKeyword) params.append('keyword', currentKeyword);
         params.append('limit', PAGE_LIMIT);
-        params.append('offset', currentOffset);
+        params.append('offset', offset);
         const url = `${API_URL}?${params.toString()}`;
 
         const response = await fetch(url, {
@@ -652,93 +762,156 @@
         });
 
         if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+          throw new Error(`HTTP ${response.status}`);
         }
 
         const data = await response.json();
         const items = data.items || [];
 
-        // Se não houver mais itens
-        if (items.length === 0) {
-          hasMoreMessages = false;
-          if (loadMore) {
-            loadMoreBtn.style.display = 'none';
-            loadMoreBtn.textContent = 'Sem mais mensagens';
-            loadMoreBtn.disabled = true;
-            infoDiv.textContent = `${allMessages.length} mensagens carregadas (fim da lista)`;
-          }
+        if (items.length === 0 && page > 1) {
+          loadPage(page - 1);
           return;
         }
 
-        // Guarda o total real se for a primeira página
-        if (!loadMore && data.count && data.count > 0) {
-          totalCount = data.count;
-        }
+        // Guarda na cache
+        pageCache.set(cacheKey, { items, page, timestamp: Date.now() });
+        console.log(`💾 Página ${page} guardada na cache`);
 
-        // Acumula mensagens
-        if (loadMore) {
-          allMessages = [...allMessages, ...items];
-        } else {
-          allMessages = items;
-        }
-
-        // Atualiza offset
-        currentOffset += items.length;
-
-        // Verifica se há mais mensagens
-        if (totalCount > 0) {
-          hasMoreMessages = allMessages.length < totalCount;
-        } else {
-          // Se o count não for confiável, assume que há mais se recebemos PAGE_LIMIT
-          hasMoreMessages = items.length === PAGE_LIMIT;
-        }
-
-        // Renderiza
-        resultsDiv.innerHTML = renderMessages(allMessages, totalCount || allMessages.length);
-        
-        // Atualiza info
-        if (totalCount > 0) {
-          infoDiv.textContent = `Mostrando ${allMessages.length} de ${totalCount} mensagens`;
-        } else {
-          infoDiv.textContent = allMessages.length > 0 
-            ? `Mostrando ${allMessages.length} mensagens` 
-            : 'Nenhum resultado';
-        }
-
-        // Mostra/oculta botão "Carregar mais"
-        if (hasMoreMessages) {
-          loadMoreBtn.style.display = 'inline-block';
-          loadMoreBtn.textContent = 'Carregar mais';
-          loadMoreBtn.disabled = false;
-        } else {
-          loadMoreBtn.style.display = 'none';
-          if (allMessages.length > 0 && totalCount > 0 && allMessages.length === totalCount) {
-            infoDiv.textContent = `${totalCount} mensagens encontradas (todas carregadas)`;
-          }
-        }
+        currentData = items;
+        resultsDiv.innerHTML = renderMessages(items, totalMessages);
+        renderPagination(currentPage, totalPages, totalMessages);
+        infoDiv.textContent = `Mostrando ${items.length} de ${totalMessages} mensagens (página ${page} de ${totalPages})`;
 
       } catch (error) {
-        console.error('Erro na busca:', error);
-        if (!loadMore) {
-          resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">✗</div><h3>Erro na busca</h3><p>${escapeHtml(error.message)}</p></div>`;
-        } else {
-          loadMoreBtn.textContent = '❌ Tentar novamente';
-          loadMoreBtn.disabled = false;
+        console.error('Erro:', error);
+        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">✗</div><h3>Erro ao carregar página</h3><p>${escapeHtml(error.message)}</p></div>`;
+      }
+    }
+
+    // ===== PRIMEIRA BUSCA =====
+
+    async function performSearch() {
+      if (!currentUser) {
+        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⊘</div><h3>Faça login primeiro</h3></div>`;
+        return;
+      }
+
+      const authorId = authorInput.value.trim();
+      const keyword = keywordInput.value.trim();
+
+      if (!authorId && !keyword) {
+        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">◈</div><h3>Informe um ID ou palavra-chave</h3></div>`;
+        infoDiv.textContent = '';
+        paginationContainer.style.display = 'none';
+        return;
+      }
+
+      const now = Date.now();
+      if (now - lastSearchTime < RATE_LIMIT_MS) {
+        const wait = Math.ceil((RATE_LIMIT_MS - (now - lastSearchTime)) / 1000);
+        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⏱</div><h3>Aguarde ${wait}s</h3><p>Intervalo entre buscas</p></div>`;
+        return;
+      }
+
+      const check = await canSearch(currentUser.uid);
+      if (!check.canSearch) {
+        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">⊘</div><h3>Limite diário atingido</h3><p>${check.used} de ${check.limit} buscas utilizadas</p></div>`;
+        await updateUI(currentUser.uid);
+        return;
+      }
+
+      lastSearchTime = now;
+      await incrementSearch(currentUser.uid);
+      await updateUI(currentUser.uid);
+
+      // Limpa cache antiga
+      pageCache.clear();
+
+      currentAuthorId = authorId;
+      currentKeyword = keyword;
+      currentPage = 1;
+      currentData = [];
+      totalMessages = 0;
+      totalPages = 0;
+
+      resultsDiv.innerHTML = `<div class="loading-state"><div class="loading-spinner"></div><div class="text">Buscando mensagens...</div></div>`;
+      infoDiv.textContent = '';
+
+      try {
+        const params = new URLSearchParams();
+        if (authorId) params.append('author_id', authorId);
+        if (keyword) params.append('keyword', keyword);
+        params.append('limit', PAGE_LIMIT);
+        params.append('offset', 0);
+        const url = `${API_URL}?${params.toString()}`;
+
+        const response = await fetch(url, {
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
         }
+
+        const data = await response.json();
+        const items = data.items || [];
+        const count = data.count || items.length;
+
+        if (items.length === 0) {
+          resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">◇</div><h3>Nenhuma mensagem encontrada</h3><p>Tente outro ID ou palavra-chave</p></div>`;
+          infoDiv.textContent = '';
+          paginationContainer.style.display = 'none';
+          return;
+        }
+
+        totalMessages = count;
+        totalPages = Math.ceil(count / PAGE_LIMIT);
+        currentData = items;
+
+        // Guarda página 1 na cache
+        pageCache.set(`${authorId}_${keyword}_1`, { items, page: 1, timestamp: Date.now() });
+
+        resultsDiv.innerHTML = renderMessages(items, count);
+        renderPagination(1, totalPages, count);
+        infoDiv.textContent = `Mostrando ${items.length} de ${count} mensagens (página 1 de ${totalPages})`;
+
+      } catch (error) {
+        console.error('Erro:', error);
+        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">✗</div><h3>Erro na busca</h3><p>${escapeHtml(error.message)}</p></div>`;
         infoDiv.textContent = 'Erro';
+        paginationContainer.style.display = 'none';
       }
     }
 
     // ===== EVENTOS =====
 
-    searchBtn.addEventListener('click', () => performSearch(false));
-    loadMoreBtn.addEventListener('click', () => performSearch(true));
+    searchBtn.addEventListener('click', performSearch);
 
     authorInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') performSearch(false);
+      if (e.key === 'Enter') performSearch();
     });
     keywordInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') performSearch(false);
+      if (e.key === 'Enter') performSearch();
+    });
+
+    // Eventos de paginação
+    pagePrev.addEventListener('click', () => { if (currentPage > 1) loadPage(currentPage - 1); });
+    pageNext.addEventListener('click', () => { if (currentPage < totalPages) loadPage(currentPage + 1); });
+    pagePrev5.addEventListener('click', () => { if (currentPage > 5) loadPage(currentPage - 5); else loadPage(1); });
+    pageNext5.addEventListener('click', () => { if (currentPage + 5 <= totalPages) loadPage(currentPage + 5); else loadPage(totalPages); });
+    pageFirst.addEventListener('click', () => loadPage(1));
+    pageLast.addEventListener('click', () => loadPage(totalPages));
+
+    jumpBtn.addEventListener('click', () => {
+      const page = parseInt(jumpInput.value);
+      if (page >= 1 && page <= totalPages) {
+        loadPage(page);
+      }
+    });
+
+    jumpInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') jumpBtn.click();
     });
 
     logoutBtn.addEventListener('click', async () => {
@@ -764,7 +937,9 @@
       }
     });
 
-    console.log('🔍 WHBF DMS — Pesquisador carregado com paginação de 100 mensagens.');
+    console.log('🔍 WHBF DMS — Pesquisador com cache e paginação avançada carregado!');
+    console.log('📦 Cache: As páginas carregadas ficam guardadas no browser.');
+    console.log('🔄 Navegação: Use -5, +5, primeira, última ou vá para página específica.');
   </script>
 </body>
 </html>
