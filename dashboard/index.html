@@ -6,12 +6,8 @@
     <title>WHBF DMS - Pesquisador</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body {
             background: #0a0a0a;
             color: #e0e0e0;
@@ -50,10 +46,7 @@
             letter-spacing: 4px;
             color: #fff;
         }
-        .title span {
-            color: #cc3333;
-            font-weight: 500;
-        }
+        .title span { color: #cc3333; font-weight: 500; }
 
         .user-info {
             display: flex;
@@ -62,9 +55,7 @@
             font-size: 0.8rem;
             color: #888;
         }
-        .user-email {
-            color: #ccc;
-        }
+        .user-email { color: #ccc; }
         .user-tier {
             background: rgba(180, 40, 40, 0.15);
             padding: 0.2rem 0.8rem;
@@ -103,13 +94,8 @@
             border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.03);
         }
-        .search-counter .count {
-            color: #cc3333;
-            font-weight: 500;
-        }
-        .search-counter .divider {
-            color: #333;
-        }
+        .search-counter .count { color: #cc3333; font-weight: 500; }
+        .search-counter .divider { color: #333; }
 
         .search-row {
             display: flex;
@@ -133,9 +119,7 @@
             border-color: rgba(180, 40, 40, 0.4);
             background: rgba(0, 0, 0, 0.8);
         }
-        .search-input::placeholder {
-            color: #444;
-        }
+        .search-input::placeholder { color: #444; }
 
         .btn-search {
             background: rgba(180, 40, 40, 0.12);
@@ -154,10 +138,7 @@
             border-color: rgba(180, 40, 40, 0.4);
             transform: translateY(-1px);
         }
-        .btn-search:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
+        .btn-search:disabled { opacity: 0.3; cursor: not-allowed; }
 
         #results {
             background: rgba(0, 0, 0, 0.3);
@@ -170,17 +151,9 @@
             font-size: 0.9rem;
             line-height: 1.6;
         }
-        #results::-webkit-scrollbar {
-            width: 5px;
-        }
-        #results::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-        }
-        #results::-webkit-scrollbar-thumb {
-            background: rgba(180, 40, 40, 0.25);
-            border-radius: 8px;
-        }
+        #results::-webkit-scrollbar { width: 5px; }
+        #results::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 8px; }
+        #results::-webkit-scrollbar-thumb { background: rgba(180, 40, 40, 0.25); border-radius: 8px; }
 
         .empty-state {
             display: flex;
@@ -191,20 +164,9 @@
             color: #444;
             text-align: center;
         }
-        .empty-state .icon {
-            font-size: 2rem;
-            margin-bottom: 0.8rem;
-            opacity: 0.2;
-        }
-        .empty-state h3 {
-            font-weight: 300;
-            color: #555;
-            font-size: 1rem;
-        }
-        .empty-state p {
-            font-size: 0.8rem;
-            color: #333;
-        }
+        .empty-state .icon { font-size: 2rem; margin-bottom: 0.8rem; opacity: 0.2; }
+        .empty-state h3 { font-weight: 300; color: #555; font-size: 1rem; }
+        .empty-state p { font-size: 0.8rem; color: #333; }
 
         .msg-card {
             background: rgba(0, 0, 0, 0.3);
@@ -226,35 +188,12 @@
             margin-bottom: 0.3rem;
             font-size: 0.75rem;
         }
-        .msg-author {
-            color: #cc3333;
-            font-weight: 500;
-        }
-        .msg-server {
-            color: #888;
-        }
-        .msg-channel {
-            color: #666;
-        }
-        .msg-date {
-            color: #444;
-            font-size: 0.6rem;
-            margin-left: auto;
-            white-space: nowrap;
-        }
-        .msg-content {
-            color: #d0d0d0;
-            font-size: 0.85rem;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-        .msg-footer {
-            margin-top: 0.3rem;
-            display: flex;
-            gap: 1rem;
-            font-size: 0.55rem;
-            color: #3a3a3a;
-        }
+        .msg-author { color: #cc3333; font-weight: 500; }
+        .msg-server { color: #888; }
+        .msg-channel { color: #666; }
+        .msg-date { color: #444; font-size: 0.6rem; margin-left: auto; white-space: nowrap; }
+        .msg-content { color: #d0d0d0; font-size: 0.85rem; white-space: pre-wrap; word-break: break-word; }
+        .msg-footer { margin-top: 0.3rem; display: flex; gap: 1rem; font-size: 0.55rem; color: #3a3a3a; }
 
         .loading-spinner {
             border: 2px solid rgba(180, 40, 40, 0.08);
@@ -265,14 +204,7 @@
             animation: spin 0.9s linear infinite;
             margin: 20px auto;
         }
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         .loading-state {
             display: flex;
@@ -323,15 +255,8 @@
             color: #cc3333;
             font-weight: 600;
         }
-        .pagination button:disabled {
-            opacity: 0.2;
-            cursor: not-allowed;
-        }
-        .pagination .page-info {
-            color: #444;
-            font-size: 0.7rem;
-            padding: 0 0.3rem;
-        }
+        .pagination button:disabled { opacity: 0.2; cursor: not-allowed; }
+        .pagination .page-info { color: #444; font-size: 0.7rem; padding: 0 0.3rem; }
         .pagination .page-jump {
             display: flex;
             align-items: center;
@@ -370,12 +295,8 @@
             font-size: 12px;
         }
         @keyframes fall {
-            from {
-                transform: translateY(-10vh) rotate(0deg);
-            }
-            to {
-                transform: translateY(110vh) rotate(360deg);
-            }
+            from { transform: translateY(-10vh) rotate(0deg); }
+            to { transform: translateY(110vh) rotate(360deg); }
         }
 
         footer {
@@ -388,24 +309,11 @@
         }
 
         @media (max-width: 640px) {
-            .container {
-                padding: 1rem;
-            }
-            .title {
-                font-size: 1.3rem;
-                letter-spacing: 2px;
-            }
-            .search-row {
-                flex-direction: column;
-            }
-            .btn-search {
-                width: 100%;
-            }
-            .pagination button {
-                padding: 0.2rem 0.4rem;
-                font-size: 0.6rem;
-                min-width: 26px;
-            }
+            .container { padding: 1rem; }
+            .title { font-size: 1.3rem; letter-spacing: 2px; }
+            .search-row { flex-direction: column; }
+            .btn-search { width: 100%; }
+            .pagination button { padding: 0.2rem 0.4rem; font-size: 0.6rem; min-width: 26px; }
         }
     </style>
 </head>
@@ -846,13 +754,37 @@
                     return;
                 }
 
-                totalMessages = count;
-                totalPages = Math.ceil(count / PAGE_LIMIT);
+                // 🔥 CORREÇÃO: Se recebemos 100 mensagens, assumimos que há mais páginas
+                const hasMore = items.length === PAGE_LIMIT;
+                const totalFromApi = count;
+                
+                // Se a API devolveu 100 e tem mais, usamos um número estimado
+                if (hasMore && totalFromApi <= PAGE_LIMIT) {
+                    // Estimativa: se há mais, assumimos pelo menos 2 páginas
+                    totalMessages = PAGE_LIMIT + 1; // Força a ter mais páginas
+                } else {
+                    totalMessages = totalFromApi > 0 ? totalFromApi : items.length;
+                }
+
+                totalPages = Math.ceil(totalMessages / PAGE_LIMIT);
+                
+                // Se há mais páginas mas o totalPages é 1, forçamos 2
+                if (hasMore && totalPages <= 1) {
+                    totalPages = 2;
+                    totalMessages = PAGE_LIMIT * 2;
+                }
+
                 pageCache.set(`${authorId}_${keyword}_1`, { items });
 
                 resultsDiv.innerHTML = renderMessages(items);
-                renderPagination(1, totalPages, count);
-                infoDiv.textContent = `${items.length} de ${count} mensagens • Página 1/${totalPages}`;
+                renderPagination(1, totalPages, totalMessages);
+                infoDiv.textContent = `${items.length} mensagens • Página 1/${totalPages}`;
+                
+                // Se houver mais páginas, carrega a página 2 em background (opcional)
+                if (totalPages > 1) {
+                    console.log(`📄 Página 2 disponível. Use os botões para navegar.`);
+                }
+
             } catch (error) {
                 console.error(error);
                 resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">✗</div><h3>Erro na busca</h3><p>${escapeHtml(error.message)}</p></div>`;
