@@ -61,7 +61,7 @@
   <section class="hero">
     <img src="./assets/whbf.png" data-asset="/assets/whbf.png" alt="WHBF" class="top-logo">
     <h1>WHBF DMS</h1>
-    <p class="sub" data-i18n="hero_sub">Discord Portuguese Server Message Searcher — search over a million messages, instantly. Filter by author, keyword, server and channel.</p>
+    <p class="sub" data-i18n="hero_sub">Discord Portuguese Server Message Searcher</p>
     <div style="display:flex; gap:0.8rem; justify-content:center; margin-top:1rem;">
       <button class="btn-primary" id="hero-main-btn" onclick="handleMainAction()" data-i18n="hero_cta">Access Dashboard</button>
       <a href="#pricing" class="btn-ghost" style="text-decoration:none; display:inline-flex; align-items:center;" data-i18n="hero_pricing">View Pricing</a>
@@ -76,36 +76,34 @@
   </section>
 
   <div class="card" id="features">
-    <h2 data-i18n="features_title">— Features —</h2>
+    <h2 data-i18n="features_title"> Features </h2>
     <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1.5rem; color:#777; font-size:0.85rem; line-height:1.7; text-align:center;">
-      <div><div style="color:#aaa; font-weight:600; margin-bottom:0.3rem;" data-i18n="feat_search">Instant Search</div><span data-i18n="feat_search_desc">Author ID + keyword, paginated 100/page, no full dump.</span></div>
-      <div><div style="color:#aaa; font-weight:600; margin-bottom:0.3rem;" data-i18n="feat_fast">Fast & Indexed</div><span data-i18n="feat_fast_desc">Oracle Text index on 1M+ messages, ~3ms queries.</span></div>
-      <div><div style="color:#aaa; font-weight:600; margin-bottom:0.3rem;" data-i18n="feat_private">Private</div><span data-i18n="feat_private_desc">Firebase Auth + server quota, no scraping.</span></div>
+      <div><div style="color:#aaa; font-weight:600; margin-bottom:0.3rem;" data-i18n="feat_search">Specific Search</div><span data-i18n="feat_search_desc">User ID + keyword searches.</span></div>
+      <div><div style="color:#aaa; font-weight:600; margin-bottom:0.3rem;" data-i18n="feat_fast">Instant Search</div><span data-i18n="feat_fast_desc">~3ms queries.</span></div>
+      <div><div style="color:#aaa; font-weight:600; margin-bottom:0.3rem;" data-i18n="feat_private">Cheap Plans</div><span data-i18n="feat_private_desc">50 searches a day!</span></div>
     </div>
   </div>
 
   <div class="card" id="pricing">
-    <h2 data-i18n="pricing_title">— Pricing —</h2>
-    <p style="text-align:center; color:#555; font-size:0.75rem; margin-bottom:1.2rem;" data-i18n="pricing_sub">50 searches per day for everyone. Pay for access time.</p>
+    <h2 data-i18n="pricing_title"> Pricing </h2>
+    <p style="text-align:center; color:#555; font-size:0.75rem; margin-bottom:1.2rem;" data-i18n="pricing_sub">50 searches per day for everyone. Long time & Cheap.</p>
     <div class="pricing">
-      <div class="price-card"><div class="price">5€ <small>/ 60d</small></div><div style="color:#555; font-size:0.7rem;" data-i18n="price_2m">2 months</div><ul><li>50 / day</li><li data-i18n="price_access">Dashboard access</li><li data-i18n="price_support">Support</li></ul><button class="btn-primary" style="width:100%;" onclick="handleMainAction()" data-i18n="price_buy">Buy</button></div>
-      <div class="price-card"><div class="price">10€ <small>/ 120d</small></div><div style="color:#555; font-size:0.7rem;" data-i18n="price_4m">4 months</div><ul><li>50 / day</li><li data-i18n="price_access">Dashboard access</li><li data-i18n="price_support">Support</li></ul><button class="btn-primary" style="width:100%;" onclick="handleMainAction()" data-i18n="price_buy">Buy</button></div>
-      <div class="price-card featured"><div class="price">20€ <small>/ 240d</small></div><div style="color:#555; font-size:0.7rem;" data-i18n="price_8m">8 months — popular</div><ul><li>50 / day</li><li data-i18n="price_access">Dashboard access</li><li data-i18n="price_support">Priority support</li></ul><button class="btn-primary" style="width:100%;" onclick="handleMainAction()" data-i18n="price_buy">Buy</button></div>
-      <div class="price-card"><div class="price">30€ <small>/ 365d</small></div><div style="color:#555; font-size:0.7rem;" data-i18n="price_1y">1 year</div><ul><li>50 / day</li><li data-i18n="price_access">Dashboard access</li><li data-i18n="price_support">Priority support</li></ul><button class="btn-primary" style="width:100%;" onclick="handleMainAction()" data-i18n="price_buy">Buy</button></div>
+      <div class="price-card"><div class="price">5€ <small>/ 60d</small></div><div style="color:#555; font-size:0.7rem;" data-i18n="price_2m">2 months</div><ul><li>50 / day</li><button class="btn-primary" style="width:100%;" onclick="handleMainAction()" data-i18n="price_buy">Buy</button></div>
+      <div class="price-card"><div class="price">10€ <small>/ 120d</small></div><div style="color:#555; font-size:0.7rem;" data-i18n="price_4m">4 months</div><ul><li>50 / day</li><button class="btn-primary" style="width:100%;" onclick="handleMainAction()" data-i18n="price_buy">Buy</button></div>
+      <div class="price-card featured"><div class="price">30€ <small>/ 365d</small></div><div style="color:#555; font-size:0.7rem;" data-i18n="price_1y">1 year</div><ul><li>50 / day</li></ul><button class="btn-primary" style="width:100%;" onclick="handleMainAction()" data-i18n="price_buy">Buy</button></div>
     </div>
   </div>
 
   <div class="card">
-    <h2 data-i18n="info_title">— Information —</h2>
+    <h2 data-i18n="info_title"> Information </h2>
     <div class="link-row">
       <a href="https://whbf.cc/" target="_blank" class="link-card"><img src="./assets/whbf.png" data-asset="/assets/whbf.png" alt="WHBF"><div style="color:#aaa; font-weight:600; font-size:0.9rem;">WHBF</div><div style="color:#777; font-size:0.65rem;">Main Website</div></a>
-      <a href="https://www.roblox.com/communities/703659855/WHBF#!/about" target="_blank" class="link-card"><img src="./assets/whbf.png" data-asset="/assets/whbf.png" alt="WHBF Roblox"><div style="color:#aaa; font-weight:600; font-size:0.9rem;">WHBF Roblox</div><div style="color:#777; font-size:0.65rem;">Main Roblox Group</div></a>
       <a href="https://discord.com/invite/fm7pSzyAT6" target="_blank" class="link-card"><img src="./assets/whbf.png" data-asset="/assets/whbf.png" alt="WHBF Center"><div style="color:#aaa; font-weight:600; font-size:0.9rem;">WHBF Center</div><div style="color:#777; font-size:0.65rem;">Discord Server</div></a>
       <a href="https://t.me/whbfcc" target="_blank" class="link-card"><img src="./assets/whbf.png" data-asset="/assets/whbf.png" alt="WHBF Telegram"><div style="color:#aaa; font-weight:600; font-size:0.9rem;">WHBF Telegram</div><div style="color:#777; font-size:0.65rem;">Telegram Channel</div></a>
     </div>
   </div>
 
-  <footer>© 2026 whbf.cc — <span data-i18n="footer">All rights reserved</span></footer>
+  <footer>© 2026 whbf.cc</footer>
 
   <script type="importmap">
     { "imports": { "firebase/app": "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js", "firebase/auth": "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js" } }
@@ -127,8 +125,8 @@
     }
     // i18n
     const dict = {
-      en: { nav_login:'Login', nav_dashboard:'Dashboard →', hero_sub:'Discord Portuguese Server Message Searcher — search over a million messages, instantly. Filter by author, keyword, server and channel.', hero_cta:'Access Dashboard', hero_pricing:'View Pricing', stat_messages:'Messages', stat_users:'Users', stat_servers:'Servers', features_title:'— Features —', feat_search:'Instant Search', feat_search_desc:'Author ID + keyword, paginated 100/page, no full dump.', feat_fast:'Fast & Indexed', feat_fast_desc:'Oracle Text index on 1M+ messages, ~3ms queries.', feat_private:'Private', feat_private_desc:'Firebase Auth + server quota, no scraping.', pricing_title:'— Pricing —', pricing_sub:'50 searches per day for everyone. Pay for access time.', price_2m:'2 months', price_4m:'4 months', price_8m:'8 months — popular', price_1y:'1 year', price_access:'Dashboard access', price_support:'Support', price_buy:'Buy', info_title:'— Information —', footer:'All rights reserved' },
-      pt: { nav_login:'Entrar', nav_dashboard:'Painel →', hero_sub:'Pesquisador de mensagens de servidores Discord PT — mais de um milhão de mensagens, instantâneo. Filtre por autor, palavra-chave, servidor e canal.', hero_cta:'Acessar Painel', hero_pricing:'Ver Preços', stat_messages:'Mensagens', stat_users:'Usuários', stat_servers:'Servidores', features_title:'— Recursos —', feat_search:'Busca Instantânea', feat_search_desc:'ID do autor + palavra-chave, 100 por página, sem dump.', feat_fast:'Rápido & Indexado', feat_fast_desc:'Índice Oracle Text em 1M+ msgs, ~3ms.', feat_private:'Privado', feat_private_desc:'Firebase Auth + cota no servidor, sem scraping.', pricing_title:'— Preços —', pricing_sub:'50 buscas por dia para todos. Pague pelo tempo de acesso.', price_2m:'2 meses', price_4m:'4 meses', price_8m:'8 meses — popular', price_1y:'1 ano', price_access:'Acesso ao painel', price_support:'Suporte', price_buy:'Comprar', info_title:'— Informação —', footer:'Todos os direitos reservados' }
+      en: { nav_login:'Login', nav_dashboard:'Dashboard →', hero_sub:'Discord Portuguese Server Message Searcher — search over a million messages, instantly. Filter by author, keyword, server and channel.', hero_cta:'Access Dashboard', hero_pricing:'View Pricing', stat_messages:'Messages', stat_users:'Users', stat_servers:'Servers', features_title:' Features ', feat_search:'Instant Search', feat_search_desc:'Author ID + keyword, paginated 100/page, no full dump.', feat_fast:'Fast & Indexed', feat_fast_desc:'Oracle Text index on 1M+ messages, ~3ms queries.', feat_private:'Private', feat_private_desc:'Firebase Auth + server quota, no scraping.', pricing_title:'— Pricing —', pricing_sub:'50 searches per day for everyone. Pay for access time.', price_2m:'2 months', price_4m:'4 months', price_8m:'8 months — popular', price_1y:'1 year', price_access:'Dashboard access', price_support:'Support', price_buy:'Buy', info_title:'— Information —', footer:'All rights reserved' },
+      pt: { nav_login:'Login', nav_dashboard:'Dashboard →', hero_sub:'Consulta de mensagens de servidores de Discord Portugueses  - mais de um milhão de mensagens, instantâneo. Filtre por autor, palavra-chave, servidor e canal.', hero_cta:'Acessar Painel', hero_pricing:'Ver Preços', stat_messages:'Mensagens', stat_users:'Usuários', stat_servers:'Servidores', features_title:'— Recursos —', feat_search:'Busca Instantânea', feat_search_desc:'ID do autor + palavra-chave, 100 por página, sem dump.', feat_fast:'Rápido & Indexado', feat_fast_desc:'Índice Oracle Text em 1M+ msgs, ~3ms.', feat_private:'Privado', feat_private_desc:'Firebase Auth + cota no servidor, sem scraping.', pricing_title:'— Preços —', pricing_sub:'50 buscas por dia para todos. Pague pelo tempo de acesso.', price_2m:'2 meses', price_4m:'4 meses', price_8m:'8 meses — popular', price_1y:'1 ano', price_access:'Acesso ao painel', price_support:'Suporte', price_buy:'Comprar', info_title:'— Informação —', footer:'Todos os direitos reservados' }
     };
     let lang = localStorage.getItem('whbf_lang') || 'en';
     function applyLang(l){ lang=l; localStorage.setItem('whbf_lang',l); document.documentElement.lang=l; document.querySelectorAll('[data-i18n]').forEach(el=>{ const k=el.getAttribute('data-i18n'); if(dict[l][k]) el.textContent=dict[l][k]; }); document.querySelectorAll('#lang-switch button').forEach(b=>b.classList.toggle('active', b.dataset.lang===l)); updateMainButtons(); }
@@ -156,7 +154,6 @@
         document.getElementById('stat-messages').textContent='1.1M+';
         document.getElementById('stat-users').textContent='5.3K+';
         document.getElementById('stat-servers').textContent='31';
-        document.getElementById('stats-note').textContent='Cached';
       }
     }
     loadStats();
