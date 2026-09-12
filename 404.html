@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Loading...</title>
+    <style>
+        body { background:#0a0a0a; color:#777; display:flex; align-items:center; justify-content:center; height:100vh; font-family:monospace; margin:0; }
+        .loader { font-size:2rem; animation:pulse 1s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+    </style>
+</head>
+<body>
+    <div class="loader">❆</div>
+    <script>
+        // DMS 404 — like whbf.cc, works on custom domain, github.io, and file://
+        (function(){
+            var p = location.pathname || '/';
+            // if dashboard deep link 404 on github pages, send to dashboard
+            if(p.includes('dashboard')) {
+                if(location.protocol==='file:') location.replace('index.html');
+                else location.replace('./');
+                return;
+            }
+            if(location.protocol==='file:') location.replace('index.html');
+            else if(location.hostname.includes('github.io')) location.replace('./');
+            else location.replace('/');
+        })();
+    </script>
+</body>
+</html>

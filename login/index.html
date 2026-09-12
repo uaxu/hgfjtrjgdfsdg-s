@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WHBF DMS — Login</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <style>
+    body { background:#0a0a0a !important; color:#c0c0c0; font-family:monospace; min-height:100vh; margin:0; display:flex; flex-direction:column; align-items:center; padding:0; }
+    .nav { width:100%; max-width:900px; display:flex; justify-content:space-between; align-items:center; padding:1.2rem 1.5rem; }
+    .nav a { color:#777; font-size:0.75rem; text-decoration:none; border:1px solid rgba(60,60,60,0.3); padding:0.4rem 0.8rem; border-radius:8px; }
+    .nav a:hover { color:#aaa; border-color:rgba(100,100,100,0.4); }
+    .card { background:rgba(15,15,15,0.95) !important; border:1px solid rgba(60,60,60,0.3); border-radius:12px; padding:2.5rem 2rem; max-width:480px; width:100%; box-shadow:0 0 20px rgba(60,60,60,0.15) !important; text-align:center; margin:2rem 1rem; }
+    .top-logo { width:120px; height:120px; object-fit:contain; margin:0 auto 1rem; display:block; background:transparent; border:none; border-radius:12px; }
+    h1 { color:#aaa; font-family:'JMH Typewriter',monospace; letter-spacing:4px; font-size:1.6rem; margin-bottom:0.3rem; }
+    .sub { color:#555; font-size:0.75rem; margin-bottom:1.5rem; }
+    .input-field { width:100%; padding:0.9rem 1rem; text-align:center; background:rgba(20,20,20,0.9); border:1px solid rgba(60,60,60,0.3); border-radius:10px; color:#c0c0c0; font-family:monospace; font-size:0.9rem; }
+    .input-field:focus { outline:none; border-color:rgba(100,100,100,0.5); background:rgba(25,25,25,0.95); }
+    .input-field::placeholder { color:#555; }
+    .btn-login { width:100%; padding:0.9rem; background:rgba(20,20,20,0.9); border:1px solid rgba(60,60,60,0.3); border-radius:10px; color:#c0c0c0; font-family:monospace; font-weight:700; letter-spacing:2px; cursor:pointer; text-transform:uppercase; }
+    .btn-login:hover:not(:disabled){ background:rgba(30,30,30,0.95); border-color:rgba(100,100,100,0.4); color:#e0e0e0; }
+    .btn-login:disabled{opacity:.4; cursor:not-allowed;}
+    .lang-switch { display:flex; border:1px solid rgba(60,60,60,0.3); border-radius:8px; overflow:hidden; }
+    .lang-switch button { background:transparent; border:none; color:#555; padding:0.3rem 0.6rem; font-size:0.7rem; cursor:pointer; font-family:monospace; }
+    .lang-switch button.active{ background:rgba(60,60,60,0.2); color:#aaa; }
+    .snowflake{ position:fixed; top:-10px; color:rgba(100,100,100,0.2); user-select:none; pointer-events:none; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="../" id="back-home">← Home</a>
+    <div class="lang-switch" id="lang-switch"><button data-lang="en" class="active">EN</button><button data-lang="pt">PT</button></div>
+  </nav>
+
+  <div class="card">
+    <img src="../assets/whbf.png" data-asset="/assets/whbf.png" alt="WHBF" class="top-logo">
+    <h1 data-i18n="login_title">WHBF DMS</h1>
+    <p class="sub" data-i18n="login_sub">Login to access dashboard</p>
+    <div style="display:flex; flex-direction:column; gap:1rem; align-items:center;">
+      <input id="email" type="email" placeholder="email" class="input-field" autocomplete="email">
+      <input id="password" type="password" placeholder="password" class="input-field" autocomplete="current-password">
+      <button id="btn-login" class="btn-login" data-i18n="login_btn">Login</button>
+      <p id="error-msg" style="color:#999; min-height:1.2rem; font-size:0.8rem;"></p>
+      <p style="color:#444; font-size:0.65rem; margin-top:0.5rem;" data-i18n="login_hint">50 searches/day • Need access? Contact on Discord</p>
+    </div>
+  </div>
+
+  <footer style="color:#333; font-size:0.65rem; letter-spacing:2px; margin-top:auto; padding:1.5rem;">© 2026 whbf.cc</footer>
+
+  <script>
+    const isFile = location.protocol==='file:';
+    const isGh = location.hostname.includes('github.io');
+    if(isFile||isGh){ document.querySelectorAll('link[href^="/"], img[src^="/"], img[data-asset]').forEach(el=>{ var a=el.hasAttribute('src')?'src':'href'; var v=el.getAttribute(a)||el.getAttribute('data-asset'); if(!v||v.startsWith('http')) return; var rel=v.replace(/^\//,''); el.setAttribute(a, (isFile? rel : '../'+rel)); }); document.getElementById('back-home').setAttribute('href', isFile?'../index.html':'../'); }
+  </script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+    const firebaseConfig={ apiKey:"AIzaSyDXX5y50eUHJtFNa4S4r5LrBoPXpUKeGBQ", authDomain:"gsrgszsgz.firebaseapp.com", projectId:"gsrgszsgz", storageBucket:"gsrgszsgz.firebasestorage.app", messagingSenderId:"896231461425", appId:"1:896231461425:web:f5e1692a5d727ff1ed7b10" };
+    const app=initializeApp(firebaseConfig); const auth=getAuth(app);
+    const emailInput=document.getElementById('email'), passwordInput=document.getElementById('password'), loginBtn=document.getElementById('btn-login'), errorMsg=document.getElementById('error-msg');
+    const dict={ en:{ login_title:'WHBF DMS', login_sub:'Login to access dashboard', login_btn:'Login', login_hint:'50 searches/day • Need access? Contact on Discord', back_home:'← Home', err_empty:'Enter email and password', err_invalid:'Invalid email', err_wrong:'Wrong email or password', err_many:'Too many attempts — wait', err_net:'Network error — check connection', err_fail:'Login failed' }, pt:{ login_title:'WHBF DMS', login_sub:'Entre para acessar o painel', login_btn:'Entrar', login_hint:'50 buscas/dia • Precisa de acesso? Fale no Discord', back_home:'← Início', err_empty:'Digite email e senha', err_invalid:'E-mail inválido', err_wrong:'E-mail ou senha incorretos', err_many:'Muitas tentativas — aguarde', err_net:'Erro de rede', err_fail:'Falha no login' } };
+    let lang=localStorage.getItem('whbf_lang')||'en';
+    function applyLang(l){ lang=l; localStorage.setItem('whbf_lang',l); document.documentElement.lang=l; document.querySelectorAll('[data-i18n]').forEach(el=>{ const k=el.getAttribute('data-i18n'); if(dict[l][k]) el.textContent=dict[l][k]; }); document.getElementById('back-home').textContent=dict[l]['back_home']; document.querySelectorAll('#lang-switch button').forEach(b=>b.classList.toggle('active', b.dataset.lang===l)); }
+    document.getElementById('lang-switch').addEventListener('click',e=>{ if(e.target.dataset.lang) applyLang(e.target.dataset.lang); }); applyLang(lang);
+    [emailInput,passwordInput].forEach(i=>i.addEventListener('keypress',e=>{ if(e.key==='Enter') loginBtn.click(); }));
+    loginBtn.onclick=async()=>{
+      const email=emailInput.value.trim(), password=passwordInput.value;
+      if(!email||!password){ errorMsg.textContent=dict[lang].err_empty; return; }
+      loginBtn.disabled=true; loginBtn.textContent='...';
+      try{ await signInWithEmailAndPassword(auth,email,password);
+        if(location.protocol==='file:') location.href='../dashboard/index.html'; else location.href='../dashboard/';
+      } catch(e){
+        let m=dict[lang].err_fail;
+        if(e.code==='auth/invalid-email') m=dict[lang].err_invalid;
+        if(e.code==='auth/user-not-found'||e.code==='auth/wrong-password'||e.code==='auth/invalid-credential') m=dict[lang].err_wrong;
+        if(e.code==='auth/too-many-requests') m=dict[lang].err_many;
+        if(e.code==='auth/network-request-failed') m=dict[lang].err_net;
+        errorMsg.textContent=m;
+      } finally{ loginBtn.disabled=false; loginBtn.textContent=dict[lang].login_btn; }
+    };
+    [emailInput,passwordInput].forEach(i=>i.addEventListener('input',()=>errorMsg.textContent=''));
+  </script>
+  <script>
+    const flakes=[]; let last=performance.now();
+    function mk(){ const p=document.createElement('div'); p.className='snowflake'; p.style.left=Math.random()*innerWidth+'px'; p.style.fontSize=Math.random()*14+6+'px'; p.innerText='❆'; document.body.appendChild(p); flakes.push({el:p,y:-10,speed:Math.random()*200+300}); }
+    function upd(t){ let d=(t-last)/1000; if(d>0.1)d=0.1; last=t; if(Math.random()<d*50) mk(); flakes.forEach((f,i)=>{ f.y+=f.speed*d; f.el.style.transform=`translateY(${f.y}px)`; if(f.y>innerHeight+2000){f.el.remove(); flakes.splice(i,1);} }); requestAnimationFrame(upd); } requestAnimationFrame(upd);
+    const titles=["2","23","238","2382","23826","2382","238","23"]; let ti=0; setInterval(()=>{document.title=titles[ti]; ti=(ti+1)%titles.length;},500);
+  </script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WHBF DMS — Discord Message Search</title>
+  <meta property="og:description" content="Search 1M+ Discord messages from Portuguese servers — fast, precise, private."/>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <style>
+    body { background:#0a0a0a !important; color:#c0c0c0; font-family:monospace; min-height:100vh; margin:0; display:flex; flex-direction:column; align-items:center; padding:0; overflow-x:hidden; position:relative; }
+    .nav { width:100%; max-width:1100px; display:flex; justify-content:space-between; align-items:center; padding:1.2rem 1.5rem; position:relative; z-index:2; }
+    .nav-logo { color:#aaa; font-family:'JMH Typewriter',monospace; letter-spacing:3px; font-size:1.1rem; }
+    .nav-actions { display:flex; gap:0.6rem; align-items:center; }
+    .btn-ghost { background:rgba(20,20,20,0.9); border:1px solid rgba(60,60,60,0.3); color:#777; padding:0.45rem 0.9rem; border-radius:8px; font-size:0.75rem; cursor:pointer; transition:all .2s; font-family:monospace; }
+    .btn-ghost:hover { border-color:rgba(100,100,100,0.4); color:#c0c0c0; }
+    .btn-primary { background:rgba(20,20,20,0.95); border:1px solid rgba(100,100,100,0.4); color:#e0e0e0; padding:0.55rem 1.2rem; border-radius:8px; font-size:0.8rem; font-weight:600; cursor:pointer; transition:all .2s; font-family:monospace; letter-spacing:1px; }
+    .btn-primary:hover { background:rgba(30,30,30,0.95); transform:translateY(1px); box-shadow:0 0 15px rgba(60,60,60,0.15); }
+    .lang-switch { display:flex; border:1px solid rgba(60,60,60,0.3); border-radius:8px; overflow:hidden; }
+    .lang-switch button { background:transparent; border:none; color:#555; padding:0.35rem 0.6rem; font-size:0.7rem; cursor:pointer; font-family:monospace; }
+    .lang-switch button.active { background:rgba(60,60,60,0.2); color:#aaa; }
+    .hero { width:100%; max-width:1100px; text-align:center; padding:2.5rem 1.5rem 1.5rem; position:relative; z-index:2; }
+    .hero h1 { color:#aaa; font-family:'JMH Typewriter',monospace; font-size:3rem; letter-spacing:6px; margin-bottom:0.6rem; }
+    .hero p.sub { color:#777; font-size:0.95rem; max-width:640px; margin:0 auto 1.5rem; line-height:1.6; }
+    .stats { display:flex; justify-content:center; gap:1rem; flex-wrap:wrap; margin:1.8rem 0; }
+    .stat { background:rgba(15,15,15,0.95); border:1px solid rgba(60,60,60,0.3); border-radius:12px; padding:1.2rem 1.5rem; min-width:150px; box-shadow:0 0 20px rgba(60,60,60,0.15); }
+    .stat .num { color:#e0e0e0; font-size:1.6rem; font-weight:700; letter-spacing:1px; }
+    .stat .lbl { color:#555; font-size:0.65rem; letter-spacing:2px; text-transform:uppercase; margin-top:0.2rem; }
+    .card { background:rgba(15,15,15,0.95) !important; border:1px solid rgba(60,60,60,0.3); border-radius:12px; padding:2rem; max-width:1100px; width:100%; box-shadow:0 0 20px rgba(60,60,60,0.15) !important; backdrop-filter:blur(8px); margin:1.2rem 1rem; position:relative; z-index:2; }
+    .card h2 { color:#aaa; letter-spacing:3px; font-size:0.85rem; text-align:center; margin-bottom:1.5rem; }
+    .pricing { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:1rem; }
+    .price-card { background:rgba(20,20,20,0.6); border:1px solid rgba(60,60,60,0.3); border-radius:12px; padding:1.5rem; text-align:center; transition:all .2s; }
+    .price-card:hover { border-color:rgba(100,100,100,0.4); transform:translateY(2px); }
+    .price-card.featured { border-color:rgba(100,100,100,0.5); background:rgba(25,25,25,0.8); box-shadow:0 0 20px rgba(60,60,60,0.2); }
+    .price { color:#e0e0e0; font-size:1.8rem; font-weight:700; }
+    .price small { color:#777; font-size:0.75rem; font-weight:400; }
+    .price-card ul { list-style:none; padding:0; margin:1rem 0; color:#777; font-size:0.75rem; line-height:1.8; }
+    .top-logo { width:160px; height:160px; object-fit:contain; margin:0 auto 1rem; display:block; background:transparent; border:none; border-radius:12px; box-shadow:none; }
+    .link-card { width:20%; min-width:140px; background:rgba(15,15,15,0.95); border:1px solid rgba(60,60,60,0.3); border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1.2rem 0.5rem; text-decoration:none; color:inherit; transition:transform .08s, box-shadow .2s; box-shadow:0 0 20px rgba(60,60,60,0.15); }
+    .link-card:hover { transform:scale(1.02); border-color:rgba(100,100,100,0.4); }
+    .link-card img { width:60px; height:60px; border-radius:50%; border:2px solid rgba(60,60,60,0.3); object-fit:cover; margin-bottom:0.75rem; background:#0a0a0a; }
+    .link-row { display:flex; flex-wrap:wrap; justify-content:center; gap:1.2rem; }
+    footer { margin-top:2rem; padding:2rem 0 1rem; text-align:center; color:#444; font-size:0.65rem; letter-spacing:2px; z-index:2; }
+    .snowflake { position:fixed; top:-10px; color:rgba(100,100,100,0.2); user-select:none; pointer-events:none; z-index:1; }
+    @media(max-width:640px){ .hero h1{font-size:2rem; letter-spacing:3px} .stat{min-width:120px} .link-card{width:45%} }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-logo">WHBF DMS</div>
+    <div class="nav-actions">
+      <div class="lang-switch" id="lang-switch">
+        <button data-lang="en" class="active">EN</button>
+        <button data-lang="pt">PT</button>
+      </div>
+      <button class="btn-primary" id="nav-main-btn" onclick="handleMainAction()">Login</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <img src="./assets/whbf.png" data-asset="/assets/whbf.png" alt="WHBF" class="top-logo">
+    <h1>WHBF DMS</h1>
+    <p class="sub" data-i18n="hero_sub">Discord Portuguese Server Message Searcher — search over a million messages, instantly. Filter by author, keyword, server and channel.</p>
+    <div style="display:flex; gap:0.8rem; justify-content:center; margin-top:1rem;">
+      <button class="btn-primary" id="hero-main-btn" onclick="handleMainAction()" data-i18n="hero_cta">Access Dashboard</button>
+      <a href="#pricing" class="btn-ghost" style="text-decoration:none; display:inline-flex; align-items:center;" data-i18n="hero_pricing">View Pricing</a>
+    </div>
+
+    <div class="stats" id="stats">
+      <div class="stat"><div class="num" id="stat-messages">—</div><div class="lbl" data-i18n="stat_messages">Messages</div></div>
+      <div class="stat"><div class="num" id="stat-users">—</div><div class="lbl" data-i18n="stat_users">Users</div></div>
+      <div class="stat"><div class="num" id="stat-servers">—</div><div class="lbl" data-i18n="stat_servers">Servers</div></div>
+    </div>
+    <div style="color:#333; font-size:0.65rem; margin-top:0.5rem;" id="stats-note">Live from database</div>
+  </section>
+
+  <div class="card" id="features">
+    <h2 data-i18n="features_title">— Features —</h2>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1.5rem; color:#777; font-size:0.85rem; line-height:1.7; text-align:center;">
+      <div><div style="color:#aaa; font-weight:600; margin-bottom:0.3rem;" data-i18n="feat_search">Instant Search</div><span data-i18n="feat_search_desc">Author ID + keyword, paginated 100/page, no full dump.</span></div>
+      <div><div style="color:#aaa; font-weight:600; margin-bottom:0.3rem;" data-i18n="feat_fast">Fast & Indexed</div><span data-i18n="feat_fast_desc">Oracle Text index on 1M+ messages, ~3ms queries.</span></div>
+      <div><div style="color:#aaa; font-weight:600; margin-bottom:0.3rem;" data-i18n="feat_private">Private</div><span data-i18n="feat_private_desc">Firebase Auth + server quota, no scraping.</span></div>
+    </div>
+  </div>
+
+  <div class="card" id="pricing">
+    <h2 data-i18n="pricing_title">— Pricing —</h2>
+    <p style="text-align:center; color:#555; font-size:0.75rem; margin-bottom:1.2rem;" data-i18n="pricing_sub">50 searches per day for everyone. Pay for access time.</p>
+    <div class="pricing">
+      <div class="price-card"><div class="price">5€ <small>/ 60d</small></div><div style="color:#555; font-size:0.7rem;" data-i18n="price_2m">2 months</div><ul><li>50 / day</li><li data-i18n="price_access">Dashboard access</li><li data-i18n="price_support">Support</li></ul><button class="btn-primary" style="width:100%;" onclick="handleMainAction()" data-i18n="price_buy">Buy</button></div>
+      <div class="price-card"><div class="price">10€ <small>/ 120d</small></div><div style="color:#555; font-size:0.7rem;" data-i18n="price_4m">4 months</div><ul><li>50 / day</li><li data-i18n="price_access">Dashboard access</li><li data-i18n="price_support">Support</li></ul><button class="btn-primary" style="width:100%;" onclick="handleMainAction()" data-i18n="price_buy">Buy</button></div>
+      <div class="price-card featured"><div class="price">20€ <small>/ 240d</small></div><div style="color:#555; font-size:0.7rem;" data-i18n="price_8m">8 months — popular</div><ul><li>50 / day</li><li data-i18n="price_access">Dashboard access</li><li data-i18n="price_support">Priority support</li></ul><button class="btn-primary" style="width:100%;" onclick="handleMainAction()" data-i18n="price_buy">Buy</button></div>
+      <div class="price-card"><div class="price">30€ <small>/ 365d</small></div><div style="color:#555; font-size:0.7rem;" data-i18n="price_1y">1 year</div><ul><li>50 / day</li><li data-i18n="price_access">Dashboard access</li><li data-i18n="price_support">Priority support</li></ul><button class="btn-primary" style="width:100%;" onclick="handleMainAction()" data-i18n="price_buy">Buy</button></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="info_title">— Information —</h2>
+    <div class="link-row">
+      <a href="https://whbf.cc/" target="_blank" class="link-card"><img src="./assets/whbf.png" data-asset="/assets/whbf.png" alt="WHBF"><div style="color:#aaa; font-weight:600; font-size:0.9rem;">WHBF</div><div style="color:#777; font-size:0.65rem;">Main Website</div></a>
+      <a href="https://www.roblox.com/communities/703659855/WHBF#!/about" target="_blank" class="link-card"><img src="./assets/whbf.png" data-asset="/assets/whbf.png" alt="WHBF Roblox"><div style="color:#aaa; font-weight:600; font-size:0.9rem;">WHBF Roblox</div><div style="color:#777; font-size:0.65rem;">Main Roblox Group</div></a>
+      <a href="https://discord.com/invite/fm7pSzyAT6" target="_blank" class="link-card"><img src="./assets/whbf.png" data-asset="/assets/whbf.png" alt="WHBF Center"><div style="color:#aaa; font-weight:600; font-size:0.9rem;">WHBF Center</div><div style="color:#777; font-size:0.65rem;">Discord Server</div></a>
+      <a href="https://t.me/whbfcc" target="_blank" class="link-card"><img src="./assets/whbf.png" data-asset="/assets/whbf.png" alt="WHBF Telegram"><div style="color:#aaa; font-weight:600; font-size:0.9rem;">WHBF Telegram</div><div style="color:#777; font-size:0.65rem;">Telegram Channel</div></a>
+    </div>
+  </div>
+
+  <footer>© 2026 whbf.cc — <span data-i18n="footer">All rights reserved</span></footer>
+
+  <script type="importmap">
+    { "imports": { "firebase/app": "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js", "firebase/auth": "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js" } }
+  </script>
+  <script>
+    const API_STATS = 'https://ge6c22a3518a389-dms.adb.eu-stockholm-1.oraclecloudapps.com/ords/admin/api/stats';
+    function goLogin(){ if(location.protocol==='file:') location.href='login/index.html'; else location.href='./login/'; }
+    function goDashboard(){ if(location.protocol==='file:') location.href='dashboard/index.html'; else location.href='./dashboard/'; }
+    let cachedUser = null;
+    function handleMainAction(){ if(cachedUser) goDashboard(); else goLogin(); }
+    function updateMainButtons(){
+      const isLogged = !!cachedUser;
+      const navBtn = document.getElementById('nav-main-btn');
+      const heroBtn = document.getElementById('hero-main-btn');
+      const txt = isLogged ? (lang==='pt' ? 'Dashboard →' : 'Dashboard →') : (lang==='pt' ? 'Login' : 'Login');
+      const heroTxt = isLogged ? (lang==='pt' ? 'Go to Dashboard' : 'Go to Dashboard') : dict[lang].hero_cta;
+      if(navBtn) navBtn.textContent = txt;
+      if(heroBtn) heroBtn.textContent = heroTxt;
+    }
+    // i18n
+    const dict = {
+      en: { nav_login:'Login', nav_dashboard:'Dashboard →', hero_sub:'Discord Portuguese Server Message Searcher — search over a million messages, instantly. Filter by author, keyword, server and channel.', hero_cta:'Access Dashboard', hero_pricing:'View Pricing', stat_messages:'Messages', stat_users:'Users', stat_servers:'Servers', features_title:'— Features —', feat_search:'Instant Search', feat_search_desc:'Author ID + keyword, paginated 100/page, no full dump.', feat_fast:'Fast & Indexed', feat_fast_desc:'Oracle Text index on 1M+ messages, ~3ms queries.', feat_private:'Private', feat_private_desc:'Firebase Auth + server quota, no scraping.', pricing_title:'— Pricing —', pricing_sub:'50 searches per day for everyone. Pay for access time.', price_2m:'2 months', price_4m:'4 months', price_8m:'8 months — popular', price_1y:'1 year', price_access:'Dashboard access', price_support:'Support', price_buy:'Buy', info_title:'— Information —', footer:'All rights reserved' },
+      pt: { nav_login:'Entrar', nav_dashboard:'Painel →', hero_sub:'Pesquisador de mensagens de servidores Discord PT — mais de um milhão de mensagens, instantâneo. Filtre por autor, palavra-chave, servidor e canal.', hero_cta:'Acessar Painel', hero_pricing:'Ver Preços', stat_messages:'Mensagens', stat_users:'Usuários', stat_servers:'Servidores', features_title:'— Recursos —', feat_search:'Busca Instantânea', feat_search_desc:'ID do autor + palavra-chave, 100 por página, sem dump.', feat_fast:'Rápido & Indexado', feat_fast_desc:'Índice Oracle Text em 1M+ msgs, ~3ms.', feat_private:'Privado', feat_private_desc:'Firebase Auth + cota no servidor, sem scraping.', pricing_title:'— Preços —', pricing_sub:'50 buscas por dia para todos. Pague pelo tempo de acesso.', price_2m:'2 meses', price_4m:'4 meses', price_8m:'8 meses — popular', price_1y:'1 ano', price_access:'Acesso ao painel', price_support:'Suporte', price_buy:'Comprar', info_title:'— Informação —', footer:'Todos os direitos reservados' }
+    };
+    let lang = localStorage.getItem('whbf_lang') || 'en';
+    function applyLang(l){ lang=l; localStorage.setItem('whbf_lang',l); document.documentElement.lang=l; document.querySelectorAll('[data-i18n]').forEach(el=>{ const k=el.getAttribute('data-i18n'); if(dict[l][k]) el.textContent=dict[l][k]; }); document.querySelectorAll('#lang-switch button').forEach(b=>b.classList.toggle('active', b.dataset.lang===l)); updateMainButtons(); }
+    document.getElementById('lang-switch').addEventListener('click', e=>{ if(e.target.dataset.lang) applyLang(e.target.dataset.lang); });
+    applyLang(lang);
+    // stats fetch (throttled 10s per IP server-side, client caches 30s)
+    let lastStats=0;
+    async function loadStats(){
+      if(Date.now()-lastStats<30000) return;
+      lastStats=Date.now();
+      try{
+        const r = await fetch(API_STATS);
+        if(r.status===429){ document.getElementById('stats-note').textContent='Rate limited — wait 10s'; return; }
+        if(!r.ok) throw new Error(r.status);
+        const j = await r.json();
+        const d = j.items ? j.items[0] : j;
+        if(d){
+          document.getElementById('stat-messages').textContent = d.messages_display || d.messages || '—';
+          document.getElementById('stat-users').textContent = d.users_display || d.users || '—';
+          document.getElementById('stat-servers').textContent = d.servers_display || d.servers || '—';
+          document.getElementById('stats-note').textContent = 'Live from database • updated';
+        }
+      } catch(e){
+        // fallback to known numbers if API not yet deployed
+        document.getElementById('stat-messages').textContent='1.1M+';
+        document.getElementById('stat-users').textContent='5.3K+';
+        document.getElementById('stat-servers').textContent='31';
+        document.getElementById('stats-note').textContent='Cached';
+      }
+    }
+    loadStats();
+    // snow
+    const flakes=[]; let last=performance.now();
+    function mk(){ const p=document.createElement('div'); p.className='snowflake'; p.style.left=Math.random()*innerWidth+'px'; p.style.fontSize=Math.random()*14+6+'px'; p.innerText='❆'; document.body.appendChild(p); flakes.push({el:p,y:-10,speed:Math.random()*200+300}); }
+    function upd(t){ let d=(t-last)/1000; if(d>0.1)d=0.1; last=t; if(Math.random()<d*50) mk(); flakes.forEach((f,i)=>{ f.y+=f.speed*d; f.el.style.transform=`translateY(${f.y}px)`; if(f.y>innerHeight+2000){f.el.remove(); flakes.splice(i,1);} }); requestAnimationFrame(upd); } requestAnimationFrame(upd);
+    const titles=["2","23","238","2382","23826","2382","238","23"]; let ti=0; setInterval(()=>{document.title=titles[ti]; ti=(ti+1)%titles.length;},500);
+    // github/file shim
+    (function(){ var isFile=location.protocol==='file:'; var isGh=location.hostname.includes('github.io'); if(isFile||isGh){ document.querySelectorAll('link[href^="/"], img[src^="/"], img[data-asset]').forEach(function(el){ var a=el.hasAttribute('src')?'src':'href'; var v=el.getAttribute(a)||el.getAttribute('data-asset'); if(!v||v.startsWith('http')) return; var rel=v.replace(/^\//,''); if(isFile) el.setAttribute(a,rel); if(isGh) el.setAttribute(a,'./'+rel); }); } })();
+  </script>
+  <script type="module">
+    import { initializeApp } from "firebase/app";
+    import { getAuth, onAuthStateChanged } from "firebase/auth";
+    const firebaseConfig={ apiKey:"AIzaSyDXX5y50eUHJtFNa4S4r5LrBoPXpUKeGBQ", authDomain:"gsrgszsgz.firebaseapp.com", projectId:"gsrgszsgz", storageBucket:"gsrgszsgz.firebasestorage.app", messagingSenderId:"896231461425", appId:"1:896231461425:web:f5e1692a5d727ff1ed7b10" };
+    try{
+      const app=initializeApp(firebaseConfig);
+      const auth=getAuth(app);
+      if(location.protocol==='file:'){
+        // file:// cannot persist auth, keep as login
+        cachedUser=null; updateMainButtons();
+      } else {
+        onAuthStateChanged(auth, (u)=>{ cachedUser=u; updateMainButtons(); });
+      }
+    }catch(e){ cachedUser=null; updateMainButtons(); }
+  </script>
+</body>
+</html>

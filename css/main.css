@@ -1,0 +1,272 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #0a0a0a !important;
+    font-family: monospace;
+    color: #c0c0c0;
+}
+
+html, body {
+    background-color: #0a0a0a !important;
+}
+
+@font-face {
+    font-family: 'JMH Typewriter';
+    src: url('/assets/JMHTypewriter.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+#terminal-big {
+    white-space: pre;
+    color: #aaa;
+    text-align: center;
+    font-size: 5rem;
+    font-family: 'JMH Typewriter', monospace;
+    line-height: 4rem;
+    min-height: 8rem;
+}
+
+.card-glow {
+    background-color: rgba(15, 15, 15, 0.95) !important;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 0 20px rgba(60, 60, 60, 0.15) !important;
+    transform-style: preserve-3d;
+    transition: transform 0.08s ease-out;
+    will-change: transform;
+    border: 1px solid rgba(60, 60, 60, 0.3);
+}
+
+.card-glow.active {
+    transform: perspective(1000px) rotateX(var(--rotate-x, 0deg)) rotateY(var(--rotate-y, 0deg)) !important;
+}
+
+.card-glow:hover {
+    transform: scale(1.02);
+}
+
+.card-glow.active:hover {
+    transform: perspective(1000px) rotateX(var(--rotate-x, 0deg)) rotateY(var(--rotate-y, 0deg)) scale(1.02) !important;
+}
+
+.snowflake {
+    position: absolute;
+    top: -10px;
+    color: rgba(100, 100, 100, 0.2);
+    user-select: none;
+    pointer-events: none;
+    animation: fall linear infinite;
+}
+
+@keyframes fall {
+    from { transform: translateY(0); }
+    to { transform: translateY(120vh); }
+}
+
+.profile-img {
+    border: 3px solid #444 !important;
+    box-shadow: 0 0 20px rgba(60, 60, 60, 0.15);
+    transition: all 0.3s ease;
+    transform-style: preserve-3d;
+}
+
+.profile-img:hover {
+    box-shadow: 0 0 35px rgba(100, 100, 100, 0.2);
+    transform: translateZ(20px) scale(1.05);
+}
+
+.btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px solid rgba(60, 60, 60, 0.4);
+    background: rgba(20, 20, 20, 0.9);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    transform-style: preserve-3d;
+}
+
+.btn:hover {
+    transform: translateY(4px) scale(1.05);
+    box-shadow: 0 0 25px rgba(100, 100, 100, 0.15);
+    border-color: rgba(100, 100, 100, 0.5);
+}
+
+.btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.fade-in {
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.back-button {
+    transition: all 0.3s ease;
+    transform-style: preserve-3d;
+    border: 1px solid rgba(60, 60, 60, 0.3);
+    background: rgba(10, 10, 10, 0.9) !important;
+}
+
+.back-button:hover {
+    transform: translateX(-5px);
+    box-shadow: 0 0 25px rgba(100, 100, 100, 0.1);
+    border-color: rgba(100, 100, 100, 0.3);
+}
+
+.back-button .text-red-500 {
+    color: #aaa !important;
+}
+
+#copy-warning {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(30, 30, 30, 0.95);
+    color: #c0c0c0;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    transform: translateY(-6px);
+    z-index: 50;
+    border: 1px solid rgba(60, 60, 60, 0.3);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+}
+
+#copy-warning.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#enter-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    backdrop-filter: blur(12px);
+    background: rgba(10, 10, 10, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: opacity 0.5s ease;
+}
+
+#enter-screen .text-red-600 {
+    color: #aaa !important;
+}
+
+#enter-screen .animate-pulse {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.icon {
+    width: 40px;
+    height: 40px;
+}
+
+.icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: brightness(0.6) contrast(1.2);
+}
+
+.icon img:hover {
+    filter: brightness(0.9) contrast(1.2);
+}
+
+.card-glow > * {
+    transform-style: preserve-3d;
+}
+
+@media (max-width: 640px) {
+    .btn {
+        width: 50px;
+        height: 50px;
+    }
+    .icon {
+        width: 30px;
+        height: 30px;
+    }
+    .back-button {
+        top: 16px;
+        left: 16px;
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+}
+
+.bg-black {
+    background-color: #0a0a0a !important;
+}
+
+.bg-black\/60 {
+    background-color: rgba(15, 15, 15, 0.9) !important;
+}
+
+.bg-black\/70 {
+    background-color: rgba(10, 10, 10, 0.95) !important;
+}
+
+.border-red-600\/80 {
+    border-color: rgba(60, 60, 60, 0.5) !important;
+    border-width: 1px !important;
+}
+
+.text-red-500 {
+    color: #aaa !important;
+}
+
+.text-red-600 {
+    color: #999 !important;
+}
+
+.text-gray-400 {
+    color: #777 !important;
+}
+
+.text-gray-500 {
+    color: #555 !important;
+}
+
+.max-w-2xl {
+    background-color: rgba(15, 15, 15, 0.95) !important;
+    border-color: rgba(60, 60, 60, 0.3) !important;
+}
+
+div, section, main, header, footer, a, article {
+    background-color: transparent;
+}
+
+header .text-gray-500 {
+    color: #555 !important;
+}
+
+footer {
+    color: #444 !important;
+}

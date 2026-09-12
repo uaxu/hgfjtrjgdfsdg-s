@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WHBF DMS - Pesquisador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #0a0a0a !important; color: #c0c0c0; font-family: monospace; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem; }
+        .container { background: rgba(15, 15, 15, 0.95) !important; border: 1px solid rgba(60, 60, 60, 0.3); border-radius: 12px; padding: 2rem; max-width: 1000px; width: 100%; box-shadow: 0 0 20px rgba(60, 60, 60, 0.15) !important; backdrop-filter: blur(8px); }
+        .header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(60, 60, 60, 0.2); }
+        .title { font-size: 1.6rem; font-weight: 300; letter-spacing: 4px; color: #aaa; font-family: 'JMH Typewriter', monospace; }
+        .title span { color: #777; font-weight: 500; }
+        .user-info { display: flex; align-items: center; gap: 0.8rem; font-size: 0.75rem; color: #777; flex-wrap:wrap; }
+        .user-email { color: #aaa; }
+        .user-tier { background: rgba(60, 60, 60, 0.2); padding: 0.2rem 0.7rem; border-radius: 20px; font-size: 0.6rem; text-transform: uppercase; color: #999; border: 1px solid rgba(60, 60, 60, 0.3); }
+        .btn-logout { background: rgba(20,20,20,0.9); border: 1px solid rgba(60,60,60,0.3); color: #777; padding: 0.4rem 0.9rem; border-radius: 8px; cursor: pointer; font-size: 0.75rem; transition: all 0.2s; font-family: monospace; }
+        .btn-logout:hover { background: rgba(30,30,30,0.95); border-color: rgba(100,100,100,0.4); color: #c0c0c0; }
+        .search-counter { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: #555; margin-bottom: 1.5rem; padding: 0.6rem 1rem; background: rgba(20,20,20,0.6); border-radius: 10px; border: 1px solid rgba(60,60,60,0.2); }
+        .search-counter .count { color: #aaa; font-weight: 500; }
+        .search-counter .divider { color: #333; }
+        .search-row { display: flex; gap: 0.8rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .search-input { background: rgba(20,20,20,0.9); border: 1px solid rgba(60,60,60,0.3); color: #c0c0c0; padding: 0.8rem 1rem; border-radius: 10px; font-size: 0.85rem; flex: 1; min-width: 180px; font-family: monospace; }
+        .search-input:focus { outline: none; border-color: rgba(100,100,100,0.5); background: rgba(25,25,25,0.95); }
+        .search-input::placeholder { color: #555; }
+        .btn-search { background: rgba(20,20,20,0.9); border: 1px solid rgba(60,60,60,0.3); color: #c0c0c0; padding: 0.8rem 2rem; border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s ease; font-family: monospace; letter-spacing: 1px; }
+        .btn-search:hover:not(:disabled) { background: rgba(30,30,30,0.95); border-color: rgba(100,100,100,0.4); color: #e0e0e0; transform: translateY(1px); }
+        .btn-search:disabled { opacity: 0.3; cursor: not-allowed; }
+        #results { background: rgba(20,20,20,0.5); border: 1px solid rgba(60,60,60,0.2); border-radius: 12px; padding: 1.2rem; min-height: 350px; max-height: 50vh; overflow-y: auto; font-size: 0.9rem; line-height: 1.6; }
+        #results::-webkit-scrollbar { width: 5px; } #results::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 8px; } #results::-webkit-scrollbar-thumb { background: rgba(60,60,60,0.4); border-radius: 8px; }
+        .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; color: #555; text-align: center; }
+        .empty-state .icon { font-size: 1.8rem; margin-bottom: 0.8rem; opacity: 0.3; }
+        .empty-state h3 { font-weight: 300; color: #777; font-size: 0.95rem; }
+        .empty-state p { font-size: 0.75rem; color: #444; }
+        .msg-card { background: rgba(10,10,10,0.6); border: 1px solid rgba(60,60,60,0.2); border-radius: 10px; padding: 0.8rem 1rem; margin-bottom: 0.6rem; transition: all 0.2s ease; }
+        .msg-card:hover { border-color: rgba(100,100,100,0.3); background: rgba(20,20,20,0.7); }
+        .msg-header { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.8rem; margin-bottom: 0.3rem; font-size: 0.75rem; }
+        .msg-author { color: #aaa; font-weight: 600; } .msg-server { color: #777; } .msg-channel { color: #666; } .msg-date { color: #444; font-size: 0.6rem; margin-left: auto; white-space: nowrap; }
+        .msg-content { color: #c0c0c0; font-size: 0.85rem; white-space: pre-wrap; word-break: break-word; }
+        .msg-footer { margin-top: 0.3rem; display: flex; gap: 1rem; font-size: 0.55rem; color: #3a3a3a; }
+        .loading-spinner { border: 2px solid rgba(60,60,60,0.2); border-top: 2px solid rgba(150,150,150,0.5); border-radius: 50%; width: 30px; height: 30px; animation: spin 0.9s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loading-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; color: #555; }
+        #result-info { text-align: right; margin-top: 0.5rem; color: #444; font-size: 0.65rem; }
+        .pagination { display: none; justify-content: center; align-items: center; gap: 0.3rem; margin-top: 1rem; flex-wrap: wrap; }
+        .pagination button { background: rgba(20,20,20,0.9); border: 1px solid rgba(60,60,60,0.3); color: #777; padding: 0.3rem 0.7rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem; transition: all 0.2s ease; font-family: monospace; min-width: 32px; text-align: center; }
+        .pagination button:hover:not(:disabled) { background: rgba(30,30,30,0.95); border-color: rgba(100,100,100,0.4); color: #c0c0c0; }
+        .pagination button.active { background: rgba(60,60,60,0.3); border-color: rgba(100,100,100,0.4); color: #e0e0e0; font-weight: 600; }
+        .pagination button:disabled { opacity: 0.2; cursor: not-allowed; }
+        .pagination .page-info { color: #555; font-size: 0.65rem; padding: 0 0.3rem; }
+        .pagination .page-jump { display: flex; align-items: center; gap: 0.2rem; margin-left: 0.3rem; }
+        .pagination .page-jump input { background: rgba(20,20,20,0.9); border: 1px solid rgba(60,60,60,0.3); color: #c0c0c0; padding: 0.2rem 0.3rem; border-radius: 4px; width: 45px; font-size: 0.7rem; text-align: center; font-family: monospace; }
+        .pagination .page-jump input:focus { outline: none; border-color: rgba(100,100,100,0.5); }
+        .pagination .page-jump button { padding: 0.2rem 0.5rem; font-size: 0.65rem; min-width: auto; }
+        .snowflake { position: fixed; top: -10px; color: rgba(100,100,100,0.2); user-select: none; pointer-events: none; z-index: 0; font-size: 12px; }
+        @keyframes fall { from { transform: translateY(-10vh) rotate(0deg); } to { transform: translateY(110vh) rotate(360deg); } }
+        footer { margin-top: 2rem; padding: 1rem 0 0.3rem; text-align: center; color: #444; font-size: 0.65rem; letter-spacing: 2px; }
+        @media (max-width: 640px) { .container { padding: 1rem; } .title { font-size: 1.2rem; letter-spacing: 2px; } .search-row { flex-direction: column; } .btn-search { width: 100%; } }
+        .lang-switch{display:flex; border:1px solid rgba(60,60,60,0.3); border-radius:8px; overflow:hidden;}
+        .lang-switch button{background:transparent; border:none; color:#555; padding:0.3rem 0.6rem; font-size:0.65rem; cursor:pointer; font-family:monospace;}
+        .lang-switch button.active{background:rgba(60,60,60,0.2); color:#aaa;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">WHBF <span>DMS</span></h1>
+            <div class="user-info">
+                <div class="lang-switch" id="lang-switch">
+                    <button data-lang="en" class="active">EN</button>
+                    <button data-lang="pt">PT</button>
+                </div>
+                <span class="user-email" id="user-email">—</span>
+                <span class="user-tier" id="user-tier">normal</span>
+                <button class="btn-logout" id="btn-logout">Sair</button>
+            </div>
+        </div>
+        <div class="search-counter">
+            <span data-i18n="search_avail">Buscas disponíveis</span>
+            <span class="count" id="search-remaining">—</span>
+            <span class="divider">/</span>
+            <span class="limit" id="search-limit">—</span>
+        </div>
+        <div class="search-row">
+            <input id="author-id" type="text" placeholder="ID do autor (17-19 dígitos)" class="search-input" maxlength="19" inputmode="numeric" data-i18n-ph="ph_author">
+            <input id="keyword" type="text" placeholder="Palavra-chave (opcional)" class="search-input" maxlength="100" data-i18n-ph="ph_keyword">
+            <button id="btn-search" class="btn-search" data-i18n="btn_search">Pesquisar</button>
+        </div>
+        <div id="results">
+            <div class="empty-state">
+                <div class="icon">⌘</div>
+                <h3 data-i18n="empty_title">Nenhuma mensagem</h3>
+                <p data-i18n="empty_sub">Insira um ID de autor ou palavra-chave</p>
+            </div>
+        </div>
+        <div id="pagination-container" class="pagination">
+            <button id="page-first">««</button>
+            <button id="page-prev5">-5</button>
+            <button id="page-prev">‹</button>
+            <div id="page-numbers" style="display:flex;gap:0.2rem;flex-wrap:wrap;"></div>
+            <button id="page-next">›</button>
+            <button id="page-next5">+5</button>
+            <button id="page-last">»»</button>
+            <div class="page-jump">
+                <span style="color:#555;font-size:0.65rem;" data-i18n="go">Ir</span>
+                <input id="page-jump-input" type="number" min="1" value="1">
+                <button id="page-jump-btn">OK</button>
+            </div>
+            <span class="page-info" id="page-info"></span>
+        </div>
+        <p id="result-info"></p>
+    </div>
+    <footer>© 2026 whbf.cc</footer>
+    <script>(function snow(){const flakes=[];let last=performance.now();function createParticle(){const p=document.createElement('div');p.className='snowflake';p.style.left=Math.random()*innerWidth+'px';p.style.fontSize=(Math.random()*10+6)+'px';p.innerText='❄';document.body.appendChild(p);flakes.push({el:p,y:-10,speed:Math.random()*150+150});}function update(time){const delta=Math.min((time-last)/1000,0.1);last=time;if(Math.random()<delta*30)createParticle();flakes.forEach((flake,i)=>{flake.y+=flake.speed*delta;flake.el.style.transform=`translateY(${flake.y}px)`;if(flake.y>innerHeight+200){flake.el.remove();flakes.splice(i,1);}});requestAnimationFrame(update);}requestAnimationFrame(update);})();</script>
+    <script>(function titleAnim(){const titles=["2","23","238","2382","23826","2382","238","23"];let i=0;setInterval(()=>{document.title=titles[i];i=(i+1)%titles.length;},480);})();</script>
+    <script type="importmap">
+        { "imports": { "firebase/app": "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js", "firebase/auth": "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js", "firebase/firestore": "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js" } }
+    </script>
+    <script type="module">
+        import { initializeApp } from "firebase/app";
+        import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment } from "firebase/firestore";
+
+        const isFile = location.protocol === 'file:';
+        const firebaseConfig={ apiKey:"AIzaSyDXX5y50eUHJtFNa4S4r5LrBoPXpUKeGBQ", authDomain:"gsrgszsgz.firebaseapp.com", projectId:"gsrgszsgz", storageBucket:"gsrgszsgz.firebasestorage.app", messagingSenderId:"896231461425", appId:"1:896231461425:web:f5e1692a5d727ff1ed7b10" };
+        const app=initializeApp(firebaseConfig);
+        const auth=getAuth(app);
+        const db=getFirestore(app);
+
+        const resultsDiv=document.getElementById('results'), infoDiv=document.getElementById('result-info'), authorInput=document.getElementById('author-id'), keywordInput=document.getElementById('keyword'), searchBtn=document.getElementById('btn-search'), logoutBtn=document.getElementById('btn-logout'), userEmailEl=document.getElementById('user-email'), userTierEl=document.getElementById('user-tier'), searchRemaining=document.getElementById('search-remaining'), searchLimitEl=document.getElementById('search-limit'), paginationContainer=document.getElementById('pagination-container'), pageNumbers=document.getElementById('page-numbers'), pagePrev=document.getElementById('page-prev'), pageNext=document.getElementById('page-next'), pagePrev5=document.getElementById('page-prev5'), pageNext5=document.getElementById('page-next5'), pageFirst=document.getElementById('page-first'), pageLast=document.getElementById('page-last'), pageInfo=document.getElementById('page-info'), jumpInput=document.getElementById('page-jump-input'), jumpBtn=document.getElementById('page-jump-btn');
+        let currentUser=null, currentPage=1, totalPages=0, totalMessages=0, currentAuthorId='', currentKeyword='', PAGE_LIMIT=100, RATE_LIMIT_MS=3000, lastSearchTime=0, paginationCooldown=false;
+        const pageCache=new Map();
+        const API_URL='https://ge6c22a3518a389-dms.adb.eu-stockholm-1.oraclecloudapps.com/ords/admin/api/search', COUNT_URL='https://ge6c22a3518a389-dms.adb.eu-stockholm-1.oraclecloudapps.com/ords/admin/api/count';
+
+        // i18n full
+        const dashDict={
+          en:{ search_avail:'Available searches', ph_author:'Author ID (17-19 digits)', ph_keyword:'Keyword (optional)', btn_search:'Search', logout:'Logout', admin:'Admin', empty_title:'No messages', empty_sub:'Enter author ID or keyword', empty_try:'Try another ID', go:'Go', err_enter_id:'Enter an ID or keyword', err_invalid_id:'Invalid ID', err_invalid_desc:'ID must be 17-19 digits', err_long_kw:'Keyword too long', err_long_desc:'Max 100 characters', err_wait:'Wait', err_spam:'Anti-spam active', err_limit:'Daily limit reached', err_limit_desc:'come back tomorrow or upgrade', err_no_msg:'No messages', err_try_other:'Try another filter', err_load_page:'Error loading page', err_search:'Search error', err_zero:'0 messages', loading_page:'Loading page', searching:'Searching...', wait_s:'Wait', msgs_page:'messages on this page', page:'page', unknown:'Unknown', server:'Server', channel:'Channel' },
+          pt:{ search_avail:'Buscas disponíveis', ph_author:'ID do autor (17-19 dígitos)', ph_keyword:'Palavra-chave (opcional)', btn_search:'Pesquisar', logout:'Sair', admin:'Admin', empty_title:'Nenhuma mensagem', empty_sub:'Insira um ID de autor ou palavra-chave', empty_try:'Tente outro ID', go:'Ir', err_enter_id:'Informe um ID ou palavra-chave', err_invalid_id:'ID inválido', err_invalid_desc:'ID deve ter 17-19 dígitos', err_long_kw:'Palavra-chave muito longa', err_long_desc:'Máximo 100 caracteres', err_wait:'Aguarde', err_spam:'Anti-spam ativo', err_limit:'Limite diário atingido', err_limit_desc:'volte amanhã ou faça upgrade', err_no_msg:'Nenhuma mensagem', err_try_other:'Tente outro filtro', err_load_page:'Erro ao carregar página', err_search:'Erro na busca', err_zero:'0 mensagens', loading_page:'Carregando página', searching:'Buscando...', wait_s:'Aguarde', msgs_page:'mensagens nesta página', page:'página', unknown:'Desconhecido', server:'Servidor', channel:'Canal' }
+        };
+        let dashLang=localStorage.getItem('whbf_lang')||'en';
+        function t(k){ return dashDict[dashLang][k]||k; }
+        function applyDashLang(l){
+          dashLang=l; localStorage.setItem('whbf_lang',l); document.documentElement.lang=l;
+          document.querySelectorAll('[data-i18n]').forEach(el=>{ const k=el.getAttribute('data-i18n'); if(dashDict[l][k]) el.textContent=dashDict[l][k]; });
+          document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ const k=el.getAttribute('data-i18n-ph'); if(dashDict[l][k]) el.placeholder=dashDict[l][k]; });
+          document.querySelectorAll('#lang-switch button').forEach(b=>{ const a=b.dataset.lang===l; b.classList.toggle('active',a); b.style.background=a?'rgba(60,60,60,0.2)':''; b.style.color=a?'#aaa':'#555'; });
+          document.getElementById('btn-logout').textContent=t('logout');
+          // re-render empty state language
+          if(resultsDiv.querySelector('.empty-state')){ const h=resultsDiv.querySelector('.empty-state h3'); const p=resultsDiv.querySelector('.empty-state p'); if(h&&p){ /* keep */ } }
+        }
+        document.getElementById('lang-switch')?.addEventListener('click',e=>{ if(e.target.dataset.lang) applyDashLang(e.target.dataset.lang); });
+        applyDashLang(dashLang);
+
+        // file:// fallback quota via localStorage
+        function fileQuota(){
+          const today=new Date().toISOString().split('T')[0];
+          let d=JSON.parse(localStorage.getItem('dms_file_quota')||'null');
+          if(!d || d.date!==today) d={date:today, used:0, limit:50};
+          return d;
+        }
+        function fileCanSearch(){
+          const q=fileQuota();
+          return { canSearch: q.used < q.limit, limit:q.limit, used:q.used, remaining:Math.max(0,q.limit-q.used) };
+        }
+        function fileIncrement(){
+          const q=fileQuota(); q.used++; localStorage.setItem('dms_file_quota', JSON.stringify(q)); return q;
+        }
+
+        async function getUserData(uid){
+          if(isFile) return { uid, email:'local@file', tier:'normal', searchLimit:50, searchesToday:fileQuota().used, lastResetDate:fileQuota().date };
+          const snap=await getDoc(doc(db,'users',uid)); return snap.exists()?{uid,...snap.data()}:null;
+        }
+        async function ensureUserExists(uid,email){
+          if(isFile) return {uid, email, tier:'normal', searchLimit:50, searchesToday:fileQuota().used, lastResetDate:fileQuota().date};
+          const ref=doc(db,'users',uid); const snap=await getDoc(ref);
+          if(!snap.exists()){ const today=new Date().toISOString().split('T')[0]; await setDoc(ref,{email,tier:'normal',searchLimit:50,searchesToday:0,lastResetDate:today,createdAt:new Date().toISOString(),lastSearchAt:0}); return {uid,email,tier:'normal',searchLimit:50,searchesToday:0,lastResetDate:today};}
+          return {uid,...snap.data()};
+        }
+        async function canSearch(uid){
+          if(isFile) return fileCanSearch();
+          const data=await getUserData(uid); if(!data) return{canSearch:false,limit:0,used:0,remaining:0};
+          const today=new Date().toISOString().split('T')[0]; const limit=data.searchLimit||50; let used=data.searchesToday||0;
+          if(data.lastResetDate!==today){ try{await updateDoc(doc(db,'users',uid),{searchesToday:0,lastResetDate:today});}catch(e){} used=0; }
+          return{canSearch:Math.max(0,limit-used)>0, limit, used, remaining:Math.max(0,limit-used), tier:data.tier};
+        }
+        async function incrementSearch(uid){
+          if(isFile){ const q=fileIncrement(); return{searchesToday:q.used, limit:q.limit}; }
+          const ref=doc(db,'users',uid);
+          try{ await updateDoc(ref,{searchesToday:increment(1),lastSearchAt:Date.now()}); }catch(e){ console.error('increment failed',e); try{await updateDoc(ref,{searchesToday:increment(1)});}catch(e2){throw e2;} }
+          const data=await getUserData(uid); return{searchesToday:data.searchesToday, limit:data.searchLimit};
+        }
+        async function updateUI(uid){
+          const data=await getUserData(uid);
+          if(data){
+            const today=new Date().toISOString().split('T')[0]; const limit=data.searchLimit||50; let used=data.searchesToday||0;
+            if(!isFile && data.lastResetDate!==today) used=0;
+            if(isFile) used=fileQuota().used;
+            const remaining=Math.max(0,limit-used);
+            userEmailEl.textContent=data.email||'—'; userTierEl.textContent=(data.tier||'normal').toUpperCase(); searchRemaining.textContent=remaining; searchLimitEl.textContent=limit; searchBtn.disabled=remaining<=0;
+          }
+        }
+
+        function isValidAuthorId(id){ if(!id) return true; return /^\d{17,19}$/.test(id); }
+        function renderMessages(items){
+          if(!items||items.length===0) return `<div class="empty-state"><div class="icon">◇</div><h3>${t('empty_title')}</h3><p>${t('empty_try')}</p></div>`;
+          let html=`<div style="display:flex;justify-content:space-between;margin-bottom:0.8rem;font-size:0.65rem;color:#555;"><span>${items.length} ${t('msgs_page')}</span><span>${t('page')} ${currentPage}/${totalPages}</span></div>`;
+          items.forEach(msg=>{ html+=`<div class="msg-card"><div class="msg-header"><span class="msg-author">${escapeHtml(msg.author||t('unknown'))}</span><span class="msg-server">${escapeHtml(msg.server||t('server'))}</span><span style="color:#333;">›</span><span class="msg-channel">${escapeHtml(msg.channel||t('channel'))}</span><span class="msg-date">${formatDate(msg.created_at)}</span></div><div class="msg-content">${escapeHtml(msg.content||'')}</div><div class="msg-footer"><span>ID: ${msg.message_id||msg.id||'—'}</span></div></div>`; });
+          return html;
+        }
+        function escapeHtml(s){ if(!s) return''; const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+        function formatDate(s){ if(!s) return'—'; try{ const d=new Date(s); return d.toLocaleString(dashLang==='pt'?'pt-BR':'en-US',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});}catch{return s;} }
+        function renderPagination(page,totalPagesArg,totalMessagesArg){
+          if(totalPagesArg<=1){paginationContainer.style.display='none'; return;}
+          paginationContainer.style.display='flex'; pageInfo.textContent=`${totalMessagesArg} msgs • ${page}/${totalPagesArg}`; jumpInput.max=totalPagesArg; jumpInput.value=page;
+          pagePrev.disabled=page<=1; pageNext.disabled=page>=totalPagesArg; pagePrev5.disabled=page<=5; pageNext5.disabled=page>totalPagesArg-5; pageFirst.disabled=page<=1; pageLast.disabled=page>=totalPagesArg;
+          pageNumbers.innerHTML=''; let s=Math.max(1,page-2),e=Math.min(totalPagesArg,page+2); if(e-s<4){ if(s>1) s=Math.max(1,e-4); if(e<totalPagesArg) e=Math.min(totalPagesArg,s+4); }
+          if(s>1){pageNumbers.appendChild(createPageBtn(1)); if(s>2){const d=document.createElement('span');d.textContent='…';d.style.color='#444';d.style.padding='0 0.2rem';pageNumbers.appendChild(d);}}
+          for(let i=s;i<=e;i++){const b=createPageBtn(i); if(i===page) b.classList.add('active'); pageNumbers.appendChild(b);}
+          if(e<totalPagesArg){ if(e<totalPagesArg-1){const d=document.createElement('span');d.textContent='…';d.style.color='#444';d.style.padding='0 0.2rem';pageNumbers.appendChild(d);} pageNumbers.appendChild(createPageBtn(totalPagesArg));}
+        }
+        function createPageBtn(n){ const b=document.createElement('button'); b.textContent=n; b.addEventListener('click',()=>{if(n!==currentPage) loadPage(n);}); return b; }
+
+        async function loadPage(page){
+          if(!currentUser && !isFile) return; if(page<1||page>totalPages) return; if(paginationCooldown) return; paginationCooldown=true; setTimeout(()=>paginationCooldown=false,600);
+          const key=`${currentAuthorId}_${currentKeyword}_${page}`; if(pageCache.has(key)){ const c=pageCache.get(key); currentPage=page; resultsDiv.innerHTML=renderMessages(c.items); renderPagination(currentPage,totalPages,totalMessages); infoDiv.textContent=`${t('page')} ${page}/${totalPages} [cache] • ${totalMessages} total`; return; }
+          const offset=(page-1)*PAGE_LIMIT; currentPage=page; resultsDiv.innerHTML=`<div class="loading-state"><div class="loading-spinner"></div><div class="text">${t('loading_page')} ${page}...</div></div>`;
+          try{
+            const p=new URLSearchParams(); if(currentAuthorId) p.append('author_id',currentAuthorId); if(currentKeyword) p.append('keyword',currentKeyword); p.append('limit',PAGE_LIMIT); p.append('offset',offset); if(!isFile) p.append('firebase_uid',currentUser.uid); else p.append('firebase_uid', 'YOSxyLD6rUQyf07DHhpQyP9LTIr1');
+            const url=`${API_URL}?${p.toString()}`; console.log(`📄 Page ${page}: offset=${offset}`); const r=await fetch(url); if(!r.ok) throw new Error(`HTTP ${r.status}`); const d=await r.json(); let items=d.items||[]; const seen=new Set(); items=items.filter(it=>{const id=it.message_id||it.id; if(seen.has(id)) return false; seen.add(id); return true;}); if(items.length===0&&page>1){loadPage(page-1); return;} pageCache.set(key,{items}); resultsDiv.innerHTML=renderMessages(items); renderPagination(currentPage,totalPages,totalMessages); infoDiv.textContent=`${t('page')} ${page}/${totalPages} • ${items.length} msgs`;
+          }catch(e){ console.error(e); resultsDiv.innerHTML=`<div class="empty-state"><div class="icon">✗</div><h3>${t('err_load_page')}</h3><p>${escapeHtml(e.message)}</p></div>`; }
+        }
+
+        async function performSearch(){
+          if(!currentUser && !isFile) return;
+          const uid=isFile?'file':currentUser.uid;
+          const authorId=authorInput.value.trim(), keyword=keywordInput.value.trim();
+          if(!authorId&&!keyword){ resultsDiv.innerHTML=`<div class="empty-state"><div class="icon">◈</div><h3>${t('err_enter_id')}</h3></div>`; paginationContainer.style.display='none'; return; }
+          if(authorId && !isValidAuthorId(authorId)){ resultsDiv.innerHTML=`<div class="empty-state"><div class="icon">⚠</div><h3>${t('err_invalid_id')}</h3><p>${t('err_invalid_desc')}</p></div>`; return; }
+          if(keyword && keyword.length>100){ resultsDiv.innerHTML=`<div class="empty-state"><div class="icon">⚠</div><h3>${t('err_long_kw')}</h3><p>${t('err_long_desc')}</p></div>`; return; }
+          const now=Date.now(); if(now-lastSearchTime < RATE_LIMIT_MS){ const w=Math.ceil((RATE_LIMIT_MS-(now-lastSearchTime))/1000); resultsDiv.innerHTML=`<div class="empty-state"><div class="icon">⏱</div><h3>${t('err_wait')} ${w}s</h3><p>${t('err_spam')}</p></div>`; return; }
+          const chk=await canSearch(uid); if(!chk.canSearch){ resultsDiv.innerHTML=`<div class="empty-state"><div class="icon">⊘</div><h3>${t('err_limit')}</h3><p>${chk.used}/${chk.limit} — ${t('err_limit_desc')}</p></div>`; await updateUI(uid); return; }
+          lastSearchTime=now; await incrementSearch(uid); await updateUI(uid);
+          pageCache.clear(); currentAuthorId=authorId; currentKeyword=keyword; currentPage=1; totalMessages=0; totalPages=0;
+          resultsDiv.innerHTML=`<div class="loading-state"><div class="loading-spinner"></div><div class="text">${t('searching')}</div></div>`; infoDiv.textContent='';
+          try{
+            const cp=new URLSearchParams(); if(authorId) cp.append('author_id',authorId); if(keyword) cp.append('keyword',keyword); cp.append('firebase_uid', isFile?'YOSxyLD6rUQyf07DHhpQyP9LTIr1':currentUser.uid); const cr=await fetch(`${COUNT_URL}?${cp.toString()}`); if(!cr.ok) throw new Error(`Count ${cr.status}`); const cd=await cr.json(); const total=cd.items?.[0]?.total||0; totalMessages=total; totalPages=Math.ceil(total/PAGE_LIMIT);
+            if(total===0){ resultsDiv.innerHTML=`<div class="empty-state"><div class="icon">◇</div><h3>${t('err_no_msg')}</h3><p>${t('err_try_other')}</p></div>`; paginationContainer.style.display='none'; infoDiv.textContent=t('err_zero'); return; }
+            const p=new URLSearchParams(); if(authorId) p.append('author_id',authorId); if(keyword) p.append('keyword',keyword); p.append('limit',PAGE_LIMIT); p.append('offset',0); p.append('firebase_uid', isFile?'YOSxyLD6rUQyf07DHhpQyP9LTIr1':currentUser.uid); const r=await fetch(`${API_URL}?${p.toString()}`); if(!r.ok) throw new Error(`HTTP ${r.status}`); const d=await r.json(); const items=d.items||[];
+            if(items.length===0){ resultsDiv.innerHTML=`<div class="empty-state"><div class="icon">◇</div><h3>${t('err_no_msg')}</h3></div>`; paginationContainer.style.display='none'; return; }
+            pageCache.set(`${authorId}_${keyword}_1`,{items}); resultsDiv.innerHTML=renderMessages(items); renderPagination(1,totalPages,totalMessages); infoDiv.textContent=`${items.length} ${t('msgs_page').split(' ')[0]} ${totalMessages} • ${t('page')} 1/${totalPages}`;
+          }catch(e){ console.error(e); resultsDiv.innerHTML=`<div class="empty-state"><div class="icon">✗</div><h3>${t('err_search')}</h3><p>${escapeHtml(e.message)}</p></div>`; paginationContainer.style.display='none'; }
+        }
+
+        searchBtn.addEventListener('click',performSearch);
+        authorInput.addEventListener('keypress',e=>{if(e.key==='Enter')performSearch();});
+        keywordInput.addEventListener('keypress',e=>{if(e.key==='Enter')performSearch();});
+        authorInput.addEventListener('input',()=>authorInput.value=authorInput.value.replace(/\D/g,'').slice(0,19));
+        pagePrev.addEventListener('click',()=>{if(currentPage>1) loadPage(currentPage-1);});
+        pageNext.addEventListener('click',()=>{if(currentPage<totalPages) loadPage(currentPage+1);});
+        pagePrev5.addEventListener('click',()=>loadPage(Math.max(1,currentPage-5)));
+        pageNext5.addEventListener('click',()=>loadPage(Math.min(totalPages,currentPage+5)));
+        pageFirst.addEventListener('click',()=>loadPage(1));
+        pageLast.addEventListener('click',()=>loadPage(totalPages));
+        jumpBtn.addEventListener('click',()=>{const p=parseInt(jumpInput.value); if(p>=1&&p<=totalPages) loadPage(p);});
+        jumpInput.addEventListener('keypress',e=>{if(e.key==='Enter') jumpBtn.click();});
+        function goLogin(){ if(location.protocol==='file:') location.href='../index.html'; else if(location.hostname.includes('github.io')) location.href='../'; else location.href='/'; }
+        logoutBtn.addEventListener('click',async()=>{ if(isFile){ localStorage.removeItem('dms_file_quota'); location.reload(); } else { await signOut(auth); goLogin(); }});
+        if(isFile){
+          // file:// mock user
+          currentUser={uid:'file', email:'local@file'}; await updateUI('file'); console.log('📁 file mode — quota via localStorage');
+          // allow search without auth
+        } else {
+          onAuthStateChanged(auth, async(user)=>{ if(user){ currentUser=user; await ensureUserExists(user.uid,user.email); await updateUI(user.uid); applyDashLang(localStorage.getItem('whbf_lang')||'en'); console.log('✅',user.email);} else goLogin(); });
+        }
+        console.log('🔍 WHBF DMS — i18n + file quota fix');
+    </script>
+    <script>(function(){var isFile=location.protocol==='file:';var isGh=location.hostname.includes('github.io');if(isFile||isGh){document.querySelectorAll('link[href^="/"]').forEach(function(el){var v=el.getAttribute('href');if(!v||v.startsWith('http')) return;var rel=v.replace(/^\//,'');el.setAttribute('href','../'+rel);});}})();</script>
+</body>
+</html>
