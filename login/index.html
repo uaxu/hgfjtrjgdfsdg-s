@@ -43,7 +43,7 @@
       <input id="password" type="password" placeholder="password" class="input-field" autocomplete="current-password">
       <button id="btn-login" class="btn-login" data-i18n="login_btn">Login</button>
       <p id="error-msg" style="color:#999; min-height:1.2rem; font-size:0.8rem;"></p>
-      <p style="color:#444; font-size:0.65rem; margin-top:0.5rem;" data-i18n="login_hint">50 searches/day • Need access? Contact on Discord</p>
+      <p style="color:#444; font-size:0.65rem; margin-top:0.5rem;" data-i18n="login_hint">Want access? Contact on Discord</p>
     </div>
   </div>
 
@@ -61,7 +61,7 @@
     const firebaseConfig={ apiKey:"AIzaSyDXX5y50eUHJtFNa4S4r5LrBoPXpUKeGBQ", authDomain:"gsrgszsgz.firebaseapp.com", projectId:"gsrgszsgz", storageBucket:"gsrgszsgz.firebasestorage.app", messagingSenderId:"896231461425", appId:"1:896231461425:web:f5e1692a5d727ff1ed7b10" };
     const app=initializeApp(firebaseConfig); const auth=getAuth(app);
     const emailInput=document.getElementById('email'), passwordInput=document.getElementById('password'), loginBtn=document.getElementById('btn-login'), errorMsg=document.getElementById('error-msg');
-    const dict={ en:{ login_title:'WHBF DMS', login_sub:'Login to access dashboard', login_btn:'Login', login_hint:'50 searches/day • Need access? Contact on Discord', back_home:'← Home', err_empty:'Enter email and password', err_invalid:'Invalid email', err_wrong:'Wrong email or password', err_many:'Too many attempts — wait', err_net:'Network error — check connection', err_fail:'Login failed' }, pt:{ login_title:'WHBF DMS', login_sub:'Entre para acessar o painel', login_btn:'Entrar', login_hint:'50 buscas/dia • Precisa de acesso? Fale no Discord', back_home:'← Início', err_empty:'Digite email e senha', err_invalid:'E-mail inválido', err_wrong:'E-mail ou senha incorretos', err_many:'Muitas tentativas — aguarde', err_net:'Erro de rede', err_fail:'Falha no login' } };
+    const dict={ en:{ login_title:'WHBF DMS', login_sub:'Login to access dashboard', login_btn:'Login', login_hint:'Want access? Contact on Discord', back_home:'← Home', err_empty:'Enter email and password', err_invalid:'Invalid email', err_wrong:'Wrong email or password', err_many:'Too many attempts, wait', err_net:'Network error, check your connection', err_fail:'Login failed' }, pt:{ login_title:'WHBF DMS', login_sub:'Entre para acessar ao painel', login_btn:'Entrar', login_hint:'Quer acesso? Compre no Discord', back_home:'← Início', err_empty:'Digite email e senha', err_invalid:'E-mail inválido', err_wrong:'E-mail ou senha incorretos', err_many:'Muitas tentativas, aguarde', err_net:'Erro de rede', err_fail:'Falha no login' } };
     let lang=localStorage.getItem('whbf_lang')||'en';
     function applyLang(l){ lang=l; localStorage.setItem('whbf_lang',l); document.documentElement.lang=l; document.querySelectorAll('[data-i18n]').forEach(el=>{ const k=el.getAttribute('data-i18n'); if(dict[l][k]) el.textContent=dict[l][k]; }); document.getElementById('back-home').textContent=dict[l]['back_home']; document.querySelectorAll('#lang-switch button').forEach(b=>b.classList.toggle('active', b.dataset.lang===l)); }
     document.getElementById('lang-switch').addEventListener('click',e=>{ if(e.target.dataset.lang) applyLang(e.target.dataset.lang); }); applyLang(lang);
